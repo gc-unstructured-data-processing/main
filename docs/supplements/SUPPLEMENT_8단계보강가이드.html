@@ -145,6 +145,7 @@ footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--bord
   <button data-tab="checklist">위반금지 체크</button>
 </nav>
 
+<!-- ============ 한 눈에 매트릭스 ============ -->
 <section class="section active" data-section="overview">
   <h2>전체 매트릭스 — 8단계 × 3트랙</h2>
   <p class="section-intro">
@@ -159,20 +160,62 @@ footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--bord
   <table class="clean">
     <thead><tr><th>단계</th><th>🔴 위반 금지</th><th>🟡 권고</th><th>🟢 발전 방향</th></tr></thead>
     <tbody>
-      <tr><td><strong>1. 청사진</strong></td><td>—</td><td>Li 2021 흐름 이해</td><td>코드 100% 재현 X, 흐름만 차용</td></tr>
-      <tr><td><strong>2. Pilot</strong></td><td>API key 코드 박기 ❌<br>회사명 join ❌</td><td>1개 firm-year 먼저</td><td>requests 직접 호출(라이브러리 X)</td></tr>
-      <tr style="background: rgba(67,56,202,0.04);"><td><strong>3. 전처리 ★</strong></td><td>—</td><td>형태소 분석기 선택<br>II/IV/VI 섹션 추출<br>불용어 제거</td><td>회사명 자동 불용어 생성<br>명사만 추출<br>분석기 4종 비교</td></tr>
-      <tr><td><strong>4. 전체 수집</strong></td><td>실패행 가짜 0으로 채우기 ❌<br>MCP 결과만 쓰기 ❌</td><td>collection_log 기록<br>raw zip 보관</td><td>지수 backoff<br>rate limit 페이스</td></tr>
-      <tr style="background: rgba(67,56,202,0.04);"><td><strong>5. θ sweep ★</strong></td><td>fastText 결과 검토 없이 확정 ❌</td><td>θ 여러 값 sweep<br>상위 100단어 직접 검토</td><td>5개 θ {0.70~0.90}<br>잡음 비율 표</td></tr>
-      <tr><td><strong>6. 점수 계산</strong></td><td>다중공선성(seed+expanded 동시) ❌</td><td>seed/expanded 별도 모델<br>word_count 통제</td><td>E·S·G 차원 분리<br>섹션별 점수(α)</td></tr>
-      <tr><td><strong>7. 검증</strong></td><td>회귀 직행 ❌</td><td>Spearman + 평균차이 검정<br>p-value만으로 결론 X</td><td>문장 직접 읽기<br>상하위 10% 비교</td></tr>
-      <tr><td><strong>8. 회귀+알파</strong></td><td>인과로 단정 ❌<br>계수 등급차로 환산 ❌</td><td>모형 선택 근거 1단락<br>cheap-talk 검토</td><td>알파 1개 이상<br>3종 모형 비교</td></tr>
+      <tr>
+        <td><strong>1. 청사진</strong></td>
+        <td>—</td>
+        <td>Li 2021 흐름 이해</td>
+        <td>코드 100% 재현 X, 흐름만 차용</td>
+      </tr>
+      <tr>
+        <td><strong>2. Pilot</strong></td>
+        <td>API key 코드 박기 ❌<br>회사명 join ❌</td>
+        <td>1개 firm-year 먼저</td>
+        <td>requests 직접 호출(라이브러리 X)</td>
+      </tr>
+      <tr style="background: rgba(67,56,202,0.04);">
+        <td><strong>3. 전처리 ★</strong></td>
+        <td>—</td>
+        <td>형태소 분석기 선택<br>II/IV/VI 섹션 추출<br>불용어 제거</td>
+        <td>회사명 자동 불용어 생성<br>명사만 추출<br>분석기 4종 비교</td>
+      </tr>
+      <tr>
+        <td><strong>4. 전체 수집</strong></td>
+        <td>실패행 가짜 0으로 채우기 ❌<br>MCP 결과만 쓰기 ❌</td>
+        <td>collection_log 기록<br>raw zip 보관</td>
+        <td>지수 backoff<br>rate limit 페이스</td>
+      </tr>
+      <tr style="background: rgba(67,56,202,0.04);">
+        <td><strong>5. θ sweep ★</strong></td>
+        <td>fastText 결과 검토 없이 확정 ❌</td>
+        <td>θ 여러 값 sweep<br>상위 100단어 직접 검토</td>
+        <td>5개 θ {0.70~0.90}<br>잡음 비율 표</td>
+      </tr>
+      <tr>
+        <td><strong>6. 점수 계산</strong></td>
+        <td>다중공선성(seed+expanded 동시) ❌</td>
+        <td>seed/expanded 별도 모델<br>word_count 통제</td>
+        <td>E·S·G 차원 분리<br>섹션별 점수(α)</td>
+      </tr>
+      <tr>
+        <td><strong>7. 검증</strong></td>
+        <td>회귀 직행 ❌</td>
+        <td>Spearman + 평균차이 검정<br>p-value만으로 결론 X</td>
+        <td>문장 직접 읽기<br>상하위 10% 비교</td>
+      </tr>
+      <tr>
+        <td><strong>8. 회귀+알파</strong></td>
+        <td>인과로 단정 ❌<br>계수 등급차로 환산 ❌</td>
+        <td>모형 선택 근거 1단락<br>cheap-talk 검토</td>
+        <td>알파 1개 이상<br>3종 모형 비교</td>
+      </tr>
     </tbody>
   </table>
 
   <h3>학술적 무게중심 — 어디에 시간을 쓸 것인가</h3>
   <div class="callout success">
-    <strong>전처리(단계 3) + 사전 정제(단계 5)가 결과를 가른다</strong> — 학술 검증 7건(Camacho-Collados &amp; Pilehvar 2017, Wang et al. 2023, Park et al. AACL 2020, Li 2021 RFS, Bao 2024 등)에서 일관됨. 뒷단(단계 6-8) 모형 변경보다, 앞단(3, 5)의 회사명·잡음 제거가 점수 안정성에 훨씬 큰 영향을 줍니다. 수업 자체가 비정형데이터분석이라 평가표에서 "텍스트 처리" 항목 비중이 크기도 합니다.
+    <strong>전처리(단계 3) + 사전 정제(단계 5)가 결과를 가른다</strong> — 학술 검증 7건(Camacho-Collados &amp; Pilehvar 2017, Wang et al. 2023, Park et al. AACL 2020, Li 2021 RFS, Bao 2024 등)에서 일관됨.
+    뒷단(단계 6-8) 모형 변경보다, 앞단(3, 5)의 회사명·잡음 제거가 점수 안정성에 훨씬 큰 영향을 줍니다.
+    수업 자체가 비정형데이터분석이라 평가표에서 "텍스트 처리" 항목 비중이 크기도 합니다.
   </div>
 
   <h3>가이드 출처 약속</h3>
@@ -189,53 +232,217 @@ footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--bord
   </table>
 </section>
 
+<!-- ============ 단계 1-2 ============ -->
 <section class="section" data-section="s12">
-  <div class="stage-header"><h3>단계 1-2 — 청사진 학습 + Pilot 수집</h3><p>목표: <strong>"가장 빠르게 1개 firm-year를 끝까지 통과"</strong>. 381행 한 번에 손대지 말 것.</p></div>
-  <div class="card must"><div class="track-label">🔴 위반 금지</div><h4>① API key를 코드에 직접 박지 말 것</h4><ul><li>반드시 <code>.env</code> 환경변수만 사용. <code>os.getenv("OPENDART_API_KEY")</code> 로 읽기</li><li>제출 전 .ipynb에 키 문자열이 안 박혔는지 검색해 확인</li></ul><div class="source">[02 §직접 API로 수집하기] · [04 §5 API key 제거 확인]</div></div>
-  <div class="card must"><h4>② 회사명(company_name)으로 join/merge 하지 말 것</h4><ul><li>분석 단위는 <strong><code>stock_code × fiscal_year</code></strong></li><li>이유: stock_code 127개인데 company_name은 133개 — 사명변경/분할로 silent mismatch 발생</li></ul><div class="source">[02 §먼저 이해할 세 가지 식별자] 분석 단위 주의 박스</div></div>
-  <div class="card should"><div class="track-label">🟡 권고</div><h4>③ 1-2개 firm-year로 먼저 연습 후 381개로 확장</h4><ul><li>식별자 흐름이 한 번 작동해야 loop 짤 수 있음</li><li>삼성전자 2024 등 익숙한 기업으로 시작 권장</li></ul><div class="source">[02 §연습 체크포인트] · [심층 단계 2]</div></div>
-  <div class="card should"><h4>④ raw 응답 보관 — 재현성 확보</h4><ul><li>list.json, document.xml zip 모두 <code>data/raw/{stock_code}_{fiscal_year}.zip</code></li><li>나중에 코드 바꿔도 같은 데이터에서 재계산 가능</li></ul><div class="source">[심층 단계 2 결정박스 ②] · [02 §재현 가능한 최종 수집 경로]</div></div>
-  <div class="card could"><div class="track-label">🟢 발전 방향</div><h4>⑤ dart-fss 라이브러리 대신 requests로 직접 호출 (권장)</h4><ul><li>라이브러리 의존성 회피 + API 사양 변화 대응 쉬움</li><li>가이드 02에 직접 API 호출 예시 코드 있음 (가이드 우선 권장 경로)</li><li>심층가이드 결정박스 ② "보고서에 쓸 판단" 그대로 인용 가능</li></ul><div class="source">[02 §직접 API로 수집하기] · [심층 단계 2 결정박스 ②]</div></div>
-  <div class="card could"><h4>⑥ 정정공시 함정 — last_reprt_at=Y</h4><ul><li><code>last_reprt_at=Y</code> 파라미터 켜기 → 정정공시가 있어도 최종 보고서만 선택</li><li>정정공시 있는 경우 어떤 rcept_no 썼는지 노트에 기록</li></ul><div class="source">[02 §MCP로 접수번호 찾기] · [심층 단계 2 흔한 함정 #2]</div></div>
-  <div class="beginner-note"><strong>비전공자 직관</strong> — OpenDART는 한 번에 보고서를 못 받습니다. CORPCODE.xml(전체 매핑) → list.json(공시 목록) → document.xml(원문) 3단계 깔때기로 좁혀 들어가요. 자세한 그림은 용어사전 D-16 참고.</div>
+  <div class="stage-header">
+    <h3>단계 1-2 — 청사진 학습 + Pilot 수집</h3>
+    <p>목표: <strong>"가장 빠르게 1개 firm-year를 끝까지 통과"</strong>. 381행 한 번에 손대지 말 것.</p>
+  </div>
+
+  <div class="card must">
+    <div class="track-label">🔴 위반 금지</div>
+    <h4>① API key를 코드에 직접 박지 말 것</h4>
+    <ul>
+      <li>반드시 <code>.env</code> 환경변수만 사용. <code>os.getenv("OPENDART_API_KEY")</code> 로 읽기</li>
+      <li>제출 전 .ipynb에 키 문자열이 안 박혔는지 검색해 확인</li>
+    </ul>
+    <div class="source">[02 §직접 API로 수집하기] · [04 §5 API key 제거 확인]</div>
+  </div>
+
+  <div class="card must">
+    <h4>② 회사명(company_name)으로 join/merge 하지 말 것</h4>
+    <ul>
+      <li>분석 단위는 <strong><code>stock_code × fiscal_year</code></strong></li>
+      <li>이유: stock_code 127개인데 company_name은 133개 — 사명변경/분할로 silent mismatch 발생</li>
+    </ul>
+    <div class="source">[02 §먼저 이해할 세 가지 식별자] 분석 단위 주의 박스</div>
+  </div>
+
+  <div class="card should">
+    <div class="track-label">🟡 권고</div>
+    <h4>③ 1-2개 firm-year로 먼저 연습 후 381개로 확장</h4>
+    <ul>
+      <li>식별자 흐름이 한 번 작동해야 loop 짤 수 있음</li>
+      <li>삼성전자 2024 등 익숙한 기업으로 시작 권장</li>
+    </ul>
+    <div class="source">[02 §연습 체크포인트] · [심층 단계 2]</div>
+  </div>
+
+  <div class="card should">
+    <h4>④ raw 응답 보관 — 재현성 확보</h4>
+    <ul>
+      <li>list.json, document.xml zip 모두 <code>data/raw/{stock_code}_{fiscal_year}.zip</code></li>
+      <li>나중에 코드 바꿔도 같은 데이터에서 재계산 가능</li>
+    </ul>
+    <div class="source">[심층 단계 2 결정박스 ②] · [02 §재현 가능한 최종 수집 경로]</div>
+  </div>
+
+  <div class="card could">
+    <div class="track-label">🟢 발전 방향</div>
+    <h4>⑤ dart-fss 라이브러리 대신 requests로 직접 호출 (권장)</h4>
+    <ul>
+      <li>라이브러리 의존성 회피 + API 사양 변화 대응 쉬움</li>
+      <li>가이드 02에 직접 API 호출 예시 코드 있음 (가이드 우선 권장 경로)</li>
+      <li>심층가이드 결정박스 ② "보고서에 쓸 판단" 그대로 인용 가능</li>
+    </ul>
+    <div class="source">[02 §직접 API로 수집하기] · [심층 단계 2 결정박스 ②]</div>
+  </div>
+
+  <div class="card could">
+    <h4>⑥ 정정공시 함정 — last_reprt_at=Y</h4>
+    <ul>
+      <li><code>last_reprt_at=Y</code> 파라미터 켜기 → 정정공시가 있어도 최종 보고서만 선택</li>
+      <li>정정공시 있는 경우 어떤 rcept_no 썼는지 노트에 기록</li>
+    </ul>
+    <div class="source">[02 §MCP로 접수번호 찾기] · [심층 단계 2 흔한 함정 #2]</div>
+  </div>
+
+  <div class="beginner-note">
+    <strong>비전공자 직관</strong> — OpenDART는 한 번에 보고서를 못 받습니다. CORPCODE.xml(전체 매핑) → list.json(공시 목록) → document.xml(원문) 3단계 깔때기로 좁혀 들어가요. 자세한 그림은 용어사전 D-16 참고.
+  </div>
 </section>
 
+<!-- ============ 단계 3 전처리 (핵심) ============ -->
 <section class="section" data-section="s3">
-  <div class="stage-header"><h3>단계 3 — 한국어 전처리 ★ 결과를 가르는 단계</h3><p>학술 검증으로 확인된 <strong>차별화 핵심 구간</strong>. 비중을 가장 크게 둘 것.</p></div>
-  <div class="callout warn"><strong>이 단계가 왜 결정적인가</strong> — 회사명·연도·법률 정형구 같은 도메인 잡음을 못 거르면 TF-IDF 상위에 ESG 단어가 못 올라옵니다. 같은 모델·같은 사전을 써도 전처리 품질로 점수가 5-10% 갈리는 게 학술적으로 확인됨 (Camacho-Collados &amp; Pilehvar 2017; PLOS One BoW preprocessing).</div>
-  <div class="card should"><div class="track-label">🟡 권고</div><h4>① 사업보고서 II, IV, VI 섹션에서 ESG 추출</h4><ul><li><strong>II. 사업의 내용</strong> — 환경/사회/지배구조 표현 비중 큼</li><li><strong>IV. 이사의 경영진단 및 분석의견</strong> — 정성적 ESG 서술 자주 등장</li><li><strong>VI. 이사회 등 회사의 기관에 관한 사항</strong> — 지배구조(G) 핵심</li></ul><div class="source">[01] · [02] · [04 §2 보고서 판단]</div></div>
-  <div class="card should"><h4>② 형태소 분석기 선택 (가이드는 자유, 팀 환경에 맞춰)</h4><ul><li>Windows 팀원 있으면 <strong>Okt</strong> 권장 (KoNLPy에서 바로)</li><li>맥/리눅스 통일 가능하면 <strong>Mecab</strong> (가장 빠름)</li><li>왜 그 분석기를 골랐는지 1줄 보고서에 명시</li></ul><div class="source">[심층 단계 3 형태소 분석기 4종 비교] · 용어사전 A-02</div></div>
+  <div class="stage-header">
+    <h3>단계 3 — 한국어 전처리 ★ 결과를 가르는 단계</h3>
+    <p>학술 검증으로 확인된 <strong>차별화 핵심 구간</strong>. 비중을 가장 크게 둘 것.</p>
+  </div>
+
+  <div class="callout warn">
+    <strong>이 단계가 왜 결정적인가</strong> — 회사명·연도·법률 정형구 같은 도메인 잡음을 못 거르면 TF-IDF 상위에 ESG 단어가 못 올라옵니다. 같은 모델·같은 사전을 써도 전처리 품질로 점수가 5-10% 갈리는 게 학술적으로 확인됨 (Camacho-Collados &amp; Pilehvar 2017; PLOS One BoW preprocessing).
+  </div>
+
+  <div class="card should">
+    <div class="track-label">🟡 권고</div>
+    <h4>① 사업보고서 II, IV, VI 섹션에서 ESG 추출</h4>
+    <ul>
+      <li><strong>II. 사업의 내용</strong> — 환경/사회/지배구조 표현 비중 큼</li>
+      <li><strong>IV. 이사의 경영진단 및 분석의견</strong> — 정성적 ESG 서술 자주 등장</li>
+      <li><strong>VI. 이사회 등 회사의 기관에 관한 사항</strong> — 지배구조(G) 핵심</li>
+    </ul>
+    <div class="source">[01] · [02] · [04 §2 보고서 판단]</div>
+  </div>
+
+  <div class="card should">
+    <h4>② 형태소 분석기 선택 (가이드는 자유, 팀 환경에 맞춰)</h4>
+    <ul>
+      <li>Windows 팀원 있으면 <strong>Okt</strong> 권장 (KoNLPy에서 바로)</li>
+      <li>맥/리눅스 통일 가능하면 <strong>Mecab</strong> (가장 빠름)</li>
+      <li>왜 그 분석기를 골랐는지 1줄 보고서에 명시</li>
+    </ul>
+    <div class="source">[심층 단계 3 형태소 분석기 4종 비교] · 용어사전 A-02</div>
+  </div>
+
   <h4>분석기 4종 동일 문장 비교 — 발표용 핵심 자료</h4>
-  <div class="card soft"><table class="clean"><thead><tr><th>분석기</th><th>"당사는 온실가스 배출량을 감축하고 있다"</th><th>"온실가스" 유지?</th></tr></thead><tbody>
-    <tr><td><strong>Okt</strong></td><td>당사 / 는 / 온실 / 가스 / 배출량 / 을 / 감축 / 하고 / 있다</td><td>❌ 분해됨</td></tr>
-    <tr><td><strong>Mecab</strong></td><td>당사 / 는 / 온실가스 / 배출량 / 을 / 감축 / 하 / 고 / 있 / 다</td><td>✅ 유지</td></tr>
-    <tr><td><strong>Komoran</strong></td><td>당사 / 는 / 온실가스 / 배출량 / 을 / 감축 / 하 / 고 / 있 / 다</td><td>✅ 유지</td></tr>
-    <tr><td><strong>Kkma</strong></td><td>당사 / 는 / 온실 / 가스 / 배출 / 량 / 을 / 감축 / 하 / 고 / 있 / 다</td><td>❌ 가장 세밀 분해</td></tr>
-  </tbody></table><div class="source">실제 실행 시 결과는 버전에 따라 미세 차이. <span class="badge lecture">Week 3 UD-03-300</span></div></div>
-  <div class="card could"><div class="track-label">🟢 발전 방향</div><h4>③ 명사만 추출 (Li 2021 방식, 권장)</h4><ul><li>이유: ESG 표현은 대부분 명사("온실가스", "이사회", "공급망"). 동사·조사 포함 시 잡음 증가</li><li>30개 seed 모두 명사 — 정합성 높음</li><li>형태소 분석기 결과 중 NN* 태그만 필터</li></ul><div class="source">[심층 단계 3 결정박스 ③] · Li et al. (2021 RFS)</div></div>
-  <div class="card could"><h4>④ 회사명 자동 불용어 생성 — <strong>차별화 핵심</strong></h4><ul><li><code>company_master.csv</code>의 <code>company_name</code> 127개를 자동 불용어 리스트로</li><li>자회사명·약칭도 함께(예: "삼성전자" + "삼성")</li><li>안 하면 단계 5에서 "재생에너지 → 대림에너지" 같은 회사명 잡음이 ESG 후보로 들어옴</li></ul><pre>company_master = pd.read_csv("data/company_master.csv")
+  <div class="card soft">
+    <table class="clean">
+      <thead><tr><th>분석기</th><th>"당사는 온실가스 배출량을 감축하고 있다"</th><th>"온실가스" 유지?</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Okt</strong></td><td>당사 / 는 / 온실 / 가스 / 배출량 / 을 / 감축 / 하고 / 있다</td><td>❌ 분해됨</td></tr>
+        <tr><td><strong>Mecab</strong></td><td>당사 / 는 / 온실가스 / 배출량 / 을 / 감축 / 하 / 고 / 있 / 다</td><td>✅ 유지</td></tr>
+        <tr><td><strong>Komoran</strong></td><td>당사 / 는 / 온실가스 / 배출량 / 을 / 감축 / 하 / 고 / 있 / 다</td><td>✅ 유지</td></tr>
+        <tr><td><strong>Kkma</strong></td><td>당사 / 는 / 온실 / 가스 / 배출 / 량 / 을 / 감축 / 하 / 고 / 있 / 다</td><td>❌ 가장 세밀 분해</td></tr>
+      </tbody>
+    </table>
+    <div class="source">실제 실행 시 결과는 버전에 따라 미세 차이. <span class="badge lecture">Week 3 UD-03-300</span></div>
+  </div>
+
+  <div class="card could">
+    <div class="track-label">🟢 발전 방향</div>
+    <h4>③ 명사만 추출 (Li 2021 방식, 권장)</h4>
+    <ul>
+      <li>이유: ESG 표현은 대부분 명사("온실가스", "이사회", "공급망"). 동사·조사 포함 시 잡음 증가</li>
+      <li>30개 seed 모두 명사 — 정합성 높음</li>
+      <li>형태소 분석기 결과 중 NN* 태그만 필터</li>
+    </ul>
+    <div class="source">[심층 단계 3 결정박스 ③] · Li et al. (2021 RFS)</div>
+  </div>
+
+  <div class="card could">
+    <h4>④ 회사명 자동 불용어 생성 — <strong>차별화 핵심</strong></h4>
+    <ul>
+      <li><code>company_master.csv</code>의 <code>company_name</code> 127개를 자동 불용어 리스트로</li>
+      <li>자회사명·약칭도 함께(예: "삼성전자" + "삼성")</li>
+      <li>안 하면 단계 5에서 "재생에너지 → 대림에너지" 같은 회사명 잡음이 ESG 후보로 들어옴</li>
+    </ul>
+    <pre>company_master = pd.read_csv("data/company_master.csv")
 company_stops = set(company_master["company_name"].tolist())
 # + 자회사명/약칭 추가 (회사명에서 첫 2-3자 슬라이싱 등)
-all_stops = base_stopwords | company_stops | domain_specific_stops</pre><div class="source">[심층 단계 3 불용어 카드] · 용어사전 A-04, A-05</div></div>
-  <div class="card could"><h4>⑤ 도메인 불용어 4범주 — 누락하기 쉬운 잡음</h4><table class="clean"><thead><tr><th>범주</th><th>예시</th><th>왜 제거</th></tr></thead><tbody>
-    <tr><td>회사명</td><td>삼성전자, 현대자동차, 우리은행</td><td>특정 회사명이 ESG 단어로 잘못 매칭</td></tr>
-    <tr><td>연도/날짜</td><td>2024년, 2024.12, 당기, 전기</td><td>모든 보고서에 나옴 → 정보량 0</td></tr>
-    <tr><td>법률 정형구</td><td>본 보고서, 당사는, 이하 같음</td><td>보일러플레이트, ESG 무관</td></tr>
-    <tr><td>표/각주 잔재</td><td>단위, 주1), (*), 백만원</td><td>XML 추출 시 들어옴</td></tr>
-  </tbody></table><div class="source">[심층 단계 3] + 비전공자 보강</div></div>
-  <div class="beginner-note"><strong>비전공자 발표 답안 초안</strong><br>"전처리에서 (1) Okt(또는 Mecab)로 명사만 추출, (2) 가이드 기본 불용어 + company_master.csv 회사명 127개 + 도메인 잡음 4범주를 자동 불용어로 통합, (3) II/IV/VI 섹션에서만 추출해 분석 안정성을 확보했다. 학술적으로 전처리 단계에서 결과가 5-10% 갈린다는 연구가 다수 있어 이 단계에 비중을 둠."</div>
+all_stops = base_stopwords | company_stops | domain_specific_stops</pre>
+    <div class="source">[심층 단계 3 불용어 카드] · 용어사전 A-04, A-05</div>
+  </div>
+
+  <div class="card could">
+    <h4>⑤ 도메인 불용어 4범주 — 누락하기 쉬운 잡음</h4>
+    <table class="clean">
+      <thead><tr><th>범주</th><th>예시</th><th>왜 제거</th></tr></thead>
+      <tbody>
+        <tr><td>회사명</td><td>삼성전자, 현대자동차, 우리은행</td><td>특정 회사명이 ESG 단어로 잘못 매칭</td></tr>
+        <tr><td>연도/날짜</td><td>2024년, 2024.12, 당기, 전기</td><td>모든 보고서에 나옴 → 정보량 0</td></tr>
+        <tr><td>법률 정형구</td><td>본 보고서, 당사는, 이하 같음</td><td>보일러플레이트, ESG 무관</td></tr>
+        <tr><td>표/각주 잔재</td><td>단위, 주1), (*), 백만원</td><td>XML 추출 시 들어옴</td></tr>
+      </tbody>
+    </table>
+    <div class="source">[심층 단계 3] + 비전공자 보강</div>
+  </div>
+
+  <div class="beginner-note">
+    <strong>비전공자 발표 답안 초안</strong><br>
+    "전처리에서 (1) Okt(또는 Mecab)로 명사만 추출, (2) 가이드 기본 불용어 + company_master.csv 회사명 127개 + 도메인 잡음 4범주를 자동 불용어로 통합, (3) II/IV/VI 섹션에서만 추출해 분석 안정성을 확보했다. 학술적으로 전처리 단계에서 결과가 5-10% 갈린다는 연구가 다수 있어 이 단계에 비중을 둠."
+  </div>
 </section>
 
+<!-- ============ 단계 4 ============ -->
 <section class="section" data-section="s4">
-  <div class="stage-header"><h3>단계 4 — 전체 381 firm-year로 확장</h3><p>Pilot 코드를 안전하게 loop. rate limit · 실패 처리가 신뢰성 결정.</p></div>
-  <div class="card must"><div class="track-label">🔴 위반 금지</div><h4>① 실패 행을 가짜 0으로 채워 분석에 넣지 말 것 (가장 강조됨)</h4><ul><li>가이드 01·02·03·04 모두에 명시</li><li>실패 시 <code>collection_log.csv</code>에 사유 기록 후 분석 corpus에서 제외</li><li>회귀 패널도 성공 행으로만 구성</li></ul><pre>collection_log.csv:
+  <div class="stage-header">
+    <h3>단계 4 — 전체 381 firm-year로 확장</h3>
+    <p>Pilot 코드를 안전하게 loop. rate limit · 실패 처리가 신뢰성 결정.</p>
+  </div>
+
+  <div class="card must">
+    <div class="track-label">🔴 위반 금지</div>
+    <h4>① 실패 행을 가짜 0으로 채워 분석에 넣지 말 것 (가장 강조됨)</h4>
+    <ul>
+      <li>가이드 01·02·03·04 모두에 명시</li>
+      <li>실패 시 <code>collection_log.csv</code>에 사유 기록 후 분석 corpus에서 제외</li>
+      <li>회귀 패널도 성공 행으로만 구성</li>
+    </ul>
+    <pre>collection_log.csv:
   stock_code, fiscal_year, status, reason
   005930,    2024,         success, ""
   XXXXXX,    2022,         failed,  "rcept_no not found"
-  YYYYYY,    2023,         failed,  "document.xml 500 error after 3 retries"</pre><div class="source">[01] · [02 §전체 분석 흐름 14번] · [03 footnote] · [04 §1·§4·§2-1]</div></div>
-  <div class="card must"><h4>② MCP passage 결과만으로 끝내지 말 것</h4><ul><li>MCP는 LLM 생성이라 실제 공시와 다를 수 있음</li><li>반드시 코드(Python)로 재현 + viewer URL로 원문 확인</li></ul><div class="source">[02 §MCP로 ESG 문단 추출하기 주의 박스]</div></div>
-  <div class="card should"><div class="track-label">🟡 권고</div><h4>③ 중간 저장 — 매 firm-year 처리 후 즉시 parquet/json</h4><ul><li>2-3시간 처리 중간에 끊겨도 처음부터 다시 안 함</li><li>파일명에 <code>{stock_code}_{fiscal_year}</code> 명시</li></ul><div class="source">[심층 단계 4 표]</div></div>
-  <div class="card could"><div class="track-label">🟢 발전 방향</div><h4>④ 지수 backoff 재시도</h4><ul><li>5xx 또는 timeout 시 1초 → 2초 → 4초 (최대 3회)</li><li>그래도 실패하면 collection_log 기록 후 다음 firm-year로</li></ul><pre>for attempt in range(3):
+  YYYYYY,    2023,         failed,  "document.xml 500 error after 3 retries"</pre>
+    <div class="source">[01] · [02 §전체 분석 흐름 14번] · [03 footnote] · [04 §1·§4·§2-1]</div>
+  </div>
+
+  <div class="card must">
+    <h4>② MCP passage 결과만으로 끝내지 말 것</h4>
+    <ul>
+      <li>MCP는 LLM 생성이라 실제 공시와 다를 수 있음</li>
+      <li>반드시 코드(Python)로 재현 + viewer URL로 원문 확인</li>
+    </ul>
+    <div class="source">[02 §MCP로 ESG 문단 추출하기 주의 박스]</div>
+  </div>
+
+  <div class="card should">
+    <div class="track-label">🟡 권고</div>
+    <h4>③ 중간 저장 — 매 firm-year 처리 후 즉시 parquet/json</h4>
+    <ul>
+      <li>2-3시간 처리 중간에 끊겨도 처음부터 다시 안 함</li>
+      <li>파일명에 <code>{stock_code}_{fiscal_year}</code> 명시</li>
+    </ul>
+    <div class="source">[심층 단계 4 표]</div>
+  </div>
+
+  <div class="card could">
+    <div class="track-label">🟢 발전 방향</div>
+    <h4>④ 지수 backoff 재시도</h4>
+    <ul>
+      <li>5xx 또는 timeout 시 1초 → 2초 → 4초 (최대 3회)</li>
+      <li>그래도 실패하면 collection_log 기록 후 다음 firm-year로</li>
+    </ul>
+    <pre>for attempt in range(3):
     try:
         res = requests.get(url, params=params, timeout=20)
         res.raise_for_status()
@@ -243,22 +450,65 @@ all_stops = base_stopwords | company_stops | domain_specific_stops</pre><div cla
     except (requests.RequestException, Timeout):
         time.sleep(2 ** attempt)  # 1, 2, 4 초
 else:
-    log_failure(stock_code, fiscal_year, "max retries exceeded")</pre><div class="source">[심층 단계 4 표]</div></div>
-  <div class="card could"><h4>⑤ rate limit 페이스 — 분당 600회 (안전 마진)</h4><ul><li>OpenDART 제한 분당 1,000회 → <code>time.sleep(0.1)</code>로 분당 600회 페이스</li><li>381 × 3 호출 ≈ 1,143회 → 약 2시간</li></ul><div class="source">[심층 단계 4] · 용어사전 D-19</div></div>
+    log_failure(stock_code, fiscal_year, "max retries exceeded")</pre>
+    <div class="source">[심층 단계 4 표]</div>
+  </div>
+
+  <div class="card could">
+    <h4>⑤ rate limit 페이스 — 분당 600회 (안전 마진)</h4>
+    <ul>
+      <li>OpenDART 제한 분당 1,000회 → <code>time.sleep(0.1)</code>로 분당 600회 페이스</li>
+      <li>381 × 3 호출 ≈ 1,143회 → 약 2시간</li>
+    </ul>
+    <div class="source">[심층 단계 4] · 용어사전 D-19</div>
+  </div>
 </section>
 
+<!-- ============ 단계 5 θ sweep (핵심) ============ -->
 <section class="section" data-section="s5">
-  <div class="stage-header"><h3>단계 5 — seed → expanded dictionary (θ sweep) ★</h3><p>두 번째 학술 핵심 구간. 발표 시 교수 질문 빈도 1위.</p></div>
-  <div class="card must"><div class="track-label">🔴 위반 금지</div><h4>① fastText 결과를 검토 없이 ESG 사전으로 확정하지 말 것</h4><ul><li>가이드 02 §전체 분석 흐름 11번 명시</li><li>cosine ≥ θ를 통과한 단어도 manual curation 필수 (회사명·일반명사 제거)</li><li>04 평가표 "텍스트 처리" 항목 명시: "fastText 후보를 검토 없이 ESG 사전으로 확정"이 흔한 문제로 기재</li></ul><div class="source">[02 §전체 분석 흐름] · [04 §3 평가에서 보는 것]</div></div>
-  <div class="card should"><div class="track-label">🟡 권고</div><h4>② θ 여러 값으로 sweep + 상위 100단어 직접 검토</h4><ul><li>가이드 03 §2단계: "θ를 몇 가지 값으로 sweep하고, 확장 사전 크기와 잡음 단어 비율을 표로"</li><li>cosine 점수 기준 상위 100단어 직접 눈으로 검토</li><li>회사명·일반명사 잡음 manual 제거 — Bao et al. (2024) 패턴</li></ul><div class="source">[03 §2단계 끝] · [심층 단계 5 결정박스 ⑤]</div></div>
-  <div class="card could"><div class="track-label">🟢 발전 방향</div><h4>③ 5개 θ 값 비교 — {0.70, 0.75, 0.80, 0.85, 0.90}</h4><pre>θ 값  | 후보 수  | 잡음 단어 | 잡음 비율 | manual 제거 후
+  <div class="stage-header">
+    <h3>단계 5 — seed → expanded dictionary (θ sweep) ★</h3>
+    <p>두 번째 학술 핵심 구간. 발표 시 교수 질문 빈도 1위.</p>
+  </div>
+
+  <div class="card must">
+    <div class="track-label">🔴 위반 금지</div>
+    <h4>① fastText 결과를 검토 없이 ESG 사전으로 확정하지 말 것</h4>
+    <ul>
+      <li>가이드 02 §전체 분석 흐름 11번 명시</li>
+      <li>cosine ≥ θ를 통과한 단어도 manual curation 필수 (회사명·일반명사 제거)</li>
+      <li>04 평가표 "텍스트 처리" 항목 명시: "fastText 후보를 검토 없이 ESG 사전으로 확정"이 흔한 문제로 기재</li>
+    </ul>
+    <div class="source">[02 §전체 분석 흐름] · [04 §3 평가에서 보는 것]</div>
+  </div>
+
+  <div class="card should">
+    <div class="track-label">🟡 권고</div>
+    <h4>② θ 여러 값으로 sweep + 상위 100단어 직접 검토</h4>
+    <ul>
+      <li>가이드 03 §2단계: "θ를 몇 가지 값으로 sweep하고, 확장 사전 크기와 잡음 단어 비율을 표로"</li>
+      <li>cosine 점수 기준 상위 100단어 직접 눈으로 검토</li>
+      <li>회사명·일반명사 잡음 manual 제거 — Bao et al. (2024) 패턴</li>
+    </ul>
+    <div class="source">[03 §2단계 끝] · [심층 단계 5 결정박스 ⑤]</div>
+  </div>
+
+  <div class="card could">
+    <div class="track-label">🟢 발전 방향</div>
+    <h4>③ 5개 θ 값 비교 — {0.70, 0.75, 0.80, 0.85, 0.90}</h4>
+    <pre>θ 값  | 후보 수  | 잡음 단어 | 잡음 비율 | manual 제거 후
 ─────┼────────┼─────────┼──────────┼──────────────
 0.90 |   2     |   0      |   0%     |    2
 0.85 |  10     |   1      |  10%     |    9
 0.80 |  30     |   2      |  ~7%     |   28   ← sweet spot 후보
 0.75 |  80     |   8      |  10%     |   72
-0.70 | 150     |  35      |  23%     |  115   ← curation 부담↑</pre><div class="source">[심층 단계 5] · Bao et al. (2024)</div></div>
-  <div class="card could"><h4>④ Trade-off 곡선 그림 — 발표용 차트</h4><pre>      후보 수
+0.70 | 150     |  35      |  23%     |  115   ← curation 부담↑</pre>
+    <div class="source">[심층 단계 5] · Bao et al. (2024)</div>
+  </div>
+
+  <div class="card could">
+    <h4>④ Trade-off 곡선 그림 — 발표용 차트</h4>
+    <pre>      후보 수
       ▲
  150  ─┤                                  ●
       │                          (잡음↑↑)
@@ -271,25 +521,80 @@ else:
       └──────────────────────────────→
         0.90    0.85   0.80   0.75   0.70   θ값
                        ↑
-                  Bao 2024 권장 영역</pre><div class="source">용어사전 C-14 그림 참고</div></div>
+                  Bao 2024 권장 영역</pre>
+    <div class="source">용어사전 C-14 그림 참고</div>
+  </div>
+
   <h4>잡음 단어 예시 — 어떤 게 잡음인가</h4>
-  <div class="card soft"><table class="clean"><thead><tr><th>seed</th><th>fastText 후보</th><th>판단</th><th>이유</th></tr></thead><tbody>
-    <tr><td>온실가스</td><td>탄소중립</td><td>✅ keep</td><td>의미 유사 + 도메인 일치</td></tr>
-    <tr><td>온실가스</td><td>배출권</td><td>✅ keep</td><td>의미 유사</td></tr>
-    <tr><td>재생에너지</td><td>대림에너지</td><td><span class="badge must">drop</span></td><td>회사명, NER 누락 시 들어옴</td></tr>
-    <tr><td>이사회</td><td>회의</td><td><span class="badge must">drop</span></td><td>너무 일반 명사</td></tr>
-    <tr><td>이사회</td><td>이사회의장</td><td>✅ keep</td><td>합성어, 의미 일치</td></tr>
-  </tbody></table></div>
-  <div class="beginner-note"><strong>비전공자 발표 답안 초안</strong><br>"θ를 0.70~0.90까지 5개 값으로 sweep해 각 θ에서 후보 수·잡음 비율을 표로 정리. 0.80에서 후보 30개·잡음 ~7%로 균형이 가장 좋아 채택. 회사명 2개·일반명사 1개를 manual 제외. 단계 3에서 회사명 자동 불용어 처리를 했기 때문에 회사명 잡음이 다른 팀 대비 적은 편이었다."</div>
+  <div class="card soft">
+    <table class="clean">
+      <thead><tr><th>seed</th><th>fastText 후보</th><th>판단</th><th>이유</th></tr></thead>
+      <tbody>
+        <tr><td>온실가스</td><td>탄소중립</td><td>✅ keep</td><td>의미 유사 + 도메인 일치</td></tr>
+        <tr><td>온실가스</td><td>배출권</td><td>✅ keep</td><td>의미 유사</td></tr>
+        <tr><td>재생에너지</td><td>대림에너지</td><td><span class="badge must">drop</span></td><td>회사명, NER 누락 시 들어옴</td></tr>
+        <tr><td>이사회</td><td>회의</td><td><span class="badge must">drop</span></td><td>너무 일반 명사</td></tr>
+        <tr><td>이사회</td><td>이사회의장</td><td>✅ keep</td><td>합성어, 의미 일치</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="beginner-note">
+    <strong>비전공자 발표 답안 초안</strong><br>
+    "θ를 0.70~0.90까지 5개 값으로 sweep해 각 θ에서 후보 수·잡음 비율을 표로 정리. 0.80에서 후보 30개·잡음 ~7%로 균형이 가장 좋아 채택. 회사명 2개·일반명사 1개를 manual 제외. 단계 3에서 회사명 자동 불용어 처리를 했기 때문에 회사명 잡음이 다른 팀 대비 적은 편이었다."
+  </div>
 </section>
 
+<!-- ============ 단계 6 점수 ============ -->
 <section class="section" data-section="s6">
-  <div class="stage-header"><h3>단계 6 — firm-year 점수 계산</h3><p>feature 5종 생성. 다중공선성 회피가 핵심.</p></div>
-  <div class="card must"><div class="track-label">🔴 위반 금지</div><h4>① seed_score와 expanded_score를 한 회귀에 동시에 넣지 말 것</h4><ul><li>두 점수 상관 ≈ 0.95 → 다중공선성 → 계수 불안정</li><li>M1a(seed only) vs M1b(expanded only)로 분리</li></ul><div class="source">[03 §2단계] · [심층 단계 6 다중공선성 박스]</div></div>
-  <div class="card should"><div class="track-label">🟡 권고</div><h4>② total_word_count 통제변수 포함</h4><ul><li>cheap-talk(공시 장황함) 분리 위한 핵심 통제변수</li><li>가이드 03 §5단계: "<code>total_word_count</code>는 cheap-talk 통제 변수"</li></ul><div class="source">[03 §5단계 옵션 A] · [04 §2]</div></div>
-  <div class="card should"><h4>③ E·S·G 차원별 분리 + 통합 점수 (둘 다)</h4><ul><li>가이드 01 표에서 E·S·G 차원별 점수 명시</li><li>KCGS도 E·S·G 등급을 별도 제공 — 차원별 검증 가능</li></ul><div class="source">[01] · [03 §1·§4단계] · [심층 단계 6 결정박스 ⑥]</div></div>
-  <div class="card could"><div class="track-label">🟢 발전 방향</div><h4>④ 기준문장 cosine — 보조 feature (가이드 명시)</h4><ul><li>E/S/G 기준문장과 firm-year 문서의 TF-IDF 벡터 cosine</li><li>가이드 03에 기준문장 3개 제시됨 — 그대로 활용</li><li>단 보조 비교용 baseline으로 해석 (단어 겹침 기반)</li></ul><div class="source">[03 §4단계 표]</div></div>
-  <div class="card could"><h4>⑤ feature 5종 결정 트리</h4><pre>1. seed_tfidf_score        ← baseline
+  <div class="stage-header">
+    <h3>단계 6 — firm-year 점수 계산</h3>
+    <p>feature 5종 생성. 다중공선성 회피가 핵심.</p>
+  </div>
+
+  <div class="card must">
+    <div class="track-label">🔴 위반 금지</div>
+    <h4>① seed_score와 expanded_score를 한 회귀에 동시에 넣지 말 것</h4>
+    <ul>
+      <li>두 점수 상관 ≈ 0.95 → 다중공선성 → 계수 불안정</li>
+      <li>M1a(seed only) vs M1b(expanded only)로 분리</li>
+    </ul>
+    <div class="source">[03 §2단계] · [심층 단계 6 다중공선성 박스]</div>
+  </div>
+
+  <div class="card should">
+    <div class="track-label">🟡 권고</div>
+    <h4>② total_word_count 통제변수 포함</h4>
+    <ul>
+      <li>cheap-talk(공시 장황함) 분리 위한 핵심 통제변수</li>
+      <li>가이드 03 §5단계: "<code>total_word_count</code>는 cheap-talk 통제 변수"</li>
+    </ul>
+    <div class="source">[03 §5단계 옵션 A] · [04 §2]</div>
+  </div>
+
+  <div class="card should">
+    <h4>③ E·S·G 차원별 분리 + 통합 점수 (둘 다)</h4>
+    <ul>
+      <li>가이드 01 표에서 E·S·G 차원별 점수 명시</li>
+      <li>KCGS도 E·S·G 등급을 별도 제공 — 차원별 검증 가능</li>
+    </ul>
+    <div class="source">[01] · [03 §1·§4단계] · [심층 단계 6 결정박스 ⑥]</div>
+  </div>
+
+  <div class="card could">
+    <div class="track-label">🟢 발전 방향</div>
+    <h4>④ 기준문장 cosine — 보조 feature (가이드 명시)</h4>
+    <ul>
+      <li>E/S/G 기준문장과 firm-year 문서의 TF-IDF 벡터 cosine</li>
+      <li>가이드 03에 기준문장 3개 제시됨 — 그대로 활용</li>
+      <li>단 보조 비교용 baseline으로 해석 (단어 겹침 기반)</li>
+    </ul>
+    <div class="source">[03 §4단계 표]</div>
+  </div>
+
+  <div class="card could">
+    <h4>⑤ feature 5종 결정 트리</h4>
+    <pre>1. seed_tfidf_score        ← baseline
 2. expanded_tfidf_score    ← 주 비교 (M1b)
 3. E_score / S_score / G_score   ← 차원별 (KCGS 차원과 매칭)
 4. cosine_E / S / G        ← 보조 baseline (가이드 명시)
@@ -298,90 +603,270 @@ else:
 회귀 입력 시:
   M1a: grade ~ seed_score + word_count
   M1b: grade ~ expanded_score + word_count
-  → 두 모형의 β1 비교</pre><div class="source">[심층 단계 6 점수 5종]</div></div>
+  → 두 모형의 β1 비교</pre>
+    <div class="source">[심층 단계 6 점수 5종]</div>
+  </div>
 </section>
 
+<!-- ============ 단계 7 ============ -->
 <section class="section" data-section="s7">
-  <div class="stage-header"><h3>단계 7 — 사전 검증 (validity)</h3><p>회귀 들어가기 전 feature가 등급과 연결되는지 확인. 빠지면 평가표 감점.</p></div>
-  <div class="card must"><div class="track-label">🔴 위반 금지</div><h4>① feature 분포만 보고 회귀로 직행하지 말 것</h4><ul><li>가이드 04 §3 "흔한 문제": "feature 분포만 보고 grade와의 관계 검증 없이 회귀로 직행"</li><li>Spearman + 평균 차이 검정 + 문장 직접 읽기 셋 다 보고 권장</li></ul><div class="source">[04 §3 평가에서 보는 것]</div></div>
-  <div class="card should"><div class="track-label">🟡 권고</div><h4>② Spearman 순위상관 (Pearson 대신)</h4><ul><li>ESG 등급은 서열변수 → 순위 비교가 자연스러움</li><li>ρ + p-value 둘 다 보고. <strong>p가 작아도 ρ가 0.10-0.20이면 약한 신호</strong></li></ul><div class="source">[03 §3단계] · [04 §3]</div></div>
-  <div class="card should"><h4>③ 평균 차이 검정 — t-test 또는 Mann-Whitney</h4><ul><li>A 이상 그룹 vs B 이하 그룹의 feature 평균 비교</li><li>분포 치우치면 Mann-Whitney가 더 안전</li></ul><div class="source">[03 §3단계] · [04 §3]</div></div>
+  <div class="stage-header">
+    <h3>단계 7 — 사전 검증 (validity)</h3>
+    <p>회귀 들어가기 전 feature가 등급과 연결되는지 확인. 빠지면 평가표 감점.</p>
+  </div>
+
+  <div class="card must">
+    <div class="track-label">🔴 위반 금지</div>
+    <h4>① feature 분포만 보고 회귀로 직행하지 말 것</h4>
+    <ul>
+      <li>가이드 04 §3 "흔한 문제": "feature 분포만 보고 grade와의 관계 검증 없이 회귀로 직행"</li>
+      <li>Spearman + 평균 차이 검정 + 문장 직접 읽기 셋 다 보고 권장</li>
+    </ul>
+    <div class="source">[04 §3 평가에서 보는 것]</div>
+  </div>
+
+  <div class="card should">
+    <div class="track-label">🟡 권고</div>
+    <h4>② Spearman 순위상관 (Pearson 대신)</h4>
+    <ul>
+      <li>ESG 등급은 서열변수 → 순위 비교가 자연스러움</li>
+      <li>ρ + p-value 둘 다 보고. <strong>p가 작아도 ρ가 0.10-0.20이면 약한 신호</strong></li>
+    </ul>
+    <div class="source">[03 §3단계] · [04 §3]</div>
+  </div>
+
+  <div class="card should">
+    <h4>③ 평균 차이 검정 — t-test 또는 Mann-Whitney</h4>
+    <ul>
+      <li>A 이상 그룹 vs B 이하 그룹의 feature 평균 비교</li>
+      <li>분포 치우치면 Mann-Whitney가 더 안전</li>
+    </ul>
+    <div class="source">[03 §3단계] · [04 §3]</div>
+  </div>
+
   <h4>Spearman ρ 해석 표 — 보고서 작성용</h4>
-  <div class="card soft"><table class="clean"><thead><tr><th>ρ 범위</th><th>해석</th><th>발표 시 언급</th></tr></thead><tbody>
-    <tr><td>ρ &lt; 0.10</td><td>거의 없음</td><td>"신호 미약, feature 재검토 필요"</td></tr>
-    <tr><td>0.10 ≤ ρ &lt; 0.20</td><td>약한 신호</td><td>"p&lt;0.05여도 효과 약함, 추가 통제 필요"</td></tr>
-    <tr><td>0.20 ≤ ρ &lt; 0.40</td><td>중간</td><td>"실용적 의미 있음, robustness 확인"</td></tr>
-    <tr><td>ρ ≥ 0.40</td><td>강함</td><td>"드문 강신호, cheap-talk 의심도 함께"</td></tr>
-  </tbody></table></div>
-  <div class="card could"><div class="track-label">🟢 발전 방향</div><h4>④ 문장 직접 읽기 — 상하위 10% 비교</h4><ul><li>expanded_score 상위 10% firm-year에서 ESG 문장 5-10개 추출 → 사람 눈으로 검토</li><li>하위 10% firm-year도 마찬가지로 비교</li><li>상위가 단순 ESG 단어 반복이면 cheap-talk 의심 신호</li></ul><div class="source">[심층 단계 7 ③ 문장 직접 읽기]</div></div>
-  <div class="card could"><h4>⑤ 문장 직접 읽기 시 cheap-talk 의심 5체크</h4><ul><li>1. 같은 표현 반복 ("당사는 ESG 경영을 통해…")</li><li>2. 구체적 수치 없음 (감축률·달성률 미기재)</li><li>3. 보고서 보일러플레이트 같은 톤</li><li>4. 환경(E) 단어만 많고 사회(S)·지배구조(G) 빈약</li><li>5. 작년·올해 표현이 거의 동일</li></ul><div class="source">비전공자 보강 (가이드 cheap-talk 가설 풀이)</div></div>
+  <div class="card soft">
+    <table class="clean">
+      <thead><tr><th>ρ 범위</th><th>해석</th><th>발표 시 언급</th></tr></thead>
+      <tbody>
+        <tr><td>ρ &lt; 0.10</td><td>거의 없음</td><td>"신호 미약, feature 재검토 필요"</td></tr>
+        <tr><td>0.10 ≤ ρ &lt; 0.20</td><td>약한 신호</td><td>"p&lt;0.05여도 효과 약함, 추가 통제 필요"</td></tr>
+        <tr><td>0.20 ≤ ρ &lt; 0.40</td><td>중간</td><td>"실용적 의미 있음, robustness 확인"</td></tr>
+        <tr><td>ρ ≥ 0.40</td><td>강함</td><td>"드문 강신호, cheap-talk 의심도 함께"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card could">
+    <div class="track-label">🟢 발전 방향</div>
+    <h4>④ 문장 직접 읽기 — 상하위 10% 비교</h4>
+    <ul>
+      <li>expanded_score 상위 10% firm-year에서 ESG 문장 5-10개 추출 → 사람 눈으로 검토</li>
+      <li>하위 10% firm-year도 마찬가지로 비교</li>
+      <li>상위가 단순 ESG 단어 반복이면 cheap-talk 의심 신호</li>
+    </ul>
+    <div class="source">[심층 단계 7 ③ 문장 직접 읽기]</div>
+  </div>
+
+  <div class="card could">
+    <h4>⑤ 문장 직접 읽기 시 cheap-talk 의심 5체크</h4>
+    <ul>
+      <li>1. 같은 표현 반복 ("당사는 ESG 경영을 통해…")</li>
+      <li>2. 구체적 수치 없음 (감축률·달성률 미기재)</li>
+      <li>3. 보고서 보일러플레이트 같은 톤</li>
+      <li>4. 환경(E) 단어만 많고 사회(S)·지배구조(G) 빈약</li>
+      <li>5. 작년·올해 표현이 거의 동일</li>
+    </ul>
+    <div class="source">비전공자 보강 (가이드 cheap-talk 가설 풀이)</div>
+  </div>
 </section>
 
+<!-- ============ 단계 8 회귀+알파 ============ -->
 <section class="section" data-section="s8">
-  <div class="stage-header"><h3>단계 8 — 회귀분석 + 알파(robustness)</h3><p>모형 선택의 정당화 + 알파 1개 이상 추가 검증.</p></div>
-  <div class="card must"><div class="track-label">🔴 위반 금지</div><h4>① 인과관계로 단정하지 말 것</h4><ul><li>가이드 01·04 명시: "회귀 결과는 연관성이지 인과관계가 아님"</li><li>표현: "이 표본에서는 ___ 경향이 있었다"로 조심스럽게</li></ul><div class="source">[01 §이 분석이 의미하는 것] · [04 §4 해석할 때 조심할 점]</div></div>
-  <div class="card must"><h4>② 계수 크기를 등급 점수 차이로 단순 환산 X</h4><ul><li>가이드 04 §4: "계수 크기를 등급 점수 차이로 단순 환산하지 마세요"</li><li>ordered logit·binary logit은 특히 odds ratio로 해석</li></ul><div class="source">[04 §4]</div></div>
-  <div class="card must"><h4>③ 381행을 KCGS 전체 대표표본으로 해석 X</h4><ul><li>"수업용 pilot panel" — 무작위 표본 아님</li><li>"이 표본에서는" 한정어 필수</li></ul><div class="source">[01 §이 분석이 의미하는 것] · [04 §4]</div></div>
-  <div class="card should"><div class="track-label">🟡 권고</div><h4>④ 모형 선택 근거 한 단락 명시</h4><ul><li>OLS / ordered logit / binary logit 중 팀 질문에 맞춰 선택</li><li>"왜 이 모형인가" + "버린 대안의 한계"를 함께</li></ul><div class="source">[03 §5단계 결정박스] · [04 §3]</div></div>
+  <div class="stage-header">
+    <h3>단계 8 — 회귀분석 + 알파(robustness)</h3>
+    <p>모형 선택의 정당화 + 알파 1개 이상 추가 검증.</p>
+  </div>
+
+  <div class="card must">
+    <div class="track-label">🔴 위반 금지</div>
+    <h4>① 인과관계로 단정하지 말 것</h4>
+    <ul>
+      <li>가이드 01·04 명시: "회귀 결과는 연관성이지 인과관계가 아님"</li>
+      <li>표현: "이 표본에서는 ___ 경향이 있었다"로 조심스럽게</li>
+    </ul>
+    <div class="source">[01 §이 분석이 의미하는 것] · [04 §4 해석할 때 조심할 점]</div>
+  </div>
+
+  <div class="card must">
+    <h4>② 계수 크기를 등급 점수 차이로 단순 환산 X</h4>
+    <ul>
+      <li>가이드 04 §4: "계수 크기를 등급 점수 차이로 단순 환산하지 마세요"</li>
+      <li>ordered logit·binary logit은 특히 odds ratio로 해석</li>
+    </ul>
+    <div class="source">[04 §4]</div>
+  </div>
+
+  <div class="card must">
+    <h4>③ 381행을 KCGS 전체 대표표본으로 해석 X</h4>
+    <ul>
+      <li>"수업용 pilot panel" — 무작위 표본 아님</li>
+      <li>"이 표본에서는" 한정어 필수</li>
+    </ul>
+    <div class="source">[01 §이 분석이 의미하는 것] · [04 §4]</div>
+  </div>
+
+  <div class="card should">
+    <div class="track-label">🟡 권고</div>
+    <h4>④ 모형 선택 근거 한 단락 명시</h4>
+    <ul>
+      <li>OLS / ordered logit / binary logit 중 팀 질문에 맞춰 선택</li>
+      <li>"왜 이 모형인가" + "버린 대안의 한계"를 함께</li>
+    </ul>
+    <div class="source">[03 §5단계 결정박스] · [04 §3]</div>
+  </div>
+
   <h4>회귀 모형 3종 비교</h4>
-  <div class="card soft"><table class="clean"><thead><tr><th>모형</th><th>가정</th><th>해석</th><th>언제</th></tr></thead><tbody>
-    <tr><td>OLS</td><td>등간성</td><td>직관적, 계수 = 등급 변화</td><td>baseline 빠르게</td></tr>
-    <tr><td>Ordered logit</td><td>순서만</td><td>가장 정확, 단 해석 까다로움</td><td>주 모형 (학술 권장)</td></tr>
-    <tr><td>Binary logit</td><td>2분류</td><td>odds ratio 직관</td><td>"A 이상 vs 미만"</td></tr>
-  </tbody></table></div>
-  <div class="card should"><h4>⑤ cheap-talk 검증 — word_count 통제 회귀</h4><ul><li>M1 (단순): <code>grade ~ expanded_score</code></li><li>M2 (통제): <code>grade ~ expanded_score + word_count</code></li><li>M1→M2에서 β1이 거의 안 바뀌면 → 진짜 ESG 신호</li><li>M1→M2에서 β1이 크게 감소 → cheap-talk 가설 강화</li></ul><div class="source">[03 §5단계 해석 표] · [04 §2]</div></div>
-  <div class="card could"><div class="track-label">🟢 발전 방향</div><h4>⑥ 알파(α) 1개 이상 — 팀 상황에 맞춰</h4><table class="clean"><thead><tr><th>알파 후보</th><th>적합한 팀 상황</th><th>난이도</th></tr></thead><tbody>
-    <tr><td>α-1 업종별 분할</td><td>산업분류 정보 있을 때</td><td>중</td></tr>
-    <tr><td>α-2 섹션별 점수 (II/IV/VI)</td><td>G 차원 별도 확인하고 싶을 때</td><td>중</td></tr>
-    <tr><td>α-3 정정공시 제외</td><td>표본 안정성이 reviewer 우려일 때</td><td>하</td></tr>
-    <tr><td>α-4 시점 분리 (2022/23/24)</td><td>KCGS 기준 강화 효과 분리</td><td>하</td></tr>
-  </tbody></table><div class="source">[심층 단계 8 알파 4종 후보]</div></div>
-  <div class="card could"><h4>⑦ OLS + ordered logit 둘 다 보고 (학술 권장)</h4><ul><li>OLS를 baseline, ordered logit으로 robustness 확인</li><li>β1의 방향·유의성이 두 모형에서 일치하면 결과 안정적</li></ul><div class="source">[심층 단계 8 결정박스 ⑧]</div></div>
-  <div class="beginner-note"><strong>비전공자 발표 답안 초안</strong><br>"OLS를 baseline으로 시작해 ordered logit으로 robustness 확인. expanded_score 계수 β1은 word_count 통제 전후 부호가 일치(양수)하나 크기는 30% 감소. 신호의 일부는 cheap-talk으로 설명되나 통제 후에도 β1이 유의해 진짜 ESG 신호가 부분적으로 존재한다고 해석. 알파로 섹션별 점수(α-2)를 추가해 G 차원이 VI 섹션에서 가장 강한 신호임을 확인."</div>
+  <div class="card soft">
+    <table class="clean">
+      <thead><tr><th>모형</th><th>가정</th><th>해석</th><th>언제</th></tr></thead>
+      <tbody>
+        <tr><td>OLS</td><td>등간성</td><td>직관적, 계수 = 등급 변화</td><td>baseline 빠르게</td></tr>
+        <tr><td>Ordered logit</td><td>순서만</td><td>가장 정확, 단 해석 까다로움</td><td>주 모형 (학술 권장)</td></tr>
+        <tr><td>Binary logit</td><td>2분류</td><td>odds ratio 직관</td><td>"A 이상 vs 미만"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card should">
+    <h4>⑤ cheap-talk 검증 — word_count 통제 회귀</h4>
+    <ul>
+      <li>M1 (단순): <code>grade ~ expanded_score</code></li>
+      <li>M2 (통제): <code>grade ~ expanded_score + word_count</code></li>
+      <li>M1→M2에서 β1이 거의 안 바뀌면 → 진짜 ESG 신호</li>
+      <li>M1→M2에서 β1이 크게 감소 → cheap-talk 가설 강화</li>
+    </ul>
+    <div class="source">[03 §5단계 해석 표] · [04 §2]</div>
+  </div>
+
+  <div class="card could">
+    <div class="track-label">🟢 발전 방향</div>
+    <h4>⑥ 알파(α) 1개 이상 — 팀 상황에 맞춰</h4>
+    <table class="clean">
+      <thead><tr><th>알파 후보</th><th>적합한 팀 상황</th><th>난이도</th></tr></thead>
+      <tbody>
+        <tr><td>α-1 업종별 분할</td><td>산업분류 정보 있을 때</td><td>중</td></tr>
+        <tr><td>α-2 섹션별 점수 (II/IV/VI)</td><td>G 차원 별도 확인하고 싶을 때</td><td>중</td></tr>
+        <tr><td>α-3 정정공시 제외</td><td>표본 안정성이 reviewer 우려일 때</td><td>하</td></tr>
+        <tr><td>α-4 시점 분리 (2022/23/24)</td><td>KCGS 기준 강화 효과 분리</td><td>하</td></tr>
+      </tbody>
+    </table>
+    <div class="source">[심층 단계 8 알파 4종 후보]</div>
+  </div>
+
+  <div class="card could">
+    <h4>⑦ OLS + ordered logit 둘 다 보고 (학술 권장)</h4>
+    <ul>
+      <li>OLS를 baseline, ordered logit으로 robustness 확인</li>
+      <li>β1의 방향·유의성이 두 모형에서 일치하면 결과 안정적</li>
+    </ul>
+    <div class="source">[심층 단계 8 결정박스 ⑧]</div>
+  </div>
+
+  <div class="beginner-note">
+    <strong>비전공자 발표 답안 초안</strong><br>
+    "OLS를 baseline으로 시작해 ordered logit으로 robustness 확인. expanded_score 계수 β1은 word_count 통제 전후 부호가 일치(양수)하나 크기는 30% 감소. 신호의 일부는 cheap-talk으로 설명되나 통제 후에도 β1이 유의해 진짜 ESG 신호가 부분적으로 존재한다고 해석. 알파로 섹션별 점수(α-2)를 추가해 G 차원이 VI 섹션에서 가장 강한 신호임을 확인."
+  </div>
 </section>
 
+<!-- ============ 위반 금지 체크리스트 ============ -->
 <section class="section" data-section="checklist">
   <h2>위반 금지 체크리스트 — 제출 직전 11개</h2>
-  <p class="section-intro">가이드 4개 md에서 명시적으로 금지/필수로 적힌 11개. 제출 전 팀이 한 번 더 합께 체크하세요. 하나라도 빠지면 평가표 감점 또는 점수 0 가능.</p>
-  <div class="card must"><div class="track-label">🔴 데이터 lineage</div><ul>
-    <li>☐ <strong>1. 수집 실패 행을 가짜 0으로 채우지 않았다</strong> — collection_log.csv에 사유 기록 후 corpus 제외 <span class="source">[01·02·03·04]</span></li>
-    <li>☐ <strong>2. 회사명으로 join/merge 하지 않았다</strong> — stock_code × fiscal_year 기본 키 <span class="source">[02]</span></li>
-    <li>☐ <strong>3. MCP 결과만으로 끝내지 않고 코드로 재현 + viewer URL 원문 확인</strong> <span class="source">[02]</span></li>
-    <li>☐ <strong>4. 정정공시 행은 어떤 rcept_no 썼는지 기록</strong> (또는 last_reprt_at=Y로 통일) <span class="source">[02]</span></li>
-  </ul></div>
-  <div class="card must"><div class="track-label">🔴 분석 설계</div><ul>
-    <li>☐ <strong>5. fastText 후보를 검토 없이 ESG 사전으로 확정하지 않았다</strong> — manual curation 표 보고서에 포함 <span class="source">[02·04]</span></li>
-    <li>☐ <strong>6. seed_score와 expanded_score를 한 회귀에 동시 넣지 않았다</strong> — M1a/M1b 분리 <span class="source">[03]</span></li>
-    <li>☐ <strong>7. feature 분포만 보고 회귀로 직행하지 않았다</strong> — Spearman + 평균차이 검정 보고 <span class="source">[04]</span></li>
-  </ul></div>
-  <div class="card must"><div class="track-label">🔴 시점·표본</div><ul>
-    <li>☐ <strong>8. esg_year = fiscal_year + 1 고정</strong> (변경 금지) <span class="source">[01·02·04]</span></li>
-    <li>☐ <strong>9. 381행을 KCGS 전체 대표표본으로 일반화 X</strong> — "이 표본에서는" 한정어 필수 <span class="source">[01·04]</span></li>
-  </ul></div>
-  <div class="card must"><div class="track-label">🔴 해석·보안</div><ul>
-    <li>☐ <strong>10. 인과관계로 단정하지 않았다 / 계수 크기를 등급 차이로 환산 X</strong> <span class="source">[01·04]</span></li>
-    <li>☐ <strong>11. API key가 코드/노트북 출력에 직접 노출되지 않았다</strong> — .env 환경변수만 <span class="source">[02·04]</span></li>
-  </ul></div>
+  <p class="section-intro">
+    가이드 4개 md에서 명시적으로 금지/필수로 적힌 11개. 제출 전 팀이 한 번 더 합께 체크하세요. 하나라도 빠지면 평가표 감점 또는 점수 0 가능.
+  </p>
+
+  <div class="card must">
+    <div class="track-label">🔴 데이터 lineage</div>
+    <ul>
+      <li>☐ <strong>1. 수집 실패 행을 가짜 0으로 채우지 않았다</strong> — collection_log.csv에 사유 기록 후 corpus 제외 <span class="source">[01·02·03·04]</span></li>
+      <li>☐ <strong>2. 회사명으로 join/merge 하지 않았다</strong> — stock_code × fiscal_year 기본 키 <span class="source">[02]</span></li>
+      <li>☐ <strong>3. MCP 결과만으로 끝내지 않고 코드로 재현 + viewer URL 원문 확인</strong> <span class="source">[02]</span></li>
+      <li>☐ <strong>4. 정정공시 행은 어떤 rcept_no 썼는지 기록</strong> (또는 last_reprt_at=Y로 통일) <span class="source">[02]</span></li>
+    </ul>
+  </div>
+
+  <div class="card must">
+    <div class="track-label">🔴 분석 설계</div>
+    <ul>
+      <li>☐ <strong>5. fastText 후보를 검토 없이 ESG 사전으로 확정하지 않았다</strong> — manual curation 표 보고서에 포함 <span class="source">[02·04]</span></li>
+      <li>☐ <strong>6. seed_score와 expanded_score를 한 회귀에 동시 넣지 않았다</strong> — M1a/M1b 분리 <span class="source">[03]</span></li>
+      <li>☐ <strong>7. feature 분포만 보고 회귀로 직행하지 않았다</strong> — Spearman + 평균차이 검정 보고 <span class="source">[04]</span></li>
+    </ul>
+  </div>
+
+  <div class="card must">
+    <div class="track-label">🔴 시점·표본</div>
+    <ul>
+      <li>☐ <strong>8. esg_year = fiscal_year + 1 고정</strong> (변경 금지) <span class="source">[01·02·04]</span></li>
+      <li>☐ <strong>9. 381행을 KCGS 전체 대표표본으로 일반화 X</strong> — "이 표본에서는" 한정어 필수 <span class="source">[01·04]</span></li>
+    </ul>
+  </div>
+
+  <div class="card must">
+    <div class="track-label">🔴 해석·보안</div>
+    <ul>
+      <li>☐ <strong>10. 인과관계로 단정하지 않았다 / 계수 크기를 등급 차이로 환산 X</strong> <span class="source">[01·04]</span></li>
+      <li>☐ <strong>11. API key가 코드/노트북 출력에 직접 노출되지 않았다</strong> — .env 환경변수만 <span class="source">[02·04]</span></li>
+    </ul>
+  </div>
+
   <h3>권고 12개 + 발전 7개 종합 (간단)</h3>
   <div class="grid-2">
-    <div class="card should"><div class="track-label">🟡 권고 12개 — 따르면 평가표 유리</div><ul>
-      <li>1개 firm-year 먼저 → 381개로 확장</li><li>raw zip 보관</li><li>II/IV/VI 섹션 추출</li>
-      <li>형태소 분석기 선택 이유 명시</li><li>collection_log 기록 + 중간 저장</li><li>θ 여러 값 sweep + 상위 100단어 검토</li>
-      <li>word_count 통제변수 포함</li><li>E·S·G 차원별 점수 (KCGS 차원 매칭)</li><li>Spearman + Mann-Whitney/t-test</li>
-      <li>모형 선택 근거 한 단락 명시</li><li>cheap-talk 가능성 검토</li><li>알파 1개 이상 포함</li>
-    </ul></div>
-    <div class="card could"><div class="track-label">🟢 발전 7개 — 차별화 포인트</div><ul>
-      <li>OpenDART API requests 직접 호출</li><li>회사명 자동 불용어 생성 (company_master 활용)</li><li>명사만 추출 + 분석기 4종 비교 표</li>
-      <li>지수 backoff + rate limit 페이스 명시</li><li>5개 θ 값 sweep + trade-off 표/그림</li><li>상하위 10% 문장 직접 읽기 (cheap-talk 5체크)</li>
-      <li>OLS + ordered logit 둘 다 + 알파 추가 검증</li>
-    </ul></div>
+    <div class="card should">
+      <div class="track-label">🟡 권고 12개 — 따르면 평가표 유리</div>
+      <ul>
+        <li>1개 firm-year 먼저 → 381개로 확장</li>
+        <li>raw zip 보관</li>
+        <li>II/IV/VI 섹션 추출</li>
+        <li>형태소 분석기 선택 이유 명시</li>
+        <li>collection_log 기록 + 중간 저장</li>
+        <li>θ 여러 값 sweep + 상위 100단어 검토</li>
+        <li>word_count 통제변수 포함</li>
+        <li>E·S·G 차원별 점수 (KCGS 차원 매칭)</li>
+        <li>Spearman + Mann-Whitney/t-test</li>
+        <li>모형 선택 근거 한 단락 명시</li>
+        <li>cheap-talk 가능성 검토</li>
+        <li>알파 1개 이상 포함</li>
+      </ul>
+    </div>
+    <div class="card could">
+      <div class="track-label">🟢 발전 7개 — 차별화 포인트</div>
+      <ul>
+        <li>OpenDART API requests 직접 호출</li>
+        <li>회사명 자동 불용어 생성 (company_master 활용)</li>
+        <li>명사만 추출 + 분석기 4종 비교 표</li>
+        <li>지수 backoff + rate limit 페이스 명시</li>
+        <li>5개 θ 값 sweep + trade-off 표/그림</li>
+        <li>상하위 10% 문장 직접 읽기 (cheap-talk 5체크)</li>
+        <li>OLS + ordered logit 둘 다 + 알파 추가 검증</li>
+      </ul>
+    </div>
   </div>
-  <div class="callout success"><strong>제출 직전 마지막 한 줄</strong> — 위반 금지 11개 체크박스가 모두 ✓이고, 권고 12개 중 8개+, 발전 방향 7개 중 3개+를 만족하면 평가표 기준 안정적인 결과를 기대할 수 있습니다. 차별화는 발전 방향에서 갈리지만, <strong>위반 금지는 단 1개도 빠지면 안 됩니다</strong>.</div>
+
+  <div class="callout success">
+    <strong>제출 직전 마지막 한 줄</strong> — 위반 금지 11개 체크박스가 모두 ✓이고, 권고 12개 중 8개+, 발전 방향 7개 중 3개+를 만족하면 평가표 기준 안정적인 결과를 기대할 수 있습니다. 차별화는 발전 방향에서 갈리지만, <strong>위반 금지는 단 1개도 빠지면 안 됩니다</strong>.
+  </div>
 </section>
 
-<footer>ESG DART 기말 프로젝트 · 8단계 보강가이드 v1 · 2026.05.12 작성<br>교수님 가이드 01-04 md 우선, 본 문서와 충돌 시 가이드를 따릅니다.<br>학술 검증 출처: Camacho-Collados &amp; Pilehvar (2017), Wang et al. (ScienceDirect 2023), Park et al. (AACL 2020), Li et al. (2021 RFS), Bao et al. (2024 ESG sustainability), PLOS One BoW preprocessing study.</footer>
+<footer>
+  ESG DART 기말 프로젝트 · 8단계 보강가이드 v1 · 2026.05.12 작성<br>
+  교수님 가이드 01-04 md 우선, 본 문서와 충돌 시 가이드를 따릅니다.<br>
+  학술 검증 출처: Camacho-Collados &amp; Pilehvar (2017), Wang et al. (ScienceDirect 2023), Park et al. (AACL 2020), Li et al. (2021 RFS), Bao et al. (2024 ESG sustainability), PLOS One BoW preprocessing study.
+</footer>
 
 </div>
+
 <script>
 const tabs = document.querySelectorAll('nav.tabs button');
 const sections = document.querySelectorAll('section.section');
@@ -394,4 +879,6 @@ tabs.forEach(btn => btn.addEventListener('click', () => {
   window.scrollTo({top: 0, behavior: 'smooth'});
 }));
 </script>
-</body></html>
+
+</body>
+</html>
