@@ -8,6 +8,7 @@
 | 파일 | 목적 | 대상 독자 |
 |---|---|---|
 | `COLLECTION_데이터수집가이드.html` | 웹 크롤링 개념(static/dynamic, requests/BS4 vs API vs MCP) + 4-track 벤치마킹(강의·공개코드·실무·논문) + DART 수집 파이프라인(Phase 1 파일럿 + Phase 2 배치 설계) + 크롤링 허용 매트릭스 | 팀 4명 공통 |
+| `ROADMAP_5일_데드라인.html` | 5/15~5/19 5일 일정 작전도 — 일별 산출물, 역할별 책임 매트릭스(A·B·C·D × 5일), 데이터 품질 게이트 12개, 위험 매트릭스 10개, 5/20 이후 분석 단계 미리보기, 통합 체크리스트 | 팀 4명 공통 (특히 일정 관리 lead A) |
 
 ## v0.1 → v0.2 변경 사항
 
@@ -19,6 +20,7 @@
 | pyproject.toml | ❌ 없음 (requirements.txt만) | ✅ uv 호환 pyproject.toml 추가 (병행) |
 | 수집 노트북 | ❌ 없음 | ✅ notebooks/01_collection.ipynb 셸 |
 | 수집 .md | ❌ 없음 | ✅ reports/01_collection_README.md |
+| 5일 로드맵 | ❌ 없음 | ✅ ROADMAP_5일_데드라인.html 추가 |
 
 ## 합의된 결정 사항 (v0.2)
 
