@@ -1,0 +1,7 @@
+# 재사용 함수 폴더
+# Python 모듈로 분리할 함수들:
+# - dart_api.py: OpenDART API 호출 wrapper
+# - preprocessing.py: normalize, tokenize, stopword 함수
+# - scoring.py: TF-IDF 점수 계산
+# - validation.py: Spearman, Mann-Whitney 등
+# - regression.py: OLS, ordered logit 패턴

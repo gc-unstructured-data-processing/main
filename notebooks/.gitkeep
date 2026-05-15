@@ -1,0 +1,6 @@
+# 분석 노트북 폴더
+# 명명 규칙: NN-이니셜-내용.ipynb
+# 예: 01-A-pilot-samsung-2024.ipynb
+#     02-B-collect-381-firmyears.ipynb
+#     03-C-preprocessing-okt.ipynb
+#     04-D-regression-baseline.ipynb

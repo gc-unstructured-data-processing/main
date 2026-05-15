@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESG DART 기말 프로젝트 — 데이터 수집 가이드 v0.2</title>
+<style>
+:root {
+  --bg: #fafaf7; --bg-card: #ffffff; --bg-soft: #f3f1ea;
+  --bg-warn: #fff7ed; --bg-danger: #fef2f2; --bg-info: #eff6ff;
+  --bg-success: #f0fdf4; --bg-purple: #f5f3ff;
+  --text-primary: #1c1c1a; --text-secondary: #5a5a55; --text-muted: #8a8a85;
+  --text-warn: #b45309; --text-danger: #b91c1c; --text-info: #1d4ed8;
+  --text-success: #15803d; --text-purple: #6d28d9;
+  --border: rgba(0,0,0,0.10); --border-strong: rgba(0,0,0,0.18); --accent: #4338ca;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text-primary); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; font-size: 15px; line-height: 1.65; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 80px; }
+header.hero { border-bottom: 0.5px solid var(--border); padding-bottom: 24px; margin-bottom: 24px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+h1 { font-size: 26px; font-weight: 500; margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { font-size: 15px; color: var(--text-secondary); margin: 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.chip strong { font-weight: 500; color: var(--text-primary); }
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--bg-soft); border-radius: 12px; margin-bottom: 28px; position: sticky; top: 12px; z-index: 10; border: 0.5px solid var(--border); }
+nav.tabs button { flex: 1 1 auto; min-width: 110px; padding: 9px 12px; border: none; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; font-family: inherit; }
+nav.tabs button:hover { background: rgba(255,255,255,0.6); color: var(--text-primary); }
+nav.tabs button.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.section { display: none; animation: fade 0.25s ease; }
+.section.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+h2 { font-size: 20px; font-weight: 500; margin: 0 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 17px; font-weight: 500; margin: 28px 0 10px; color: var(--text-primary); }
+h4 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; color: var(--text-primary); }
+.section-intro { color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; max-width: 760px; }
+.card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 14px; }
+.card.must   { background: var(--bg-danger); border-color: rgba(239,68,68,0.25); }
+.card.should { background: var(--bg-warn);   border-color: rgba(245,158,11,0.25); }
+.card.could  { background: var(--bg-success);border-color: rgba(34,197,94,0.25); }
+.card.info   { background: var(--bg-info);   border-color: rgba(37,99,235,0.25); }
+.card.purple { background: var(--bg-purple); border-color: rgba(124,58,237,0.25); }
+.card.soft   { background: var(--bg-soft); border: none; }
+.card .track-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.card.must   .track-label { color: var(--text-danger); }
+.card.should .track-label { color: var(--text-warn); }
+.card.could  .track-label { color: var(--text-success); }
+.card.info   .track-label { color: var(--text-info); }
+.card.purple .track-label { color: var(--text-purple); }
+.card h4 { margin-top: 0; }
+.card ul { margin: 6px 0 8px; padding-left: 22px; color: var(--text-secondary); font-size: 14px; }
+.card li { margin-bottom: 6px; }
+.card li strong { color: var(--text-primary); font-weight: 500; }
+.card code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; background: rgba(0,0,0,0.05); padding: 1px 6px; border-radius: 4px; color: var(--text-primary); }
+.card pre { background: rgba(0,0,0,0.04); padding: 12px 14px; border-radius: 6px; font-size: 12.5px; color: var(--text-primary); overflow-x: auto; margin: 6px 0; line-height: 1.5; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+table.clean { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 10px 0; }
+table.clean th, table.clean td { text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+table.clean th { font-weight: 500; color: var(--text-muted); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--bg-soft); }
+table.clean tr:last-child td { border-bottom: none; }
+.callout { border-left: 3px solid var(--accent); background: var(--bg-card); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 14px; color: var(--text-secondary); }
+.callout strong { color: var(--text-primary); font-weight: 500; }
+.callout.warn   { border-left-color: #d97706; background: var(--bg-warn); }
+.callout.danger { border-left-color: #dc2626; background: var(--bg-danger); }
+.callout.info   { border-left-color: #2563eb; background: var(--bg-info); }
+.callout.success{ border-left-color: #16a34a; background: var(--bg-success); }
+.callout.purple { border-left-color: #7c3aed; background: var(--bg-purple); }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); font-weight: 500; margin-right: 4px; }
+.badge.ok { background: #f0fdf4; color: #15803d; }
+.badge.warn { background: #fff7ed; color: #b45309; }
+.badge.no { background: #fef2f2; color: #b91c1c; }
+.badge.lecture { background: #f0f9ff; color: #0369a1; }
+.badge.code { background: #f5f3ff; color: #6d28d9; }
+.badge.industry { background: #fdf2f8; color: #be185d; }
+.badge.paper { background: #fff7ed; color: #b45309; }
+.analogy { background: linear-gradient(180deg, rgba(67,56,202,0.04), transparent); border: 0.5px dashed rgba(67,56,202,0.3); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 13.5px; color: var(--text-secondary); }
+.analogy strong { color: var(--accent); }
+.analogy::before { content: "💡 비유로 이해하기 — "; font-weight: 600; color: var(--accent); font-size: 12px; letter-spacing: 0.04em; }
+.flow { display: flex; flex-direction: column; gap: 0; margin: 14px 0 18px; }
+.flow-row { display: grid; grid-template-columns: 60px 1fr; gap: 14px; align-items: stretch; }
+.flow-step-num { background: var(--accent); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; margin: 12px auto; }
+.flow-body { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; }
+.flow-body h5 { margin: 0 0 4px; font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.flow-body p { margin: 0; font-size: 13px; color: var(--text-secondary); }
+.flow-body .source { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-style: italic; }
+.matrix-cell { padding: 8px 10px; border-radius: 6px; font-size: 12.5px; }
+.matrix-cell.go { background: #ecfdf5; color: #047857; }
+.matrix-cell.caution { background: #fef3c7; color: #92400e; }
+.matrix-cell.stop { background: #fee2e2; color: #991b1b; }
+.matrix-cell.neutral { background: var(--bg-soft); color: var(--text-secondary); }
+footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">비정형데이터분석 · 기말 팀 프로젝트 · 데이터 수집 가이드 v0.2</div>
+  <h1>데이터 수집 가이드 — 크롤링 · 벤치마킹 · DART 파이프라인</h1>
+  <p class="sub">실무 데이터 분석 첫 단계인 <strong>수집</strong>을 비전공자도 따라할 수 있게 정리. 웹 크롤링 개념 → 4-track 벤치마킹 → DART 파이프라인 → Phase 1 파일럿(005930-2024) → Phase 2 전체 배치 설계 순.</p>
+  <div class="meta-row">
+    <span class="chip"><strong>환경</strong> uv(로컬) + pip(Colab)</span>
+    <span class="chip"><strong>주력 경로</strong> OpenDART API</span>
+    <span class="chip"><strong>파일럿</strong> 005930 × 2024</span>
+    <span class="chip"><strong>벤치마킹</strong> 4-track (강의 BASE)</span>
+    <span class="chip"><strong>버전</strong> v0.2</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="overview" class="active">한 눈에 보기</button>
+  <button data-tab="permission">크롤링 허용 매트릭스</button>
+  <button data-tab="webcrawl">웹 크롤링 개념</button>
+  <button data-tab="benchmark">4-track 벤치마킹</button>
+  <button data-tab="pipeline">DART 파이프라인</button>
+  <button data-tab="phase1">Phase 1 파일럿</button>
+  <button data-tab="phase2">Phase 2 배치 설계</button>
+  <button data-tab="setup">환경 셋업</button>
+  <button data-tab="quickstart">Quick Start</button>
+</nav>
+
+<section class="section active" data-section="overview">
+  <h2>한 페이지 요약 — 수집 단계 전체 흐름</h2>
+  <p class="section-intro">실무 데이터 분석은 <strong>수집 → 정제·전처리·마이닝 → 모델링 → 검증·해석</strong> 순으로 갑니다. 우리는 지금 <strong>수집</strong>에 들어왔습니다. 다음은 정제·전처리·마이닝.</p>
+  <div class="analogy">수집 단계는 <strong>요리 재료 준비</strong>와 같습니다. 어떤 재료(=원본 문서)를, 어디서(=DART API/viewer/KRX), 얼마만큼(=381 firm-years), 어떤 상태로(=raw zip + 추출 텍스트) 가져오느냐가 이후 모든 요리(=분석)의 한계를 결정합니다. 재료가 잘못되면 회귀분석을 아무리 잘해도 결과가 의미 없습니다.</div>
+  <h3>수집 단계의 출력물 6종</h3>
+  <table class="clean"><thead><tr><th>#</th><th>파일</th><th>내용</th><th>위치</th></tr></thead><tbody>
+  <tr><td>1</td><td><code>company_master_filled.csv</code></td><td>식별자(corp_code, rcept_no) 채워진 마스터</td><td><code>data/</code></td></tr>
+  <tr><td>2</td><td><code>{stock}_{year}_disclosure.zip</code></td><td>OpenDART 사업보고서 원본 zip</td><td><code>data/raw/</code> (gitignore)</td></tr>
+  <tr><td>3</td><td><code>{stock}_{year}_sections.json</code></td><td>II/IV/VI 섹션 추출 결과</td><td><code>data/interim/</code> (gitignore)</td></tr>
+  <tr><td>4</td><td><code>collection_log.csv</code></td><td>각 firm-year 수집 시도·성공·실패 + 이유</td><td><code>logs/</code> (gitignore)</td></tr>
+  <tr><td>5</td><td><code>01_collection.ipynb</code></td><td>실행 가능한 수집 노트북</td><td><code>notebooks/</code></td></tr>
+  <tr><td>6</td><td><code>01_collection_README.md</code></td><td>단계별 결정 사항 기록</td><td><code>reports/</code></td></tr>
+  </tbody></table>
+  <h3>전체 수집 흐름 (8단계)</h3>
+  <div class="flow">
+    <div class="flow-row"><div class="flow-step-num">1</div><div class="flow-body"><h5>환경 셋업</h5><p><code>uv venv</code> → <code>uv pip install -e .</code> (로컬) 또는 <code>!pip install -r requirements.txt</code> (Colab). <code>.env</code>에 <code>OPENDART_API_KEY</code>.</p><div class="source">참고: pyproject.toml · requirements.txt · README.md</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">2</div><div class="flow-body"><h5>company_master.csv 로드 + 검증</h5><p>381행 확인, <code>stock_code</code> 유니크 127개, <code>fiscal_year</code> 3개(2022·2023·2024) 검증. esg_year = fiscal_year + 1 매핑.</p><div class="source">참고: data/README.md · 02 md</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">3</div><div class="flow-body"><h5>corp_code 매핑 (전체 1회)</h5><p>OpenDART <code>corpCode.xml</code> 1회 다운로드 → <code>stock_code</code> ↔ <code>corp_code</code> 매핑 dict 캐시.</p><div class="source">참고: opendart-py 패턴 · 02 md</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">4</div><div class="flow-body"><h5>rcept_no 조회 (firm-year별)</h5><p><code>list.json</code> 호출 → <code>report_nm</code>에 "사업보고서 (YYYY.12)" 포함 행 선택. 정정공시 있으면 <code>last_reprt_at=Y</code>로 최신만.</p><div class="source">참고: 02 md "재무계정 받는 방법" 박스</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">5</div><div class="flow-body"><h5>document.xml 다운로드</h5><p><code>rcept_no</code>로 <code>document.xml</code> zip 받기 → <code>data/raw/{stock}_{year}_disclosure.zip</code>로 저장.</p><div class="source">참고: 02 md · dart-fss 패턴</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">6</div><div class="flow-body"><h5>섹션 추출 (II · IV · VI)</h5><p>XML 파싱 → 정규식·BeautifulSoup으로 II 사업의 내용, IV 이사의 경영진단, VI 이사회 섹션 발췌.</p><div class="source">참고: 02 md · Li 2021 NER 패턴</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">7</div><div class="flow-body"><h5>ESG passage 후보 추출</h5><p>seed 30개 + 확장 키워드로 ESG 관련 문장 필터링. <strong>최종 corpus는 다음 단계(전처리)에서 결정.</strong></p><div class="source">참고: 02 md · seed_dictionary.csv</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">8</div><div class="flow-body"><h5>collection_log + viewer URL 검증</h5><p>실패 행은 사유 기록(가짜 0 ❌). 무작위 5개 firm-year의 viewer URL을 직접 열어 원문과 비교.</p><div class="source">참고: 02 md · 04 md §2-1 체크리스트</div></div></div>
+  </div>
+  <div class="callout info"><strong>이 가이드의 사용 흐름</strong> — 처음에는 "한 눈에 보기 → 크롤링 매트릭스 → 환경 셋업 → Phase 1 파일럿" 순으로. Phase 1이 끝나면 "Phase 2 배치 설계"로.</div>
+</section>
+
+<section class="section" data-section="permission">
+  <h2>웹 크롤링 허용 범위 매트릭스 (합의됨)</h2>
+  <p class="section-intro">교수님 가이드 01~04 md + CONTRIBUTING.md + data/README.md를 정밀 검토하여 v0.2에서 합의한 10개 항목. <strong>이 매트릭스 안에서만</strong> 크롤링·수집을 진행합니다.</p>
+  <table class="clean"><thead><tr><th>판정</th><th>대상</th><th>가이드 근거</th><th>이번 프로젝트에서</th></tr></thead><tbody>
+  <tr><td><span class="matrix-cell go">🟢 적극 권장</span></td><td>OpenDART API<br>(<code>list.json</code>, <code>document.xml</code>, <code>fnlttSinglAcnt.json</code>)</td><td>02 md 명시 — 주력 경로</td><td>수집 노트북의 80% 차지</td></tr>
+  <tr><td><span class="matrix-cell go">🟢 적극 권장</span></td><td>DART viewer URL 확인</td><td>02 md "viewer URL로 원문 확인 권장"</td><td>샘플 5개 정합성 검증용</td></tr>
+  <tr><td><span class="matrix-cell go">🟢 적극 권장</span></td><td>KRX 산업분류 정보 보강</td><td>data/README.md "팀이 KRX 산업분류 등으로 보강 가능"</td><td>industry 컬럼 결측 채우기 / 알파 분석</td></tr>
+  <tr><td><span class="matrix-cell caution">🟡 조건부 허용</span></td><td>KCGS 공시 페이지 (등급 발표일 timing 참고)</td><td>04 md "timing 단정 금지" — 참고용만</td><td>해석 보조용. 회귀 변수로 단정 사용 ❌</td></tr>
+  <tr><td><span class="matrix-cell caution">🟡 조건부 허용</span></td><td>DART 정정공시 차트</td><td>02 md "정정공시 접수번호 기록"</td><td>최종 보고서에 어떤 rcept_no 썼는지 기록</td></tr>
+  <tr><td><span class="matrix-cell caution">🟡 조건부 허용 (알파 한정)</span></td><td>지속가능경영보고서 등 공시 외 ESG 자료</td><td>명시 없음 → 알파 분석으로</td><td>알파 시도자만, 본 분석엔 미반영</td></tr>
+  <tr><td><span class="matrix-cell stop">🔴 금지</span></td><td>MCP/LLM이 만든 passage를 검증 없이 corpus 투입</td><td>02 md "반드시 코드(Python)로 재현"</td><td>MCP는 발견·연습 용도만</td></tr>
+  <tr><td><span class="matrix-cell stop">🔴 금지</span></td><td>document.xml 우회 raw 텍스트 만들기 (viewer 페이지를 Selenium으로 긁기)</td><td>lineage 추적 어려움</td><td>document.xml이 표준 경로</td></tr>
+  <tr><td><span class="matrix-cell stop">🔴 금지</span></td><td>로그인/유료 사이트 (Bloomberg, Refinitiv 등) 크롤링</td><td>robots.txt·ToS 위반</td><td>설사 API key 있어도 본 프로젝트 corpus 미사용</td></tr>
+  <tr><td><span class="matrix-cell neutral">⚪ 일반 원칙</span></td><td>robots.txt 확인 · User-Agent 명시 · rate limit · 캐시</td><td>Week 4 강의 표준</td><td>모든 크롤링에 적용 (HTTP·BeautifulSoup 패턴)</td></tr>
+  </tbody></table>
+  <div class="callout danger"><strong>🔴 가장 자주 위반되는 함정 3개</strong><ol style="margin: 8px 0 0; padding-left: 20px;"><li><strong>MCP 신뢰 함정</strong> — MCP가 그럴듯한 passage 표를 만들어주면 그대로 분석에 넣고 싶어짐. ❌ 반드시 코드로 재현·viewer URL로 검증.</li><li><strong>"하나라도 더" 함정</strong> — 실패 행이 아까워서 viewer 페이지를 긁어 텍스트를 만들고 싶어짐. ❌ document.xml이 안 되는 행은 collection_log에 기록 후 drop.</li><li><strong>"더 많은 데이터 = 더 좋은 분석" 함정</strong> — 알파라며 뉴스 기사·SNS까지 끌어옴. ⚠️ 추가 데이터의 출처·신뢰도·timing이 보고서에서 정당화되지 않으면 오히려 감점.</li></ol></div>
+  <h3>실패 행 처리 — collection_log.csv 표준 형식</h3>
+  <div class="card info"><pre>stock_code,fiscal_year,corp_code,rcept_no,status,reason,timestamp
+005930,2024,00126380,20250311001085,SUCCESS,,2026-05-15T10:23:11
+009150,2023,,,FAIL_CORP_CODE,"corp_code 매핑 안 됨 — 우선주 단독 종목 가능성",2026-05-15T10:23:42
+017670,2022,00266961,,FAIL_RCEPT,"2023년 list.json에 사업보고서 없음 — 회계연도 6월 결산 가능성",2026-05-15T10:24:15
+...</pre></div>
+  <div class="callout success"><strong>collection_log의 가치</strong> — 04 md 평가표 "데이터 이해" 항목의 핵심. 누락 행을 숨기지 않고 <strong>왜 누락됐는지 사유와 함께 보여주는 것</strong>이 분석가의 정직성. 가짜 0보다 100배 좋은 신호.</div>
+</section>
+
+<section class="section" data-section="webcrawl">
+  <h2>웹 크롤링 개념 — 비전공자용 정리</h2>
+  <p class="section-intro">Week 4 강의의 핵심을 이 프로젝트에 맞게 압축. 크롤링은 단순히 "긁어오기"가 아니라 <strong>여러 가지 방법 중 가장 적절한 것을 선택</strong>하는 일입니다.</p>
+  <h3>1. Static vs Dynamic 사이트</h3>
+  <div class="grid-2">
+    <div class="card"><h4>📄 Static (정적) 사이트</h4><p style="margin: 0 0 8px; font-size: 13.5px; color: var(--text-secondary);">서버가 완성된 HTML을 한 번에 내려줌. <code>requests.get(url)</code>으로 받으면 끝.</p><p style="margin: 0; font-size: 13px; color: var(--text-muted);"><strong>DART의 viewer URL</strong>이 여기. <code>BeautifulSoup</code>으로 파싱 가능.</p></div>
+    <div class="card"><h4>⚙️ Dynamic (동적) 사이트</h4><p style="margin: 0 0 8px; font-size: 13.5px; color: var(--text-secondary);">초기 HTML은 비어 있고, JavaScript가 추가로 데이터를 fetch해서 채움.</p><p style="margin: 0; font-size: 13px; color: var(--text-muted);"><strong>Selenium / Playwright</strong> 필요하지만, 이 프로젝트에선 <strong>API 직접 호출이 우선</strong>이라 거의 안 씀.</p></div>
+  </div>
+  <div class="analogy"><strong>Static = 신문지를 통째로 받는 것</strong> (글이 다 인쇄돼 있음). <strong>Dynamic = 신문이 백지로 오고, 옆에 작가가 손글씨로 글을 채워 넣는 것</strong> (브라우저 = 작가). API 호출은 신문사 본사 창고에서 원문을 직접 받는 것 — 가장 빠르고 정확.</div>
+  <h3>2. 4가지 접근법 비교</h3>
+  <table class="clean"><thead><tr><th>방법</th><th>속도</th><th>안정성</th><th>이 프로젝트 적합</th><th>예시</th></tr></thead><tbody>
+  <tr><td><strong>requests + BS4</strong></td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>🟡 viewer URL 검증, KRX 산업분류 보강에만</td><td><code>requests.get(viewer_url)</code> + <code>BeautifulSoup(html)</code></td></tr>
+  <tr><td><strong>공개 API (OpenDART)</strong></td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>🟢 주력 경로 (80% 비중)</td><td><code>requests.get("https://opendart.fss.or.kr/api/list.json", params=...)</code></td></tr>
+  <tr><td><strong>MCP (LLM agent)</strong></td><td>⭐⭐⭐</td><td>⭐⭐ (LLM 환각 위험)</td><td>🟡 발견·연습용. corpus 직접 투입 ❌</td><td>VS Code MCP, Claude Desktop MCP</td></tr>
+  <tr><td><strong>Selenium / Playwright</strong></td><td>⭐⭐</td><td>⭐⭐⭐⭐</td><td>🔴 거의 불필요 (DART API 충분)</td><td>동적 페이지 인터랙션 필요할 때만</td></tr>
+  </tbody></table>
+  <h3>3. HTTP·API 기본 (Week 4)</h3>
+  <div class="card info"><pre>import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+api_key = os.getenv("OPENDART_API_KEY")
+
+# GET 요청 — params로 query string 전달
+res = requests.get(
+    "https://opendart.fss.or.kr/api/list.json",
+    params={
+        "crtfc_key": api_key,
+        "corp_code": "00126380",
+        "bgn_de": "20250101",
+        "end_de": "20251231",
+        "pblntf_detail_ty": "A001",  # 사업보고서
+        "last_reprt_at": "Y",        # 정정 시 최신만
+    },
+    timeout=20,
+)
+res.raise_for_status()
+payload = res.json()</pre></div>
+  <h3>4. robots.txt와 ToS</h3>
+  <div class="card should"><ul><li><strong>robots.txt 확인</strong>: <code>https://opendart.fss.or.kr/robots.txt</code>처럼 도메인 끝에 <code>/robots.txt</code> 붙이면 크롤링 허용 범위 확인 가능.</li><li><strong>User-Agent 명시</strong>: <code>headers={"User-Agent": "ESG-DART-research/0.1 (academic)"}</code>로 정체 밝히기.</li><li><strong>Rate limit</strong>: 요청 간 <code>time.sleep(0.1)</code> 정도. OpenDART는 분당 약 600회 제한 권장.</li><li><strong>캐시</strong>: 같은 URL을 반복 호출하지 말고 <code>data/cache/</code>에 저장 후 재사용.</li></ul></div>
+  <div class="callout warn"><strong>윤리·법적 주의</strong> 공개 데이터라도 <strong>대량 크롤링은 서버 부하·법적 문제</strong>를 일으킬 수 있음. 학술 연구·소규모 표본(381건)에서는 보통 문제 없지만, "academic", 연락처, 목적을 User-Agent에 적는 게 안전.</div>
+</section>
+
+<section class="section" data-section="benchmark">
+  <h2>4-Track 벤치마킹</h2>
+  <p class="section-intro">수업 강의 자료를 <strong>BASE</strong>로 두고, 다른 3개 트랙에서 보강. 우리 접근법이 외부 기준에서 어떻게 보이는지를 확인.</p>
+  <h3>Track 1 (BASE) — 수업 강의 자료</h3>
+  <div class="card info"><div class="track-label"><span class="badge lecture">강의</span> Week 4 · requests / BeautifulSoup</div><ul><li><code>UD-04-200__http-and-requests.md</code> — HTTP GET·params·headers·status code 기초</li><li><code>UD-04-250__static-vs-dynamic.md</code> — 정적/동적 구분, 우리는 정적+API 위주</li><li><code>UD-04-300__beautifulsoup-devtools.md</code> — DevTools로 셀렉터 찾기. viewer URL 검증할 때 사용</li><li><code>UD-04-500__mcp-automation.md</code> — MCP 활용 패턴. <strong>발견·연습 용도</strong>만</li></ul></div>
+  <div class="card info"><div class="track-label"><span class="badge lecture">강의</span> Week 10 · DART MCP·CLI</div><ul><li><code>UD-10-900__dart-mcp-cli-guide-instructor.ipynb</code> — DART MCP 사용법, CLI 명령</li><li><strong>적용</strong>: 파일럿 단계에서 MCP로 corp_code·rcept_no 빠르게 발견 → 코드로 재현</li></ul></div>
+  <h3>Track 2 — 온라인 공개 코드</h3>
+  <div class="card purple"><div class="track-label"><span class="badge code">공개 코드</span> 주요 라이브러리·repo</div><table class="clean" style="margin: 0;"><thead><tr><th>이름</th><th>위치</th><th>벤치마킹 포인트</th></tr></thead><tbody><tr><td><code>dart-fss</code></td><td>PyPI · GitHub</td><td>OpenDART CLI 래퍼. rate limit·backoff 패턴, JSON 캐시</td></tr><tr><td><code>opendart-py</code></td><td>GitHub</td><td>모든 OpenDART 엔드포인트 wrap, error 메시지 매핑</td></tr><tr><td><code>dart-api-py</code></td><td>GitHub</td><td>document.xml 압축 해제·인코딩 처리</td></tr></tbody></table><p style="margin: 8px 0 0; font-size: 13px;"><strong>우리가 차용할 패턴</strong>: ① 지수 backoff (1초 → 2초 → 4초), ② JSON 응답 캐시, ③ <code>last_reprt_at=Y</code> 기본 ON, ④ <code>document.xml</code> zip을 <code>io.BytesIO</code>로 메모리에서 처리 후 저장.</p></div>
+  <h3>Track 3 — 실무 데이터 파이프라인 (ETL 패턴)</h3>
+  <div class="card could"><div class="track-label"><span class="badge industry">실무</span> Kaggle 노트북 + 엔터프라이즈 ETL</div><ul><li><strong>Idempotent scripts</strong> — 노트북을 두 번 돌려도 같은 결과. 이미 받은 zip은 다시 안 받음.</li><li><strong>Checkpoint·resume</strong> — 381건 중 100건 받은 상태에서 끊겨도 101번부터 재개.</li><li><strong>Structured logging</strong> — <code>collection_log.csv</code>에 timestamp, status, reason 컬럼.</li><li><strong>Dry-run mode</strong> — <code>--dry-run</code>으로 실제 API 호출 없이 흐름 검증.</li><li><strong>tqdm 진행 표시</strong> — 381개 진행 시 ETA·실패율 모니터링.</li></ul></div>
+  <h3>Track 4 — 학술 논문 방법론</h3>
+  <div class="card should"><div class="track-label"><span class="badge paper">논문</span> ESG 텍스트 분석 표준 절차</div><table class="clean" style="margin: 0;"><thead><tr><th>논문</th><th>수집 단계 핵심</th><th>우리 적용</th></tr></thead><tbody><tr><td><strong>Li et al. (2021, RFS)</strong></td><td>10-K filing 전체 다운로드 → MD&A 섹션 추출 → NER로 회사명 제거</td><td>document.xml → II/IV/VI 섹션 → 회사명 불용어 추가</td></tr><tr><td><strong>Bao et al. (2024)</strong></td><td>fastText θ sweep + manual curation 표준</td><td>다음 단계(전처리·feature)에서 적용</td></tr><tr><td><strong>Park et al. (AACL 2020)</strong></td><td>한국어는 형태소 + BPE 하이브리드</td><td>다음 단계(전처리)에서 Okt/Pecab 비교</td></tr></tbody></table></div>
+  <h3>벤치마킹 종합 — 우리만의 표준 공식</h3>
+  <div class="callout purple"><strong>우리 프로젝트의 수집 표준</strong><ol style="margin: 8px 0 0; padding-left: 20px;"><li>Week 4 requests/BS4를 베이스로 (강의 BASE)</li><li>OpenDART API 호출은 <code>dart-fss·opendart-py</code>의 rate limit·backoff 패턴 차용 (공개 코드)</li><li>checkpoint·collection_log·tqdm 구조는 실무 ETL 패턴 (실무)</li><li>섹션 추출·회사명 제거는 Li 2021 NER 흐름 (논문)</li><li>MCP는 발견·연습용만 — corpus는 항상 코드 재현 (가이드 02 md)</li></ol></div>
+</section>
+
+<section class="section" data-section="pipeline">
+  <h2>DART 수집 파이프라인 (상세)</h2>
+  <p class="section-intro">stock_code 1개에서 ESG passage까지 가는 전 과정. 각 단계의 입력·출력·API endpoint를 명시.</p>
+  <h3>식별자 깔때기 (3-step)</h3>
+  <div class="card"><pre>stock_code (005930)
+   │  OpenDART corpCode.xml (전체 기업 사전, 1회 다운로드)
+   ▼
+corp_code  (00126380)
+   │  OpenDART list.json (해당 기업 공시 목록)
+   │  필터: pblntf_detail_ty=A001 (사업보고서) + report_nm contains "(2024.12)"
+   ▼
+rcept_no   (20250311001085)
+   │  OpenDART document.xml (사업보고서 원문 zip)
+   ▼
+data/raw/005930_2024_disclosure.zip</pre></div>
+  <h3>OpenDART 엔드포인트 요약</h3>
+  <table class="clean"><thead><tr><th>엔드포인트</th><th>용도</th><th>핵심 파라미터</th><th>응답</th></tr></thead><tbody>
+  <tr><td><code>corpCode.xml</code></td><td>전체 기업 코드 매핑 (1회만)</td><td><code>crtfc_key</code></td><td>zip 안에 XML — 모든 corp_code · stock_code · 회사명</td></tr>
+  <tr><td><code>list.json</code></td><td>특정 기업의 공시 목록</td><td><code>corp_code, bgn_de, end_de, pblntf_detail_ty, last_reprt_at</code></td><td>JSON 안에 <code>list</code> (각 공시의 rcept_no, report_nm, rcept_dt)</td></tr>
+  <tr><td><code>document.xml</code></td><td>사업보고서 원문</td><td><code>rcept_no</code></td><td>zip 안에 XML — 보고서 전체 텍스트</td></tr>
+  <tr><td><code>fnlttSinglAcnt.json</code></td><td>재무계정 (선택, 통제변수용)</td><td><code>corp_code, bsns_year, reprt_code</code></td><td>JSON — 매출·자산·부채·당기순이익 등</td></tr>
+  </tbody></table>
+  <h3>주의 — list.json의 함정</h3>
+  <div class="card must"><div class="track-label">⚠️ "사업보고서 (2024.12)" 정확히 매칭</div><ul><li><code>list.json</code>은 회사의 <strong>모든 공시</strong>를 반환. "사업보고서"라는 단어가 들어간 다른 공시(정정 등)도 섞임.</li><li>매칭 규칙: <code>report_nm</code>에 <code>"사업보고서"</code> 포함 AND <code>f"({fiscal_year}.12)"</code> 포함</li><li>정정공시가 여러 개면 <code>last_reprt_at=Y</code>로 가장 최신 행 1개만.</li><li>최종 사용한 <code>rcept_no</code>를 <code>collection_log</code>에 기록.</li></ul></div>
+  <h3>document.xml 파싱</h3>
+  <div class="card info"><pre>import requests, zipfile
+from io import BytesIO
+from lxml import etree
+
+res = requests.get(
+    "https://opendart.fss.or.kr/api/document.xml",
+    params={"crtfc_key": api_key, "rcept_no": "20250311001085"},
+    timeout=30,
+)
+res.raise_for_status()
+
+# zip → XML 텍스트 추출
+with zipfile.ZipFile(BytesIO(res.content)) as zf:
+    xml_bytes = zf.read(zf.namelist()[0])
+
+# 디스크에 저장 (재현성)
+out_path = "data/raw/005930_2024_disclosure.zip"
+with open(out_path, "wb") as f:
+    f.write(res.content)
+
+# XML 파싱
+root = etree.fromstring(xml_bytes)</pre></div>
+  <h3>섹션 추출 — II · IV · VI</h3>
+  <div class="card"><h4>DART 사업보고서 표준 목차</h4><ul><li><strong>I. 회사의 개요</strong> — 회사 일반 정보 (이번 분석 제외)</li><li><strong>II. 사업의 내용</strong> ✅ — 사업 영역, ESG 활동 설명 (E 신호 多)</li><li><strong>III. 재무에 관한 사항</strong> — 재무제표 (재무 통제변수용, 선택)</li><li><strong>IV. 이사의 경영진단 및 분석의견</strong> ✅ — 경영진 시각의 ESG 언급 (S·G 신호)</li><li><strong>V. 회계감사인의 감사의견 등</strong> — 일반적으로 제외</li><li><strong>VI. 이사회 등 회사의 기관에 관한 사항</strong> ✅ — 지배구조 (G 신호 多)</li><li><strong>VII~XII</strong> — 주주, 임원, 계열사 등 (선택)</li></ul><p style="margin: 8px 0 0; font-size: 13.5px;">추출 전략: 헤딩 마커 정규식(예: <code>r"II\.\s*사업의\s*내용"</code>) → 다음 헤딩까지 텍스트 슬라이스.</p></div>
+  <div class="callout warn"><strong>섹션 추출의 함정</strong> — DART XML은 회사마다 형식이 약간씩 다름. 헤딩 라벨이 "Ⅱ"(로마자 II)인지 "II"(영문 II)인지, "사업의 내용"인지 "사업의내용"인지 변형이 있음. <strong>여러 패턴을 OR로 매칭</strong>하고 추출 실패율을 모니터링.</div>
+</section>
+
+<section class="section" data-section="phase1">
+  <h2>Phase 1 파일럿 — 005930 × 2024 (1개 firm-year)</h2>
+  <p class="section-intro">전 파이프라인을 1개 firm-year로 끝까지 통과시킵니다. 4명이 각자 자기 폴더에서 시도 → 회고에서 가장 좋은 접근법 채택.</p>
+  <h3>파일럿 목표 (성공 기준)</h3>
+  <div class="card could"><ul><li>[ ] <code>stock_code=005930</code>에서 <code>corp_code=00126380</code>으로 매핑 성공</li><li>[ ] 2025년 공시 목록에서 "사업보고서 (2024.12)" 행 1개 선택, <code>rcept_no</code> 기록</li><li>[ ] <code>document.xml</code> zip 다운로드 → <code>data/raw/005930_2024_disclosure.zip</code> 저장</li><li>[ ] II/IV/VI 섹션 추출 → <code>data/interim/005930_2024_sections.json</code></li><li>[ ] ESG 키워드(seed 30개)로 passage 후보 ≥ 30개 추출</li><li>[ ] viewer URL 열어 원문과 추출 결과 비교 (정합성 ≥ 90%)</li><li>[ ] <code>collection_log.csv</code>에 1행 기록</li></ul></div>
+  <h3>파일럿 노트북 구조</h3>
+  <div class="card info"><pre>notebooks/individual/{이니셜}/01-{이니셜}-pilot-005930-2024.ipynb
+
+[Cell 1] 환경 셋업
+  - .env 로드, API key 검증
+  - 출력 디렉토리 생성
+
+[Cell 2] corp_code 매핑
+  - OpenDART corpCode.xml 1회 다운로드 + 캐시
+  - stock_code=005930 → corp_code 확인
+
+[Cell 3] rcept_no 조회
+  - list.json 호출 (bgn_de=20250101, end_de=20251231, A001)
+  - "사업보고서 (2024.12)" 필터링
+  - rcept_no, rcept_dt, viewer_url 출력
+
+[Cell 4] document.xml 다운로드
+  - 받은 zip을 data/raw/에 저장
+  - 메모리에서 XML 추출 후 길이 출력 (sanity check)
+
+[Cell 5] 섹션 추출
+  - 정규식으로 II · IV · VI 슬라이스
+  - 각 섹션 길이 출력
+
+[Cell 6] ESG passage 후보
+  - seed 30개 키워드 매칭
+  - 문장 단위 split → 키워드 포함 문장 추출
+  - top 10 passage를 표로
+
+[Cell 7] viewer URL 검증
+  - viewer URL 출력 (브라우저에서 직접 확인)
+  - 추출 passage 5개를 viewer 원문과 대조
+
+[Cell 8] collection_log 기록
+  - 한 행 append
+  - status=SUCCESS / 실패면 reason 기록</pre></div>
+  <h3>파일럿 결과 보고 (회고용)</h3>
+  <table class="clean"><thead><tr><th>관찰 포인트</th><th>예상 결과</th><th>실패 시 조사</th></tr></thead><tbody>
+  <tr><td>corp_code 매핑</td><td>1회로 성공</td><td>uppercase·zero-padding 확인</td></tr>
+  <tr><td>list.json 응답 시간</td><td>1-2초</td><td>rate limit 초과 시 backoff</td></tr>
+  <tr><td>document.xml zip 크기</td><td>1-5 MB</td><td>너무 작으면(< 100KB) error JSON 가능성</td></tr>
+  <tr><td>II 섹션 길이</td><td>10,000자 이상</td><td>0이면 정규식 패턴 점검</td></tr>
+  <tr><td>passage 추출 수</td><td>30개 이상</td><td>0이면 키워드 인코딩 또는 토큰화 문제</td></tr>
+  </tbody></table>
+  <h3>4명 회고 회의 (주 1회)</h3>
+  <div class="card purple"><div class="track-label">📅 회고 어젠다 (30분)</div><ul><li><strong>10분</strong> — 4명 각자 노트북 결과 공유 (성공/실패, 막힌 지점)</li><li><strong>10분</strong> — AI(Claude/ChatGPT)에 4개 노트북 diff 보여주고 차이점 정리</li><li><strong>10분</strong> — Phase 2에서 채택할 표준 결정 (rate limit 값, 캐시 위치, 섹션 패턴, log 컬럼 등)</li></ul></div>
+</section>
+
+<section class="section" data-section="phase2">
+  <h2>Phase 2 배치 설계 — 381 firm-years 전체</h2>
+  <p class="section-intro">파일럿이 성공하면 동일 함수를 381 행에 반복 적용. 단순한 for문이 아니라 <strong>중단·재개·재시도·로깅</strong>이 포함된 production-grade 배치.</p>
+  <h3>Phase 2 노트북 vs 스크립트</h3>
+  <div class="grid-2">
+    <div class="card info"><h4>📓 <code>notebooks/01_collection.ipynb</code></h4><p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);"><strong>탐색·시연용</strong>. 1-2개 sample로 함수 동작 확인, 결과 시각화. 발표·보고서 첨부.</p></div>
+    <div class="card info"><h4>🖥️ <code>src/collection.py</code></h4><p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);"><strong>배치 실행용</strong>. CLI에서 <code>uv run python -m src.collection --all</code>로 381 행 한 번에. checkpoint 기반 resume.</p></div>
+  </div>
+  <h3>핵심 기능 5종</h3>
+  <div class="card should"><div class="track-label">기능 #1 — Rate Limit (요청 페이스)</div><pre>import time
+from collections import deque
+
+class RateLimiter:
+    """분당 N회 제한. OpenDART는 분당 ~600 권장."""
+    def __init__(self, max_per_minute=300):
+        self.max = max_per_minute
+        self.window = 60
+        self.calls = deque()
+
+    def wait(self):
+        now = time.monotonic()
+        while self.calls and now - self.calls[0] > self.window:
+            self.calls.popleft()
+        if len(self.calls) >= self.max:
+            sleep_for = self.window - (now - self.calls[0]) + 0.1
+            time.sleep(sleep_for)
+        self.calls.append(time.monotonic())</pre></div>
+  <div class="card should"><div class="track-label">기능 #2 — Exponential Backoff (실패 시 재시도)</div><pre>import time, random
+
+def request_with_backoff(url, params, max_retries=5):
+    """503·timeout 발생 시 지수 backoff로 재시도."""
+    for attempt in range(max_retries):
+        try:
+            res = requests.get(url, params=params, timeout=20)
+            if res.status_code == 200:
+                return res
+            if res.status_code in (429, 503):
+                wait = (2 ** attempt) + random.uniform(0, 1)
+                time.sleep(wait)
+                continue
+            res.raise_for_status()
+        except requests.exceptions.Timeout:
+            time.sleep(2 ** attempt)
+    raise RuntimeError(f"Failed after {max_retries} retries: {url}")</pre></div>
+  <div class="card should"><div class="track-label">기능 #3 — Idempotent Cache (재실행 안전)</div><pre>from pathlib import Path
+
+def get_or_fetch_document(rcept_no, api_key):
+    """이미 받은 zip은 재다운로드 ❌."""
+    cache_path = Path(f"data/raw/{rcept_no}.zip")
+    if cache_path.exists() and cache_path.stat().st_size > 1000:
+        return cache_path  # 이미 있음 → 즉시 반환
+
+    res = request_with_backoff(
+        "https://opendart.fss.or.kr/api/document.xml",
+        params={"crtfc_key": api_key, "rcept_no": rcept_no},
+    )
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    cache_path.write_bytes(res.content)
+    return cache_path</pre></div>
+  <div class="card should"><div class="track-label">기능 #4 — Checkpoint·Resume (중단 복구)</div><pre>import pandas as pd
+from pathlib import Path
+
+LOG_PATH = Path("logs/collection_log.csv")
+
+def load_done_set():
+    """이미 처리된 firm-year set 반환."""
+    if not LOG_PATH.exists():
+        return set()
+    df = pd.read_csv(LOG_PATH)
+    return set(zip(df["stock_code"], df["fiscal_year"]))
+
+def main():
+    master = pd.read_csv("data/company_master.csv")
+    done = load_done_set()
+    for _, row in tqdm(master.iterrows(), total=len(master)):
+        key = (row["stock_code"], row["fiscal_year"])
+        if key in done:
+            continue  # 재실행 시 건너뜀
+        result = collect_one(row)
+        append_log(result)</pre></div>
+  <div class="card should"><div class="track-label">기능 #5 — Structured Logging</div><pre>def append_log(stock_code, fiscal_year, corp_code, rcept_no,
+               status, reason="", timestamp=None):
+    row = {
+        "stock_code": stock_code,
+        "fiscal_year": fiscal_year,
+        "corp_code": corp_code or "",
+        "rcept_no": rcept_no or "",
+        "status": status,             # SUCCESS / FAIL_CORP / FAIL_RCEPT / FAIL_DOC
+        "reason": reason,
+        "timestamp": timestamp or datetime.now().isoformat(timespec="seconds"),
+    }
+    pd.DataFrame([row]).to_csv(
+        LOG_PATH,
+        mode="a",
+        header=not LOG_PATH.exists(),
+        index=False,
+    )</pre></div>
+  <h3>예상 처리 시간</h3>
+  <table class="clean"><thead><tr><th>구간</th><th>건수</th><th>예상 시간</th><th>병목</th></tr></thead><tbody>
+  <tr><td>corp_code 매핑 (1회)</td><td>1 req</td><td>~5초</td><td>zip 다운로드</td></tr>
+  <tr><td>list.json 조회</td><td>381 req (또는 127 req — 기업별 조회 시)</td><td>~2-5분</td><td>rate limit</td></tr>
+  <tr><td>document.xml 다운로드</td><td>최대 381 req</td><td>~15-30분</td><td>rate limit + 응답 크기</td></tr>
+  <tr><td>섹션 추출 + passage 후보</td><td>로컬 처리</td><td>~10분</td><td>CPU</td></tr>
+  <tr><th>총합</th><th></th><th>30~45분</th><th></th></tr>
+  </tbody></table>
+  <div class="callout info"><strong>실행 전략</strong> — 한 번에 381건을 처리하지 말고, 50건씩 끊어서 실행 → log 확인 → 다음 50건. 실패율 모니터링.</div>
+</section>
+
+<section class="section" data-section="setup">
+  <h2>환경 셋업 — uv (로컬) + pip (Colab)</h2>
+  <p class="section-intro">사용자 환경에 따라 두 가지 경로. 두 경로 모두 같은 패키지 버전을 보장하기 위해 <code>pyproject.toml</code>과 <code>requirements.txt</code>를 동기화 유지.</p>
+  <h3>Path A — 로컬 (uv)</h3>
+  <div class="card purple"><pre># 1. uv 설치 (한 번만)
+# Windows PowerShell:
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# macOS/Linux:
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 2. 가상환경 생성
+cd unstructured-data-processing-final-project
+uv venv                              # .venv 자동 생성
+
+# 3. 의존성 설치
+uv pip install -e .                  # pyproject.toml 기반
+# 또는
+uv pip install -r requirements.txt   # requirements.txt 기반 (둘 다 가능)
+
+# 4. 활성화
+.venv\Scripts\activate               # Windows
+source .venv/bin/activate            # macOS/Linux
+
+# 5. nbstripout (한 번만)
+nbstripout --install
+
+# 6. .env 파일
+cp .env.example .env                 # OPENDART_API_KEY 입력
+
+# 7. 노트북 실행
+uv run jupyter lab                   # 또는 그냥 jupyter lab</pre></div>
+  <h3>Path B — Colab (pip)</h3>
+  <div class="card info"><pre># Colab 첫 셀에 붙여넣기
+!git clone https://github.com/mygithub05253/unstructured-data-processing-final-project.git
+%cd unstructured-data-processing-final-project
+
+!pip install -r requirements.txt -q
+
+# .env 대신 Colab Secrets 사용
+from google.colab import userdata
+import os
+os.environ["OPENDART_API_KEY"] = userdata.get("OPENDART_API_KEY")
+
+# 또는 임시로 (커밋 ❌)
+# os.environ["OPENDART_API_KEY"] = "your_key_here"</pre></div>
+  <h3>uv vs pip 비교</h3>
+  <table class="clean"><thead><tr><th>항목</th><th>uv (로컬)</th><th>pip (Colab)</th></tr></thead><tbody>
+  <tr><td>설치 속도</td><td>~5초 (Rust 기반, 10-100배 빠름)</td><td>~30-60초</td></tr>
+  <tr><td>lock 파일</td><td><code>uv.lock</code> (재현성 ⭐⭐⭐⭐⭐)</td><td>없음 (수동)</td></tr>
+  <tr><td>가상환경</td><td>자동 (<code>.venv</code>)</td><td>Colab은 시스템 Python</td></tr>
+  <tr><td>의존성 충돌</td><td>자동 해결</td><td>수동 (가끔 깨짐)</td></tr>
+  <tr><td>Colab 호환</td><td>❌ (Colab은 pip 만)</td><td>✅</td></tr>
+  </tbody></table>
+  <div class="callout warn"><strong>requirements.txt 동기화</strong> — pyproject.toml의 dependencies를 수정했으면 <code>uv pip compile pyproject.toml -o requirements.txt</code>로 동기화하거나 수동 반영. Colab 사용자가 깨지지 않게.</div>
+  <h3>API key 보호 — 가장 자주 일어나는 실수</h3>
+  <div class="card must"><div class="track-label">🔴 절대 금지</div><ul><li>❌ <code>api_key = "ABCD1234..."</code>를 코드에 직접 적음</li><li>❌ <code>print(api_key)</code> 또는 <code>print(response.url)</code>로 URL에 키 노출</li><li>❌ Colab 노트북을 GitHub에 그대로 푸시 (출력 셀에 키 포함 가능)</li></ul><h4 style="margin: 12px 0 4px;">✅ 권장 방식</h4><pre>import os
+from dotenv import load_dotenv
+load_dotenv()  # .env 파일 로드
+
+api_key = os.getenv("OPENDART_API_KEY")
+if not api_key:
+    raise ValueError("OPENDART_API_KEY가 .env에 없습니다")
+
+# requests 호출 시 params로 전달 (URL 출력 시에도 마스킹 필요)
+res = requests.get(URL, params={"crtfc_key": api_key, ...})
+# res.url 출력 금지!</pre></div>
+</section>
+
+<section class="section" data-section="quickstart">
+  <h2>Quick Start — 오늘 시작하는 방법</h2>
+  <p class="section-intro">팀 4명이 각자 자기 폴더에서 Phase 1 파일럿을 시작하는 30분 가이드.</p>
+  <h3>Step 0 — 사전 확인 (5분)</h3>
+  <div class="card info"><ul><li>[ ] GitHub 레포 clone 완료</li><li>[ ] Python 3.10+ 설치 (<code>python --version</code>)</li><li>[ ] OpenDART API key 발급 완료 (<code>https://opendart.fss.or.kr</code>)</li><li>[ ] uv 설치 (로컬) 또는 Colab 접근 (브라우저)</li></ul></div>
+  <h3>Step 1 — 환경 셋업 (5분)</h3>
+  <div class="card"><pre># 로컬 (uv)
+cd unstructured-data-processing-final-project
+uv venv
+uv pip install -e .
+nbstripout --install
+
+# .env 파일 만들기
+echo "OPENDART_API_KEY=your_actual_key_here" > .env
+
+# Colab — 노트북에서 첫 셀
+# (위 환경 셋업 탭 Path B 참고)</pre></div>
+  <h3>Step 2 — 개인 브랜치·폴더 (5분)</h3>
+  <div class="card purple"><pre>git checkout main
+git pull
+git checkout -b experiment/A-pilot-005930-2024     # 이니셜 변경
+
+mkdir -p notebooks/individual/A                     # 이니셜 변경
+
+# 노트북 파일 생성
+cp notebooks/01_collection.ipynb notebooks/individual/A/01-A-pilot-005930-2024.ipynb
+# 또는 빈 노트북 생성 후 수집 가이드 보면서 작성</pre></div>
+  <h3>Step 3 — 파일럿 실행 (15분)</h3>
+  <div class="card could"><ul><li>[ ] Cell 1: 환경 셋업 (API key 로드)</li><li>[ ] Cell 2: corp_code 매핑 → 005930 → 00126380 확인</li><li>[ ] Cell 3: list.json 호출 → "사업보고서 (2024.12)" 필터 → rcept_no 출력</li><li>[ ] Cell 4: document.xml zip 다운로드 → <code>data/raw/</code>에 저장</li><li>[ ] Cell 5: 섹션 추출 → 각 섹션 길이 출력</li><li>[ ] Cell 6: ESG passage 후보 추출 → top 10 출력</li><li>[ ] Cell 7: viewer URL 출력 → 브라우저에서 직접 확인</li><li>[ ] Cell 8: collection_log 1행 append</li></ul></div>
+  <h3>Step 4 — 커밋 & PR 없음 (탐색 단계)</h3>
+  <div class="card"><pre>git add notebooks/individual/A/
+git commit -m "experiment: A pilot 005930-2024 수집 시도"
+git push -u origin experiment/A-pilot-005930-2024
+
+# Phase 1은 PR·머지 안 함. archive 보관만.
+# 회고 후 best practice만 Phase 2 표준에 반영.</pre></div>
+  <h3>주간 회고 어젠다 (30분, Phase 1 종료 시)</h3>
+  <div class="card purple"><ol style="margin: 0; padding-left: 20px;"><li>4명 각자 결과 공유 — 성공? 막힌 곳?</li><li>실행 시간 비교 — 누구 코드가 가장 빨랐나, 가장 안정적이었나</li><li>섹션 추출 정확도 비교 — viewer URL과 대조한 결과</li><li>Phase 2 표준 결정 — rate limit, 캐시 위치, 정규식 패턴, log 컬럼</li><li>다음 단계 진입 — 4명이 동일 코드 베이스로 합쳐서 전체 수집 시작</li></ol></div>
+  <div class="callout success"><strong>이 가이드 완료 시점에서 가능한 것</strong><ul style="margin: 8px 0 0; padding-left: 20px;"><li>✅ DART API 호출 4종 (corpCode, list, document, fnltt)을 직접 작성</li><li>✅ 1개 firm-year의 사업보고서 원본·섹션·passage 보유</li><li>✅ collection_log.csv 1행 작성</li><li>✅ viewer URL로 정합성 검증 완료</li><li>✅ Phase 2 전체 배치 설계 준비 완료</li></ul></div>
+</section>
+
+<footer>
+  <p><strong>출처</strong> — 교수님 가이드 (01-04 md), CONTRIBUTING.md (브랜치·PR), data/README.md (lineage), Week 4 강의 (requests·BS4·MCP), Week 10 강의 (DART MCP·CLI). 학술: Li et al. 2021 RFS · Bao et al. 2024. 공개 코드: dart-fss · opendart-py.</p>
+  <p>v0.2 · 2026-05-15 작성 · 크롤링 허용 매트릭스(10항목) 합의 완료 · Phase 1 파일럿 시작점 005930 × 2024</p>
+</footer>
+
+</div>
+
+<script>
+const tabs = document.querySelectorAll('nav.tabs button');
+const sections = document.querySelectorAll('section.section');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    tabs.forEach(b => b.classList.toggle('active', b === btn));
+    sections.forEach(s => s.classList.toggle('active', s.dataset.section === target));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>

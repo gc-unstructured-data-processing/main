@@ -1,0 +1,92 @@
+[project]
+name = "esg-dart-final-project"
+version = "0.1.0"
+description = "ESG DART 기말 프로젝트 — DART 사업보고서의 ESG 언어와 KCGS 등급의 연관성 분석 (가천대 비정형데이터분석 2026 1학기)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "ESG DART Team A·B·C·D" }
+]
+
+dependencies = [
+    # 데이터 처리
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "scipy>=1.10",
+
+    # DART 수집
+    "requests>=2.31",
+    "python-dotenv>=1.0",
+    "lxml>=4.9",
+    "beautifulsoup4>=4.12",
+
+    # 한국어 형태소 분석
+    "konlpy>=0.6.0",
+
+    # Word embedding
+    "gensim>=4.3",
+
+    # 텍스트 벡터화 + 회귀
+    "scikit-learn>=1.3",
+    "statsmodels>=0.14",
+
+    # 시각화
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+    "koreanize-matplotlib>=0.1.1",
+    "plotly>=5.18",
+
+    # 노트북
+    "jupyter>=1.0",
+    "ipykernel>=6.25",
+    "nbstripout>=0.6",
+    "tqdm>=4.66",
+
+    # 진행 추적·로깅
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+]
+dev = [
+    "ruff>=0.4",
+    "ipython>=8.12",
+]
+
+# ──────────────────────────────────────────
+# uv 전용 설정 (로컬 개발)
+#
+# 사용법:
+#   uv venv                          # 가상환경 생성 (.venv 자동)
+#   uv pip install -e .              # 의존성 설치
+#   uv pip install -e ".[test,dev]"  # 테스트·개발 도구 포함
+#
+# Colab 사용 시:
+#   !pip install -r requirements.txt
+# ──────────────────────────────────────────
+
+[tool.uv]
+# uv 캐시·해결 옵션
+dev-dependencies = [
+    "pytest>=7.4",
+    "ruff>=0.4",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]  # 줄 길이는 black/포매터에 위임
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]

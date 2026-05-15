@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESG DART 기말 프로젝트 — 역할 분담 재설계 v0.1</title>
+<style>
+:root {
+  --bg: #fafaf7;
+  --bg-card: #ffffff;
+  --bg-soft: #f3f1ea;
+  --bg-warn: #fff7ed;
+  --bg-danger: #fef2f2;
+  --bg-info: #eff6ff;
+  --bg-success: #f0fdf4;
+  --bg-purple: #f5f3ff;
+  --text-primary: #1c1c1a;
+  --text-secondary: #5a5a55;
+  --text-muted: #8a8a85;
+  --text-warn: #b45309;
+  --text-danger: #b91c1c;
+  --text-info: #1d4ed8;
+  --text-success: #15803d;
+  --text-purple: #6d28d9;
+  --border: rgba(0,0,0,0.10);
+  --border-strong: rgba(0,0,0,0.18);
+  --accent: #4338ca;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 80px; }
+header.hero { border-bottom: 0.5px solid var(--border); padding-bottom: 24px; margin-bottom: 24px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+h1 { font-size: 26px; font-weight: 500; margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { font-size: 15px; color: var(--text-secondary); margin: 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.chip strong { font-weight: 500; color: var(--text-primary); }
+
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--bg-soft); border-radius: 12px; margin-bottom: 28px; position: sticky; top: 12px; z-index: 10; border: 0.5px solid var(--border); }
+nav.tabs button { flex: 1 1 auto; min-width: 110px; padding: 9px 12px; border: none; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; font-family: inherit; }
+nav.tabs button:hover { background: rgba(255,255,255,0.6); color: var(--text-primary); }
+nav.tabs button.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+.section { display: none; animation: fade 0.25s ease; }
+.section.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+h2 { font-size: 20px; font-weight: 500; margin: 0 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 17px; font-weight: 500; margin: 28px 0 10px; color: var(--text-primary); }
+h4 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; color: var(--text-primary); }
+.section-intro { color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; max-width: 760px; }
+
+.card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 14px; }
+.card.must   { background: var(--bg-danger); border-color: rgba(239,68,68,0.25); }
+.card.should { background: var(--bg-warn);   border-color: rgba(245,158,11,0.25); }
+.card.could  { background: var(--bg-success);border-color: rgba(34,197,94,0.25); }
+.card.info   { background: var(--bg-info);   border-color: rgba(37,99,235,0.25); }
+.card.purple { background: var(--bg-purple); border-color: rgba(124,58,237,0.25); }
+.card.soft   { background: var(--bg-soft); border: none; }
+.card .track-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.card.must   .track-label { color: var(--text-danger); }
+.card.should .track-label { color: var(--text-warn); }
+.card.could  .track-label { color: var(--text-success); }
+.card.info   .track-label { color: var(--text-info); }
+.card.purple .track-label { color: var(--text-purple); }
+.card h4 { margin-top: 0; }
+.card ul { margin: 6px 0 8px; padding-left: 22px; color: var(--text-secondary); font-size: 14px; }
+.card li { margin-bottom: 6px; }
+.card li strong { color: var(--text-primary); font-weight: 500; }
+.card code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; background: rgba(0,0,0,0.05); padding: 1px 6px; border-radius: 4px; color: var(--text-primary); }
+.card pre { background: rgba(0,0,0,0.04); padding: 12px 14px; border-radius: 6px; font-size: 12.5px; color: var(--text-primary); overflow-x: auto; margin: 6px 0; line-height: 1.5; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+
+table.clean { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 10px 0; }
+table.clean th, table.clean td { text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+table.clean th { font-weight: 500; color: var(--text-muted); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--bg-soft); }
+table.clean tr:last-child td { border-bottom: none; }
+
+.callout { border-left: 3px solid var(--accent); background: var(--bg-card); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 14px; color: var(--text-secondary); }
+.callout strong { color: var(--text-primary); font-weight: 500; }
+.callout.warn   { border-left-color: #d97706; background: var(--bg-warn); }
+.callout.danger { border-left-color: #dc2626; background: var(--bg-danger); }
+.callout.info   { border-left-color: #2563eb; background: var(--bg-info); }
+.callout.success{ border-left-color: #16a34a; background: var(--bg-success); }
+.callout.purple { border-left-color: #7c3aed; background: var(--bg-purple); }
+
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); font-weight: 500; margin-right: 4px; }
+.badge.lead { background: #fef2f2; color: #b91c1c; }
+.badge.co { background: #fff7ed; color: #b45309; }
+.badge.review { background: #f0fdf4; color: #15803d; }
+.badge.support { background: #f0f9ff; color: #0369a1; }
+.badge.A { background: #ecfdf5; color: #047857; }
+.badge.B { background: #eff6ff; color: #1d4ed8; }
+.badge.C { background: #f5f3ff; color: #6d28d9; }
+.badge.D { background: #fff7ed; color: #b45309; }
+
+.analogy { background: linear-gradient(180deg, rgba(67,56,202,0.04), transparent); border: 0.5px dashed rgba(67,56,202,0.3); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 13.5px; color: var(--text-secondary); }
+.analogy strong { color: var(--accent); }
+.analogy::before { content: "💡 비유로 이해하기 — "; font-weight: 600; color: var(--accent); font-size: 12px; letter-spacing: 0.04em; }
+
+.phase-card { background: var(--bg-card); border: 0.5px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+.phase-card.p1 { border-left-color: #7c3aed; background: var(--bg-purple); }
+.phase-card.p2 { border-left-color: #2563eb; background: var(--bg-info); }
+.phase-card.p3 { border-left-color: #16a34a; background: var(--bg-success); }
+.phase-card h4 { margin: 0 0 8px; font-size: 15px; }
+.phase-card .phase-when { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+.role-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px 18px; }
+.role-card h4 { margin: 0 0 4px; font-size: 14px; }
+.role-card .role-tag { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+.role-card ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-secondary); }
+.role-card li { margin-bottom: 3px; }
+
+footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">비정형데이터분석 · 기말 팀 프로젝트 · 역할 분담 재설계 v0.1</div>
+  <h1>역할 분담 재설계 — 4명 전원 참여 모델</h1>
+  <p class="sub">README의 A·B·C·D 분담을 <strong>"한 사람이 한 분야"</strong>에서 <strong>"모두가 전 단계, 단계별 lead 회전"</strong>으로 재설계. 개인 폴더 병렬 작업 + AI 병합 방식의 실무적 평가도 함께 정리했습니다.</p>
+  <div class="meta-row">
+    <span class="chip"><strong>팀 인원</strong> 4명</span>
+    <span class="chip"><strong>모델</strong> 3-Phase (탐색→생산→통합)</span>
+    <span class="chip"><strong>제출물</strong> .ipynb + .md</span>
+    <span class="chip"><strong>버전</strong> v0.1</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="overview" class="active">한 눈에 보기</button>
+  <button data-tab="old-vs-new">기존 vs 재설계</button>
+  <button data-tab="parallel-eval">개인 폴더 + AI 병합 평가</button>
+  <button data-tab="3phase">3-Phase 권장 모델</button>
+  <button data-tab="matrix">8단계 × 4명 매트릭스</button>
+  <button data-tab="folder">폴더 구조</button>
+  <button data-tab="git-flow">Git 흐름</button>
+  <button data-tab="quickstart">Quick Start</button>
+</nav>
+
+<section class="section active" data-section="overview">
+  <h2>한 페이지 요약</h2>
+  <p class="section-intro">"4명이 각자 폴더에서 전체 파이프라인을 시도하고 AI로 비교·병합한다"는 사용자 제안을 검토한 결과, <strong>탐색 기간에는 매우 좋고, 생산 기간에는 일부 수정이 필요합니다.</strong></p>
+  <div class="callout success"><strong>결론 한 줄</strong> — Phase 1(탐색): 4명이 각자 폴더에서 1-2 firm-years 파일럿. Phase 2(생산): 단계별 lead/co-lead로 효율화. Phase 3(통합): 1명이 master 정리.</div>
+  <h3>핵심 원칙 4가지</h3>
+  <div class="grid-2">
+    <div class="card info"><div class="track-label">🎯 원칙 #1</div><h4>모두가 전 단계를 경험한다</h4><p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);">한 명이 수집만, 다른 사람이 회귀만 하면 학습 효과가 비대칭. 모든 팀원이 수집·전처리·feature·회귀를 최소 1번씩 손으로 만져봅니다.</p></div>
+    <div class="card info"><div class="track-label">🎯 원칙 #2</div><h4>단계별 lead 회전</h4><p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);">전원 참여하되 각 단계에 <strong>"이번 단계 책임자(lead) 1명 + co-lead 1명"</strong>을 둬서 결정 정체를 막습니다. 4단계마다 lead가 바뀌어 4명이 한 번씩 책임을 짊어집니다.</p></div>
+    <div class="card info"><div class="track-label">🎯 원칙 #3</div><h4>개인 작업은 탐색 단계에서만 병렬</h4><p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);">파일럿(1-2 firm-years)은 각자 폴더에서 4명이 독립 시도. 본격 생산(381 행)으로 가면 코드를 하나로 합치고 PR 모델로 전환.</p></div>
+    <div class="card info"><div class="track-label">🎯 원칙 #4</div><h4>GitHub master 1명 병행</h4><p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);">PR 리뷰·머지·브랜치 정리·릴리스 노트는 한 사람이 병행. 다른 책임은 똑같이 부담하되 "조율 책임"만 추가.</p></div>
+  </div>
+  <h3>3-Phase 모델 미리보기</h3>
+  <div class="phase-card p1"><div class="phase-when">Phase 1 (1-2주차) · 탐색</div><h4>4명이 각자 폴더에서 1-2 firm-years 파일럿</h4><p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);">개인 폴더 병렬 작업 + AI 비교 → <strong>가장 깔끔한 접근법 발견</strong>. 사용자 제안한 모델이 가장 잘 작동하는 구간.</p></div>
+  <div class="phase-card p2"><div class="phase-when">Phase 2 (3-5주차) · 생산</div><h4>단계별 lead/co-lead로 381행 본격 수집·분석</h4><p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);">공용 <code>src/</code>, <code>notebooks/</code>에서 작업. <strong>병렬 작업 → PR 모델</strong>로 전환. 알파 분석만 개인 자유 영역.</p></div>
+  <div class="phase-card p3"><div class="phase-when">Phase 3 (6주차+발표 직전) · 통합</div><h4>최종 노트북·보고서를 한 명이 master로 정리</h4><p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);">개별 결과를 모아 최종 <code>.ipynb</code> + <code>.md</code> 1세트로. 나머지 3명은 동시에 발표 자료·QnA 준비.</p></div>
+</section>
+
+<section class="section" data-section="old-vs-new">
+  <h2>README 기존 분담 vs 재설계 모델</h2>
+  <p class="section-intro">기존은 한 명이 한 분야를 책임지는 "Silo 모델". 재설계는 모두가 전 단계를 거치되 단계별로 lead를 회전시키는 "Round-robin 모델".</p>
+  <h3>기존 README 분담</h3>
+  <table class="clean"><thead><tr><th>이름</th><th>주 책임</th><th>접근법</th></tr></thead><tbody><tr><td><strong>A</strong></td><td>코디네이션 · GitHub master</td><td>전반 조율, PR 관리</td></tr><tr><td><strong>B</strong></td><td>데이터 수집</td><td>OpenDART API, corp_code 채우기</td></tr><tr><td><strong>C</strong></td><td>전처리 · Feature</td><td>토큰화, TF-IDF, fastText</td></tr><tr><td><strong>D</strong></td><td>회귀 · 알파 분석</td><td>OLS/ordered logit, 알파</td></tr></tbody></table>
+  <div class="callout warn"><strong>기존 모델의 위험</strong><ul style="margin: 8px 0 0; padding-left: 20px;"><li><strong>학습 효과 비대칭</strong> — B는 회귀를 모르고, D는 수집을 모름. 발표 때 다른 영역 질문에 답을 못 함.</li><li><strong>단일 장애점</strong> — B가 막히면 수집이 멈추고, C가 막히면 feature가 멈춤. 다른 사람이 도울 손이 없음.</li><li><strong>비정형 데이터·마이닝 강조</strong>가 교수님 평가 핵심인데, 한 명만 텍스트 마이닝을 깊게 봄.</li></ul></div>
+  <h3>재설계 모델 — Round-robin lead</h3>
+  <table class="clean"><thead><tr><th>단계</th><th>Lead</th><th>Co-lead</th><th>Reviewer</th></tr></thead><tbody>
+  <tr><td>1. 수집 (corp_code→rcept_no)</td><td><span class="badge A">A</span></td><td><span class="badge B">B</span></td><td>C, D</td></tr>
+  <tr><td>2. 원문·섹션 추출</td><td><span class="badge B">B</span></td><td><span class="badge A">A</span></td><td>C, D</td></tr>
+  <tr><td>3. 전처리·토큰화</td><td><span class="badge C">C</span></td><td><span class="badge D">D</span></td><td>A, B</td></tr>
+  <tr><td>4. TF-IDF · seed score</td><td><span class="badge D">D</span></td><td><span class="badge C">C</span></td><td>A, B</td></tr>
+  <tr><td>5. fastText 확장 · θ sweep</td><td><span class="badge C">C</span></td><td><span class="badge B">B</span></td><td>A, D</td></tr>
+  <tr><td>6. 검증 통계 (Spearman, MW)</td><td><span class="badge D">D</span></td><td><span class="badge A">A</span></td><td>B, C</td></tr>
+  <tr><td>7. 회귀 (OLS/ordered/binary)</td><td><span class="badge A">A</span></td><td><span class="badge D">D</span></td><td>B, C</td></tr>
+  <tr><td>8. 알파 분석 + 한계 해석</td><td><span class="badge B">B</span></td><td><span class="badge C">C</span></td><td>A, D</td></tr>
+  </tbody></table>
+  <div class="callout info"><strong>회전 규칙</strong> — 4명이 각각 lead 2회 + co-lead 2회씩 가져갑니다. <strong>모든 단계에 4명 다 참여</strong>하되, lead는 의사결정 책임, co-lead는 검증, reviewer는 PR 확인. 회의는 단계 시작·종료 시 짧게(15분).</div>
+  <h3>이름표는 그대로, 역할 매핑만 재설계</h3>
+  <div class="grid-4">
+    <div class="role-card"><h4>A</h4><div class="role-tag">+ GitHub master 병행</div><ul><li>Lead: 수집, 회귀</li><li>Co-lead: 원문 추출, 검증</li><li>PR 머지·브랜치 정리</li></ul></div>
+    <div class="role-card"><h4>B</h4><div class="role-tag">데이터·환경 강함</div><ul><li>Lead: 원문 추출, 알파</li><li>Co-lead: 수집, fastText</li><li>collection_log 관리</li></ul></div>
+    <div class="role-card"><h4>C</h4><div class="role-tag">텍스트 처리 강함</div><ul><li>Lead: 전처리, fastText</li><li>Co-lead: TF-IDF, 알파</li><li>불용어 사전 관리</li></ul></div>
+    <div class="role-card"><h4>D</h4><div class="role-tag">통계·해석 강함</div><ul><li>Lead: TF-IDF, 검증</li><li>Co-lead: 전처리, 회귀</li><li>해석 가드레일 관리</li></ul></div>
+  </div>
+</section>
+
+<section class="section" data-section="parallel-eval">
+  <h2>사용자 제안 검토 — "개인 폴더 병렬 + AI 병합"</h2>
+  <p class="section-intro">제안 내용: <em>"사람마다 폴더를 생성해서 각각 작업하면서 AI한테 비교하면서 병합한다."</em> 실무적 관점에서 평가합니다.</p>
+  <div class="analogy">이 모델을 학원에 비유하면, <strong>4명이 같은 문제를 각자 풀고 → 강사가 답안을 비교해서 가장 좋은 풀이를 채택</strong>하는 방식입니다. 학습 효과는 매우 크지만, 만약 매주 4명 모두가 모든 문제를 풀면 시간이 4배 드는 문제가 있습니다. <strong>"어떤 단계에서 이걸 할지"</strong>가 핵심.</div>
+  <h3>✅ 장점 (이 모델이 빛나는 순간)</h3>
+  <div class="grid-2">
+    <div class="card could"><div class="track-label">장점 #1</div><h4>학습 효과 극대화</h4><p style="margin: 0; font-size: 13.5px;">4명이 각자 전 단계를 끝까지 만져봄. 발표 때 어떤 질문이 와도 답할 수 있는 깊이.</p></div>
+    <div class="card could"><div class="track-label">장점 #2</div><h4>"가장 잘된 부분 병합"으로 최종 품질↑</h4><p style="margin: 0; font-size: 13.5px;">사람마다 강점이 다름. A의 수집 코드 + C의 전처리 + D의 회귀 해석을 골라 모으면 평균을 넘는 결과.</p></div>
+    <div class="card could"><div class="track-label">장점 #3</div><h4>다양한 접근 → 알파 분석 풍부</h4><p style="margin: 0; font-size: 13.5px;">4명이 다른 θ, 다른 섹션 조합, 다른 모형을 시도하면 자연스레 알파 분석 후보가 4개 이상 쌓임.</p></div>
+    <div class="card could"><div class="track-label">장점 #4</div><h4>Git conflict 위험 ↓ (탐색 단계)</h4><p style="margin: 0; font-size: 13.5px;">개인 폴더면 충돌 자체가 일어날 일이 없음. 머지를 한 번에 의도적으로 함.</p></div>
+  </div>
+  <h3>⚠️ 위험 (이 모델이 무너지는 순간)</h3>
+  <div class="grid-2">
+    <div class="card should"><div class="track-label">위험 #1</div><h4>노동량 4배</h4><p style="margin: 0; font-size: 13.5px;">파일럿 1-2개는 괜찮지만, 381행 수집을 4명이 각자 하면 OpenDART rate limit + 시간 측면에서 비효율. <strong>특히 수집 단계는 한 번만 깔끔하게 끝내는 게 맞음.</strong></p></div>
+    <div class="card should"><div class="track-label">위험 #2</div><h4>병합 시점에 root cause 추적 어려움</h4><p style="margin: 0; font-size: 13.5px;">A의 수집 + C의 전처리 + D의 회귀를 합쳤는데 결과가 이상하면 어느 단계의 어떤 선택 때문인지 추적이 힘듦. 단일 master가 더 디버깅 쉬움.</p></div>
+    <div class="card should"><div class="track-label">위험 #3</div><h4>4명의 raw 데이터가 같은지 검증 필요</h4><p style="margin: 0; font-size: 13.5px;">각자 corp_code·rcept_no를 채웠는데 만약 다르면? 분석 corpus가 다르면 비교가 불가능. 공용 master CSV로 통일해야 함.</p></div>
+    <div class="card should"><div class="track-label">위험 #4</div><h4>AI 병합의 환각 위험</h4><p style="margin: 0; font-size: 13.5px;">AI가 4명 코드를 비교해주는 건 좋지만, 미묘한 버그·통계 가정 차이를 놓칠 수 있음. <strong>사람이 최종 결정해야 함.</strong></p></div>
+  </div>
+  <h3>💡 실무 표준 모델과 비교</h3>
+  <table class="clean"><thead><tr><th>모델</th><th>실무에서 쓰는 상황</th><th>이번 프로젝트 적합도</th></tr></thead><tbody>
+  <tr><td><strong>개인 fork → 비교 머지</strong> (사용자 제안)</td><td>오픈소스 초기 prototype, 헤커톤 첫날</td><td>🟢 파일럿 단계 매우 적합 / 🔴 생산 단계 비효율</td></tr>
+  <tr><td><strong>Feature branch + PR</strong> (GitHub flow)</td><td>대부분의 회사·팀 프로젝트</td><td>🟢 생산 단계 표준. 본 레포가 이미 이 구조로 셋업됨</td></tr>
+  <tr><td><strong>Trunk-based</strong></td><td>CI/CD 성숙도 높은 팀</td><td>🔴 이번 프로젝트엔 과함</td></tr>
+  <tr><td><strong>1명 master + 3명 검토</strong></td><td>긴급 hotfix, 단일 작성자 문서</td><td>🟡 통합 단계에만 적합</td></tr>
+  </tbody></table>
+  <div class="callout success"><strong>결론</strong> — 사용자 제안은 <strong>"틀린 게 아니라 시점이 중요한 모델"</strong>입니다. Phase 1(탐색)에서는 적극 활용, Phase 2(생산)부터는 PR 모델로 갈아탑니다. 다음 탭의 3-Phase 모델이 권장안입니다.</div>
+</section>
+
+<section class="section" data-section="3phase">
+  <h2>3-Phase 권장 모델 — 탐색·생산·통합</h2>
+  <p class="section-intro">사용자의 "개인 폴더 + AI 병합" 아이디어를 살리되, 단계별로 협업 방식을 다르게 가져갑니다.</p>
+  <div class="phase-card p1"><div class="phase-when">Phase 1 · 탐색 (M0~M1 · 1-2주)</div><h4>4명이 각자 폴더에서 파일럿 (1-2 firm-years)</h4><p style="margin: 0 0 10px; font-size: 14px;">사용자 제안 모델이 가장 잘 작동하는 구간. 각자 자신의 방식으로 end-to-end를 끝까지 통과시켜 봅니다.</p>
+  <h5 style="margin: 12px 0 6px; font-size: 13px;">구체 활동</h5>
+  <ul style="margin: 0; padding-left: 20px; font-size: 13.5px; color: var(--text-secondary);"><li>각자 <code>notebooks/individual/{이니셜}/</code> 폴더에서 작업</li><li>같은 firm-year(예: 005930-2024) 1-2개로 수집→전처리→TF-IDF→회귀까지 끝까지</li><li>매주 금요일 30분 회고: 4명의 접근법 비교, AI(Claude/ChatGPT)에 코드 diff 보여주고 차이점 정리</li><li><strong>산출물</strong>: 4명 각자의 파일럿 노트북 4개 + Phase 1 회고 보고서 1개</li></ul>
+  <div class="callout info" style="margin: 12px 0 0;"><strong>이 단계의 목표</strong> — 결과보다 <strong>학습</strong>. 각자가 어디서 막혔고, 어떤 선택을 했는지를 비교해서 Phase 2의 표준 결정.</div></div>
+  <div class="phase-card p2"><div class="phase-when">Phase 2 · 생산 (M1~M3 · 3-5주)</div><h4>단계별 lead/co-lead로 381행 본격 작업</h4><p style="margin: 0 0 10px; font-size: 14px;">개인 폴더 시대를 끝내고 공용 <code>src/</code>, <code>notebooks/</code>로 통합. 단계별 lead가 PR을 주도합니다.</p>
+  <h5 style="margin: 12px 0 6px; font-size: 13px;">구체 활동</h5>
+  <ul style="margin: 0; padding-left: 20px; font-size: 13.5px; color: var(--text-secondary);"><li>각 단계 lead가 <code>feature/{단계}-{이슈}</code> 브랜치에서 작업</li><li>co-lead는 매일 코드 리뷰 (PR 시 별도 의견)</li><li>나머지 2명은 reviewer (위반금지 체크리스트 + 결과 합리성 확인)</li><li>알파 분석은 <strong>개인 자유 영역</strong> — <code>experiment/{이니셜}-{주제}</code> 브랜치에서 각자 시도</li><li><strong>산출물</strong>: 통합 <code>notebooks/01_collection.ipynb</code>, <code>02_preprocessing.ipynb</code>, <code>03_features.ipynb</code>, <code>04_regression.ipynb</code> + 4명의 알파 노트북</li></ul>
+  <div class="callout warn" style="margin: 12px 0 0;"><strong>Phase 2에서 사라지는 것</strong> — 개인 폴더(<code>notebooks/individual/</code>)는 archive로 이동. 모든 새 코드는 공용 브랜치에.</div></div>
+  <div class="phase-card p3"><div class="phase-when">Phase 3 · 통합 (M3~M4 · 1주)</div><h4>최종 .ipynb + .md를 한 명이 master로 정리</h4><p style="margin: 0 0 10px; font-size: 14px;">통합 노트북 4개를 하나의 <strong>제출용 .ipynb</strong>로 합치고, 알파 분석 1개를 선별해 보고서에 추가합니다.</p>
+  <h5 style="margin: 12px 0 6px; font-size: 13px;">분담</h5>
+  <table class="clean" style="margin: 0;"><thead><tr><th>활동</th><th>담당</th></tr></thead><tbody>
+  <tr><td>최종 노트북 통합 (master)</td><td>A (GitHub master)</td></tr>
+  <tr><td>보고서 .md 작성 (데이터·방법 섹션)</td><td>B, C</td></tr>
+  <tr><td>보고서 .md 작성 (결과·한계 섹션)</td><td>D</td></tr>
+  <tr><td>발표 자료 (Marp/슬라이드)</td><td>전원 (섹션 분담)</td></tr>
+  <tr><td>QnA 대비 (<code>QNA_발표대비.html</code> 정독)</td><td>전원</td></tr>
+  <tr><td>API key·재현성 최종 점검</td><td>A + reviewer 1명</td></tr>
+  </tbody></table>
+  <div class="callout success" style="margin: 12px 0 0;"><strong>제출 직전 체크</strong> — <code>04_submission_and_evaluation.md</code>의 §2-1 체크리스트 8항목을 4명이 함께 통과시킵니다.</div></div>
+  <h3>Phase 전환 트리거</h3>
+  <table class="clean"><thead><tr><th>전환</th><th>트리거 조건</th></tr></thead><tbody>
+  <tr><td>Phase 1 → 2</td><td>4명 모두 1-2 firm-year 파일럿을 end-to-end 통과 + Phase 1 회고 보고서 작성</td></tr>
+  <tr><td>Phase 2 → 3</td><td>4개 통합 노트북 + 검증 통계 + 회귀 결과 1개 완성 + 알파 분석 1개 이상</td></tr>
+  </tbody></table>
+</section>
+
+<section class="section" data-section="matrix">
+  <h2>8단계 × 4명 매트릭스</h2>
+  <p class="section-intro">단계별로 누가 어떤 책임을 가지는지 한 표로 정리. 회의 시 옆에 두고 진행.</p>
+  <table class="clean"><thead><tr><th>#</th><th>단계</th><th>Lead 책임</th><th>Co-lead 검증</th><th>Reviewer 확인</th><th>마일스톤</th></tr></thead><tbody>
+  <tr><td>1</td><td><strong>수집</strong> stock_code→corp_code→rcept_no</td><td><span class="badge A">A</span> 식별자 채우기, 실패 행 collection_log 작성</td><td><span class="badge B">B</span> rate limit·backoff 점검</td><td><span class="badge C">C</span>, <span class="badge D">D</span> stock_code 기준 join 확인</td><td>M1</td></tr>
+  <tr><td>2</td><td><strong>원문 다운로드 & 섹션 추출</strong></td><td><span class="badge B">B</span> document.xml zip 저장, II/IV/VI 발췌 로직</td><td><span class="badge A">A</span> 추출 결과 viewer URL 비교</td><td><span class="badge C">C</span>, <span class="badge D">D</span> 섹션 누락 확인</td><td>M1</td></tr>
+  <tr><td>3</td><td><strong>전처리·토큰화</strong></td><td><span class="badge C">C</span> 형태소 분석기 선택, 불용어 사전 보강</td><td><span class="badge D">D</span> 회사명·도메인 불용어 추가</td><td><span class="badge A">A</span>, <span class="badge B">B</span> 토큰 샘플 검토</td><td>M2</td></tr>
+  <tr><td>4</td><td><strong>TF-IDF · seed score</strong></td><td><span class="badge D">D</span> sklearn TfidfVectorizer, seed_tfidf 계산</td><td><span class="badge C">C</span> ngram·min_df 파라미터 검토</td><td><span class="badge A">A</span>, <span class="badge B">B</span> 점수 분포 sanity check</td><td>M2</td></tr>
+  <tr><td>5</td><td><strong>fastText 확장 · θ sweep</strong></td><td><span class="badge C">C</span> fastText 학습, θ 5개 sweep, 상위 100 단어 검토</td><td><span class="badge B">B</span> 회사명·일반명사 manual 제거</td><td><span class="badge A">A</span>, <span class="badge D">D</span> expanded_tfidf 변화 비교</td><td>M2</td></tr>
+  <tr><td>6</td><td><strong>검증 통계</strong> Spearman + t-test/MW</td><td><span class="badge D">D</span> scipy.stats로 ρ·p-value 표 작성</td><td><span class="badge A">A</span> 상위/하위 그룹 분리 기준 합의</td><td><span class="badge B">B</span>, <span class="badge C">C</span> 효과 크기 해석</td><td>M3</td></tr>
+  <tr><td>7</td><td><strong>회귀</strong> OLS/ordered/binary 중 선택</td><td><span class="badge A">A</span> statsmodels로 회귀 + 모형 선택 정당화</td><td><span class="badge D">D</span> word_count 통제, 다중공선성 점검</td><td><span class="badge B">B</span>, <span class="badge C">C</span> 결과 해석 검토</td><td>M3</td></tr>
+  <tr><td>8</td><td><strong>알파 + 한계 해석</strong></td><td><span class="badge B">B</span> 알파 주제 1개 통합 + 한계 문단 작성</td><td><span class="badge C">C</span> cheap-talk 가설 점검</td><td><span class="badge A">A</span>, <span class="badge D">D</span> 최종 정합성</td><td>M4</td></tr>
+  </tbody></table>
+  <div class="callout info"><strong>핵심 원칙 — Lead 회전</strong> 4명 각각 lead 2회 · co-lead 2회씩. <strong>모든 단계에 4명 다 참여</strong>하되 의사결정 책임만 lead에게.</div>
+  <h3>알파 분석은 개인 자유 영역</h3>
+  <div class="grid-4">
+    <div class="role-card"><h4>A의 알파 후보</h4><ul><li>섹션별(II/IV/VI) 점수 분리 회귀</li><li>업종별(KRX 분류) 결과 비교</li></ul></div>
+    <div class="role-card"><h4>B의 알파 후보</h4><ul><li>정정공시 vs 원공시 표현 차이</li><li>접수일 ↔ 등급 발표일 timing 분석</li></ul></div>
+    <div class="role-card"><h4>C의 알파 후보</h4><ul><li>dense embedding(SBERT) cosine</li><li>토픽모델링(LDA) 보조</li></ul></div>
+    <div class="role-card"><h4>D의 알파 후보</h4><ul><li>cheap-talk 변수 통제 강화</li><li>E·S·G 별도 회귀로 차원 분해</li></ul></div>
+  </div>
+</section>
+
+<section class="section" data-section="folder">
+  <h2>폴더 구조 — Phase 1과 Phase 2의 차이</h2>
+  <p class="section-intro">사용자 제안한 "사람마다 폴더 생성" 모델은 <strong>Phase 1에서만</strong> 적용. Phase 2부터는 공용 폴더로 합칩니다.</p>
+  <h3>Phase 1 (탐색) — 개인 폴더 병렬</h3>
+  <div class="card purple"><pre>unstructured-data-processing-final-project/
+├── notebooks/
+│   └── individual/                  ← Phase 1 전용 (개인 자유 영역)
+│       ├── A/
+│       │   ├── 01-A-pilot-005930-2024.ipynb
+│       │   └── notes-A.md
+│       ├── B/
+│       │   └── 01-B-pilot-005930-2024.ipynb
+│       ├── C/
+│       │   └── 01-C-pilot-005930-2024.ipynb
+│       └── D/
+│           └── 01-D-pilot-005930-2024.ipynb
+├── src/                             ← Phase 1엔 손대지 않음
+└── data/                            ← 공용 (모두 동일)</pre><p style="margin: 8px 0 0; font-size: 13px; color: var(--text-secondary);"><strong>충돌 없음</strong> — 각자 독립 폴더라 git 충돌이 거의 안 일어남. 매주 회고 회의에서 4개 노트북을 한꺼번에 비교.</p></div>
+  <h3>Phase 2 (생산) — 공용 폴더 표준화</h3>
+  <div class="card info"><pre>unstructured-data-processing-final-project/
+├── notebooks/
+│   ├── 01_collection.ipynb          ← Lead: A · Co: B
+│   ├── 02_preprocessing.ipynb       ← Lead: C · Co: D
+│   ├── 03_features.ipynb            ← Lead: D, C · Co: 회전
+│   ├── 04_regression.ipynb          ← Lead: A · Co: D
+│   ├── experiments/                 ← 알파 분석 (개인 자유 영역)
+│   │   ├── A-section-split.ipynb
+│   │   ├── B-amendment-vs-original.ipynb
+│   │   ├── C-sbert-cosine.ipynb
+│   │   └── D-cheap-talk-control.ipynb
+│   └── individual/_archive/         ← Phase 1 자료 (참고용)
+├── src/
+│   ├── collection.py                ← 공용 함수
+│   ├── preprocessing.py
+│   ├── features.py
+│   └── regression.py
+└── data/
+    ├── company_master.csv           ← 공용 (식별자 채운 버전)
+    └── interim/, feature/, raw/     ← gitignore (각자 캐시)</pre></div>
+  <h3>Phase 3 (통합) — 최종 제출 폴더</h3>
+  <div class="card could"><pre>unstructured-data-processing-final-project/
+├── notebooks/
+│   └── FINAL_esg_dart_analysis.ipynb  ← 모든 단계 1개로 합침
+├── reports/
+│   ├── REPORT.md                       ← 최종 보고서
+│   └── presentation.md                 ← Marp 슬라이드
+└── docs/supplements/versions/
+    ├── v0.1/                           ← 현재 (분석+역할분담)
+    ├── v0.2/                           ← Phase 2 진입 시 업데이트
+    └── ...</pre></div>
+  <div class="callout warn"><strong>주의 — gitignore</strong> <code>data/raw/</code>, <code>data/interim/</code>, <code>data/feature/</code>는 용량 커서 .gitignore. 각자 OpenDART에서 받아 캐시.</div>
+</section>
+
+<section class="section" data-section="git-flow">
+  <h2>Git/PR 흐름</h2>
+  <p class="section-intro">CONTRIBUTING.md에 정의된 흐름을 3-Phase 모델에 맞게 풀어 씁니다.</p>
+  <h3>Phase 1 — 개인 브랜치 기반</h3>
+  <div class="card purple"><pre>main
+ ├── experiment/A-pilot-005930-2024     # A 개인 파일럿
+ ├── experiment/B-pilot-005930-2024     # B 개인 파일럿
+ ├── experiment/C-pilot-005930-2024     # C 개인 파일럿
+ └── experiment/D-pilot-005930-2024     # D 개인 파일럿
+
+머지 정책: experiment/* 브랜치는 main에 머지하지 않음 (archive로 보관 가능)
+           Phase 1 회고 후 best practice만 Phase 2에 반영</pre></div>
+  <h3>Phase 2 — feature 브랜치 + PR</h3>
+  <div class="card info"><pre>main
+ ├── feature/preprocessing-okt-tokenize    # Lead: C, Co: D
+ ├── feature/tfidf-seed-score              # Lead: D, Co: C
+ ├── feature/fasttext-theta-sweep          # Lead: C, Co: B
+ ├── feature/regression-ordered-logit      # Lead: A, Co: D
+ └── experiment/D-cheap-talk-control       # 알파 (개인)
+
+PR 흐름:
+ 1. lead가 branch 따서 작업
+ 2. co-lead가 매일 review
+ 3. PR 시 reviewer 2명도 위반금지 체크리스트 확인
+ 4. 머지 (squash merge 권장) → 브랜치 삭제</pre></div>
+  <h3>PR 시 위반금지 체크리스트 (CONTRIBUTING.md 발췌)</h3>
+  <div class="card must"><ul><li>[ ] 실패 행을 가짜 0으로 채우지 않았다</li><li>[ ] 회사명 join 없이 <code>stock_code</code> 기준</li><li>[ ] API key가 코드/노트북 출력에 노출되지 않았다</li><li>[ ] <code>esg_year = fiscal_year + 1</code> 고정</li><li>[ ] fastText 후보 단어를 사람이 직접 검토했다 (Phase 2 단계 5 PR 한정)</li><li>[ ] seed_tfidf + expanded_tfidf 동시 회귀 없음 (단계 7 PR 한정)</li></ul></div>
+  <h3>노트북 충돌 방지 (필수)</h3>
+  <div class="card should"><pre># 셋업 (한 번만)
+pip install nbstripout
+nbstripout --install
+
+# 효과: commit 시 셀 출력이 자동 제거되어 diff가 깔끔해짐
+# 최종 제출 직전에만 출력을 살린 ipynb를 별도로 생성</pre></div>
+  <h3>커밋 메시지 컨벤션</h3>
+  <table class="clean"><thead><tr><th>type</th><th>용도</th><th>예시</th></tr></thead><tbody>
+  <tr><td><code>feat</code></td><td>새 기능·분석</td><td><code>feat: fastText θ=0.80 sweep + manual curation</code></td></tr>
+  <tr><td><code>fix</code></td><td>버그 수정</td><td><code>fix: rate limit backoff timing</code></td></tr>
+  <tr><td><code>docs</code></td><td>문서</td><td><code>docs: v0.2 supplements 업데이트</code></td></tr>
+  <tr><td><code>data</code></td><td>데이터(raw 제외)</td><td><code>data: collection_log 누락 행 12개 보강</code></td></tr>
+  <tr><td><code>experiment</code></td><td>알파(병합 안 할 수도)</td><td><code>experiment: D-cheap-talk 변수 추가 시도</code></td></tr>
+  </tbody></table>
+</section>
+
+<section class="section" data-section="quickstart">
+  <h2>Quick Start — 오늘 당장 할 일</h2>
+  <p class="section-intro">팀 4명이 이 HTML을 같이 보면서 합의해야 할 항목들.</p>
+  <h3>1. 합의 사항 (회의 30분)</h3>
+  <div class="card info"><ul><li>[ ] 3-Phase 모델 채택 여부 (또는 다른 모델)</li><li>[ ] 4명의 lead 회전표 확정 (8단계 × 4명)</li><li>[ ] GitHub master 1명 확정 (PR 머지 권한)</li><li>[ ] 마일스톤 M1~M4 날짜 (README의 빈 칸 채우기)</li><li>[ ] Phase 1 파일럿 firm-year 선택 (예: 005930-2024 1개 공통 + 각자 1개 추가)</li><li>[ ] 매주 회의 시간·요일 (Phase 1 회고 ~30분 + Phase 2 짧은 standup)</li></ul></div>
+  <h3>2. 환경 셋업 (각자)</h3>
+  <div class="card should"><pre>git clone https://github.com/mygithub05253/unstructured-data-processing-final-project.git
+cd unstructured-data-processing-final-project
+
+python -m venv .venv
+.venv\Scripts\activate                    # Windows
+# source .venv/bin/activate                # Mac/Linux
+
+pip install -r requirements.txt
+pip install nbstripout
+nbstripout --install
+
+cp .env.example .env                        # .env에 OPENDART_API_KEY 입력</pre></div>
+  <h3>3. Phase 1 시작 (각자)</h3>
+  <div class="card purple"><pre># 각자 자기 폴더 만들기
+mkdir -p notebooks/individual/A           # 자기 이니셜로
+
+# experiment 브랜치 따기
+git checkout -b experiment/A-pilot-005930-2024
+
+# 노트북 생성
+touch notebooks/individual/A/01-A-pilot-005930-2024.ipynb
+
+# 작업 → 커밋 → push
+git add notebooks/individual/A/
+git commit -m "experiment: A pilot 005930-2024 수집 시도"
+git push -u origin experiment/A-pilot-005930-2024</pre></div>
+  <h3>4. Phase 1 회고 (주 1회)</h3>
+  <div class="card could"><ul><li>[ ] 4명이 같은 firm-year(005930-2024)를 분석한 노트북 4개를 나란히 띄우고 비교</li><li>[ ] AI(Claude/ChatGPT)에 4명 노트북 diff 보여주고 "어떤 차이가 의미 있는지" 정리</li><li>[ ] 각자 막힌 지점 공유 (DART rate limit, 섹션 추출 실패, 형태소 분석기 차이 등)</li><li>[ ] Phase 2에서 채택할 표준 결정 (예: 형태소 분석기는 Pecab, θ는 0.80, 회귀는 ordered logit)</li><li>[ ] Phase 1 회고 보고서를 <code>docs/supplements/versions/v0.2/PHASE1_회고.md</code>에 작성</li></ul></div>
+  <h3>5. Phase 2 전환 체크</h3>
+  <div class="card info"><ul><li>[ ] 4명 모두 파일럿 end-to-end 통과</li><li>[ ] Phase 1 회고로 표준 결정 합의</li><li>[ ] 개인 폴더(<code>notebooks/individual/</code>)를 archive로 이동</li><li>[ ] 공용 <code>notebooks/01_collection.ipynb</code> 등 4개 셰자레톤 노트북 생성</li><li>[ ] <code>src/</code> 폴더에 공용 함수 시드 (collection, preprocessing, features, regression)</li><li>[ ] 마일스톤 M2 → M3 일정 재점검</li></ul></div>
+  <h3>최종 제출 직전 (Phase 3 끝물)</h3>
+  <div class="callout danger"><strong>제출 직전 마지막 점검 (04 md §2-1)</strong><ul style="margin: 8px 0 0; padding-left: 20px;"><li>[ ] 최대 381행 기준 수집 시도, 실패 행 collection_log 기록</li><li>[ ] 각 행 corp_code·rcept_no·fiscal_year 올바르게 연결</li><li>[ ] 노트북 위에서 아래로 실행해도 재현</li><li>[ ] API key 코드/출력 노출 없음 (.env만)</li><li>[ ] 섹션(II/IV/VI)·feature·회귀모형 선택 이유 보고서에 명시</li><li>[ ] 인과관계 아닌 연관성으로 해석</li></ul></div>
+</section>
+
+<footer>
+  <p><strong>출처</strong> — README.md (기존 분담), CONTRIBUTING.md (브랜치·PR), 04_submission_and_evaluation.md (제출 체크), ANALYSIS_프로젝트분석.html (분석 단계 산출물). 사용자 제안 모델("개인 폴더 + AI 병합")을 실무 표준과 비교한 결과 Phase 1에 한정해 적용 권장.</p>
+  <p>v0.1 · 2026-05-15 작성 · 다음 버전(v0.2)는 Phase 1 회고 후 작성 예정</p>
+</footer>
+
+</div>
+
+<script>
+const tabs = document.querySelectorAll('nav.tabs button');
+const sections = document.querySelectorAll('section.section');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    tabs.forEach(b => b.classList.toggle('active', b === btn));
+    sections.forEach(s => s.classList.toggle('active', s.dataset.section === target));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
