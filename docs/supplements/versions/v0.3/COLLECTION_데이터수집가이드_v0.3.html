@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESG DART 기말 프로젝트 — 데이터 수집 가이드 v0.3 (노트북 6 규칙 적용)</title>
+<style>
+:root {
+  --bg: #fafaf7;
+  --bg-card: #ffffff;
+  --bg-soft: #f3f1ea;
+  --bg-warn: #fff7ed;
+  --bg-danger: #fef2f2;
+  --bg-info: #eff6ff;
+  --bg-success: #f0fdf4;
+  --bg-purple: #f5f3ff;
+  --text-primary: #1c1c1a;
+  --text-secondary: #5a5a55;
+  --text-muted: #8a8a85;
+  --text-warn: #b45309;
+  --text-danger: #b91c1c;
+  --text-info: #1d4ed8;
+  --text-success: #15803d;
+  --text-purple: #6d28d9;
+  --border: rgba(0,0,0,0.10);
+  --accent: #4338ca;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 80px; }
+header.hero { border-bottom: 0.5px solid var(--border); padding-bottom: 24px; margin-bottom: 24px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+h1 { font-size: 26px; font-weight: 500; margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { font-size: 15px; color: var(--text-secondary); margin: 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.chip strong { font-weight: 500; color: var(--text-primary); }
+.chip.new { background: #f0fdf4; color: #15803d; border-color: rgba(34,197,94,0.25); }
+.chip.new strong { color: #15803d; }
+.chip.deprecated { background: #fef2f2; color: #b91c1c; border-color: rgba(239,68,68,0.25); }
+
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--bg-soft); border-radius: 12px; margin-bottom: 28px; position: sticky; top: 12px; z-index: 10; border: 0.5px solid var(--border); }
+nav.tabs button { flex: 1 1 auto; min-width: 110px; padding: 9px 12px; border: none; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; font-family: inherit; }
+nav.tabs button:hover { background: rgba(255,255,255,0.6); color: var(--text-primary); }
+nav.tabs button.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+.section { display: none; animation: fade 0.25s ease; }
+.section.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+h2 { font-size: 20px; font-weight: 500; margin: 0 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 17px; font-weight: 500; margin: 28px 0 10px; }
+h4 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; }
+.section-intro { color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; max-width: 760px; }
+
+.card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 14px; }
+.card.must   { background: var(--bg-danger); border-color: rgba(239,68,68,0.25); }
+.card.should { background: var(--bg-warn);   border-color: rgba(245,158,11,0.25); }
+.card.could  { background: var(--bg-success);border-color: rgba(34,197,94,0.25); }
+.card.info   { background: var(--bg-info);   border-color: rgba(37,99,235,0.25); }
+.card.purple { background: var(--bg-purple); border-color: rgba(124,58,237,0.25); }
+.card.soft   { background: var(--bg-soft); border: none; }
+.card .track-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.card.must   .track-label { color: var(--text-danger); }
+.card.should .track-label { color: var(--text-warn); }
+.card.could  .track-label { color: var(--text-success); }
+.card.info   .track-label { color: var(--text-info); }
+.card.purple .track-label { color: var(--text-purple); }
+.card h4 { margin-top: 0; }
+.card ul { margin: 6px 0 8px; padding-left: 22px; color: var(--text-secondary); font-size: 14px; }
+.card li { margin-bottom: 6px; }
+.card li strong { color: var(--text-primary); font-weight: 500; }
+.card code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; background: rgba(0,0,0,0.05); padding: 1px 6px; border-radius: 4px; color: var(--text-primary); }
+.card pre { background: rgba(0,0,0,0.04); padding: 12px 14px; border-radius: 6px; font-size: 12.5px; color: var(--text-primary); overflow-x: auto; margin: 6px 0; line-height: 1.5; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+
+table.clean { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 10px 0; }
+table.clean th, table.clean td { text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+table.clean th { font-weight: 500; color: var(--text-muted); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--bg-soft); }
+table.clean tr:last-child td { border-bottom: none; }
+table.clean td.rule-cell { font-weight: 600; color: var(--accent); white-space: nowrap; }
+
+.callout { border-left: 3px solid var(--accent); background: var(--bg-card); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 14px; color: var(--text-secondary); }
+.callout strong { color: var(--text-primary); font-weight: 500; }
+.callout.warn   { border-left-color: #d97706; background: var(--bg-warn); }
+.callout.danger { border-left-color: #dc2626; background: var(--bg-danger); }
+.callout.info   { border-left-color: #2563eb; background: var(--bg-info); }
+.callout.success{ border-left-color: #16a34a; background: var(--bg-success); }
+
+.diff-row { display: grid; grid-template-columns: 100px 1fr 1fr; gap: 14px; padding: 12px 14px; background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 8px; margin-bottom: 6px; align-items: start; }
+.diff-row .diff-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.diff-row .diff-old { background: #fef2f2; color: #991b1b; padding: 8px 10px; border-radius: 6px; font-size: 13px; }
+.diff-row .diff-new { background: #ecfdf5; color: #047857; padding: 8px 10px; border-radius: 6px; font-size: 13px; }
+.diff-row .diff-old::before { content: "v0.2 ❌ "; font-weight: 600; }
+.diff-row .diff-new::before { content: "v0.3 ✅ "; font-weight: 600; }
+
+.rule-num { display: inline-block; background: var(--accent); color: white; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-weight: 600; margin-right: 8px; }
+
+footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">비정형데이터분석 · 기말 팀 프로젝트 · 데이터 수집 가이드 v0.3</div>
+  <h1>데이터 수집 가이드 v0.3 — 노트북 6 규칙 + 출력 보존 정책</h1>
+  <p class="sub">v0.2 COLLECTION의 <strong>delta 업데이트</strong>. nbstripout 안내 deprecate + 노트북 6 규칙 정식화 + 출력 보존 정책 + API key 안전 강화 + archive 컨벤션 + tqdm/시각화 예제. 본 v0.3와 v0.2 COLLECTION을 <strong>함께 참조</strong>.</p>
+  <div class="meta-row">
+    <span class="chip"><strong>버전</strong> v0.3</span>
+    <span class="chip new"><strong>신규</strong> 노트북 6 규칙</span>
+    <span class="chip new"><strong>신규</strong> 출력 보존 정책</span>
+    <span class="chip deprecated"><strong>제거</strong> nbstripout</span>
+    <span class="chip"><strong>합의일</strong> 2026-05-15</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="overview" class="active">한 눈에 보기</button>
+  <button data-tab="diff">v0.2 → v0.3 변경</button>
+  <button data-tab="rules">노트북 6 규칙</button>
+  <button data-tab="output">출력 보존 정책</button>
+  <button data-tab="apikey">API key 안전 (강화)</button>
+  <button data-tab="archive">archive 컨벤션</button>
+  <button data-tab="examples">tqdm · 시각화 예제</button>
+</nav>
+
+<!-- ============ 한 눈에 보기 ============ -->
+<section class="section active" data-section="overview">
+  <h2>v0.3 한 페이지 요약</h2>
+  <p class="section-intro">
+    v0.2 COLLECTION 가이드는 <strong>데이터 수집 워크플로우의 본체</strong>로 유효합니다. v0.3는 그 위에 얹는 <strong>노트북 운영 정책</strong> delta. 두 가지를 같이 보세요.
+  </p>
+
+  <div class="callout warn">
+    <strong>v0.2 COLLECTION 가이드의 nbstripout 관련 안내는 무효</strong> — Quick Start "Step 1"의 <code>nbstripout --install</code> 단계, Setup의 Path A "Step 5", 위험 매트릭스의 "API key 노출" 예방 항목 등. v0.3 정책 (출력 보존 + 코드 레벨 마스킹) 으로 대체.
+  </div>
+
+  <h3>5개 핵심 변화</h3>
+  <table class="clean">
+    <thead><tr><th>#</th><th>변화</th><th>영향</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>nbstripout 제거</strong> (pyproject.toml/requirements.txt)</td><td>노트북 출력이 git에 그대로 들어감. PR #9 / org PR #3에서 적용 완료.</td></tr>
+      <tr><td>2</td><td><strong>출력 보존 의무</strong></td><td>전처리 결과 재실행 없이 PR/리뷰. 보고서 작성 시 출력 그대로 활용.</td></tr>
+      <tr><td>3</td><td><strong>API key 마스킹 코드 레벨 처리</strong></td><td>출력에 key 노출 위험 ↑. <code>mask_key()</code> 헬퍼 + <code>&lt;MASKED&gt;</code> placeholder.</td></tr>
+      <tr><td>4</td><td><strong>archive/ 컨벤션</strong></td><td>중요 버전을 <code>archive/{원본명}_{YYYY-MM-DD}_{descriptor}.ipynb</code>로 스냅샷. rollback 가능.</td></tr>
+      <tr><td>5</td><td><strong>표준 헤더 의무</strong></td><td>각 노트북 첫 셀에 <code>members/_TEMPLATE_노트북_표준헤더.md</code> 적용. 위반금지 8항목 명시.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>이 가이드를 읽는 순서</h3>
+  <ol style="color: var(--text-secondary); font-size: 14px;">
+    <li><strong>v0.2 COLLECTION 가이드</strong> 먼저 — 데이터 수집 워크플로우 전체 (Phase 1·2, 크롤링 매트릭스, DART API)</li>
+    <li><strong>본 v0.3 한 눈에 보기 → v0.2→v0.3 변경</strong> — 무엇이 바뀌었는지</li>
+    <li><strong>노트북 6 규칙</strong> — 핵심 규칙 6개 한 페이지</li>
+    <li><strong>출력 보존 정책 + API key 안전</strong> — 두 정책의 trade-off 이해</li>
+    <li><strong>archive 컨벤션 + 예제</strong> — 실제 적용 방법</li>
+  </ol>
+</section>
+
+<!-- ============ v0.2 → v0.3 변경 ============ -->
+<section class="section" data-section="diff">
+  <h2>v0.2 → v0.3 변경 사항 (구체)</h2>
+  <p class="section-intro">v0.2 COLLECTION 가이드의 <strong>어느 부분이 무엇으로 바뀌었는지</strong> 한 줄씩 정리. 팀원이 v0.2를 읽다가 본 카드와 충돌하는 부분을 만나면 v0.3가 우선합니다.</p>
+
+  <div class="diff-row">
+    <div class="diff-label">의존성</div>
+    <div class="diff-old"><code>nbstripout&gt;=0.6</code> 포함 (pyproject.toml + requirements.txt)</div>
+    <div class="diff-new"><code>nbstripout</code> 삭제. <code>ipywidgets&gt;=8.0</code> · <code>pyarrow&gt;=14.0</code> · <code>openpyxl&gt;=3.1</code> · <code>regex&gt;=2024.0</code> · <code>wordcloud&gt;=1.9</code> 추가</div>
+  </div>
+
+  <div class="diff-row">
+    <div class="diff-label">로컬 셋업</div>
+    <div class="diff-old"><code>uv pip install -e .</code> 후 <code>nbstripout --install</code> 실행 권장</div>
+    <div class="diff-new"><code>uv pip install -e .</code>만. nbstripout 설치/실행 ❌</div>
+  </div>
+
+  <div class="diff-row">
+    <div class="diff-label">노트북 commit</div>
+    <div class="diff-old">출력 strip 후 코드만 commit</div>
+    <div class="diff-new"><strong>출력 포함하여 commit</strong>. 재실행 없이 결과 확인·비교</div>
+  </div>
+
+  <div class="diff-row">
+    <div class="diff-label">API key 보호</div>
+    <div class="diff-old"><code>.env</code> 사용 + <code>nbstripout --install</code>로 출력 제거</div>
+    <div class="diff-new"><code>.env</code> 사용 + <strong>코드 레벨 마스킹</strong> (<code>mask_key()</code>). <code>response.url</code> · <code>response.text</code> 직접 출력 금지</div>
+  </div>
+
+  <div class="diff-row">
+    <div class="diff-label">노트북 버전 관리</div>
+    <div class="diff-old">git history만</div>
+    <div class="diff-new">+ <code>notebooks/archive/</code> 폴더에 중요 버전 스냅샷</div>
+  </div>
+
+  <div class="diff-row">
+    <div class="diff-label">진행률 표시</div>
+    <div class="diff-old"><code>tqdm</code> (선택)</div>
+    <div class="diff-new"><code>tqdm.notebook</code> + <code>ipywidgets</code> (의무)</div>
+  </div>
+
+  <div class="diff-row">
+    <div class="diff-label">결과 시각화</div>
+    <div class="diff-old">선택</div>
+    <div class="diff-new"><strong>의무</strong> — matplotlib·seaborn·plotly·wordcloud. 단계별 결과 검증</div>
+  </div>
+
+  <div class="diff-row">
+    <div class="diff-label">마크다운 셀</div>
+    <div class="diff-old">선택</div>
+    <div class="diff-new"><strong>What / Why / 근거 3블록</strong> 의무 (각 코드 셀 위에)</div>
+  </div>
+
+  <div class="diff-row">
+    <div class="diff-label">노트북 헤더</div>
+    <div class="diff-old">자유 양식</div>
+    <div class="diff-new"><code>members/_TEMPLATE_노트북_표준헤더.md</code> 적용 의무 (위반금지 8항목 + 출처)</div>
+  </div>
+</section>
+
+<!-- ============ 노트북 6 규칙 ============ -->
+<section class="section" data-section="rules">
+  <h2>노트북 6 규칙 — 모든 .ipynb 파일에 적용</h2>
+  <p class="section-intro">2026-05-15 합의된 운영 원칙. 5/19 데드라인 + 발표·보고서 단계에서 일관성과 재현성을 보장하기 위한 6 규칙.</p>
+
+  <div class="card">
+    <h4><span class="rule-num">1</span> 버전 보존</h4>
+    <p style="margin: 4px 0 8px; font-size: 13.5px;">새 버전을 만들 때 기존 노트북을 <strong>덮어쓰기 X</strong>. 결과가 나빠질 때 복구 가능해야 함.</p>
+    <ul>
+      <li>중요 버전은 <code>notebooks/archive/{원본명}_{YYYY-MM-DD}_{descriptor}.ipynb</code>로 스냅샷</li>
+      <li>소소한 변경은 git history (commit log)로 충분</li>
+      <li>예: <code>archive/02_preprocessing_2026-05-17_okt-only.ipynb</code></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4><span class="rule-num">2</span> 출력 보존</h4>
+    <p style="margin: 4px 0 8px; font-size: 13.5px;">GitHub commit 시 <strong>모든 cell 출력 유지</strong>. nbstripout 사용 ❌.</p>
+    <ul>
+      <li>전처리 재실행 없이 PR 리뷰 가능</li>
+      <li>보고서 작성 시 그대로 캡처/인용</li>
+      <li><strong>주의</strong>: API key 등 비밀값은 코드 레벨에서 마스킹 필수 (다음 규칙)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4><span class="rule-num">3</span> 진행률 시각화</h4>
+    <p style="margin: 4px 0 8px; font-size: 13.5px;">오래 걸리는 작업에 진행률 바 의무.</p>
+    <pre>from tqdm.notebook import tqdm  # ipywidgets 필요
+
+for stock_code in tqdm(stock_codes, desc="Collecting"):
+    result = collect_one(stock_code)</pre>
+  </div>
+
+  <div class="card">
+    <h4><span class="rule-num">4</span> 교수님 가이드 준수 + 모든 경우의 수 테스트</h4>
+    <p style="margin: 4px 0 8px; font-size: 13.5px;">노트북 최상단에 <strong>위반금지 8항목</strong> 헤더 셀. 각 단계마다 alt 셀로 변형 실험.</p>
+    <ul>
+      <li>형태소 분석기 3종 비교 (Okt / Mecab / Kkma)</li>
+      <li>TF-IDF vocab 크기 sweep (5k / 10k / 20k)</li>
+      <li>seed_dictionary 확장 vs 기본</li>
+      <li>이 모든 alt 결과를 같은 노트북에 보존 → 비교 결과로 final 결정</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4><span class="rule-num">5</span> 결과 시각화 의무</h4>
+    <p style="margin: 4px 0 8px; font-size: 13.5px;">각 단계 결과를 시각화로 검증.</p>
+    <ul>
+      <li>수집 단계: status별 firm-year 분포 (barh)</li>
+      <li>전처리: passage/firm-year 히스토그램, OOV율 boxplot</li>
+      <li>Feature: cosine similarity heatmap, E/S/G 점수 violin plot</li>
+      <li>마이닝: wordcloud로 E/S/G top 키워드</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4><span class="rule-num">6</span> 상세 마크다운·주석</h4>
+    <p style="margin: 4px 0 8px; font-size: 13.5px;">보고서·회의 설명용. 비전공자도 이해 가능하게.</p>
+    <ul>
+      <li>각 코드 셀 위에 <strong>What / Why / 근거</strong> 3블록 마크다운</li>
+      <li>근거는 교수님 가이드 §N 또는 수업 자료·학술 인용 명시</li>
+      <li>코드 주석은 "무엇을" + "왜" 둘 다</li>
+    </ul>
+  </div>
+
+  <div class="callout info">
+    <strong>구체 적용 템플릿</strong> — <code>members/_TEMPLATE_노트북_표준헤더.md</code>에 즉시 복사 가능한 마크다운 셀 + tqdm 예제 + 시각화 예제 + API key 안전 패턴 정리됨.
+  </div>
+</section>
+
+<!-- ============ 출력 보존 정책 ============ -->
+<section class="section" data-section="output">
+  <h2>출력 보존 정책 — Why & How</h2>
+  <p class="section-intro">규칙 2의 근거와 운영 방법.</p>
+
+  <h3>왜 출력을 보존하는가</h3>
+  <div class="grid-2">
+    <div class="card info">
+      <h4>재실행 비용 회피</h4>
+      <ul>
+        <li>Phase 2 수집 (~380 firm-years): 30~45분</li>
+        <li>전처리 (KoNLPy 형태소): 30분~2시간</li>
+        <li>임베딩 학습 (fastText 등): 수십 분</li>
+        <li>출력 유지 시 PR 리뷰·발표 자료 작성 시 <strong>재실행 0초</strong></li>
+      </ul>
+    </div>
+    <div class="card info">
+      <h4>결정 추적성</h4>
+      <ul>
+        <li>"이 결정의 근거 출력"이 같은 노트북에 있음</li>
+        <li>"왜 vocab=10k가 아니라 5k?" → 같은 노트북에 두 alt 결과 모두</li>
+        <li>발표 시 reviewer 질문에 즉답 가능</li>
+      </ul>
+    </div>
+    <div class="card info">
+      <h4>비교 가능성</h4>
+      <ul>
+        <li>v1 / v2 / archive 노트북을 나란히 펴서 결과 차이 즉시 확인</li>
+        <li>git diff로 코드만 보던 시절보다 훨씬 명확</li>
+      </ul>
+    </div>
+    <div class="card info">
+      <h4>보고서·회의 효율</h4>
+      <ul>
+        <li>스크린샷 캡처 위치가 GitHub에 그대로</li>
+        <li>슬랙/회의에 GitHub 노트북 링크 공유만으로 결과 전달</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>어떻게 출력을 유지하나</h3>
+  <div class="card must">
+    <div class="track-label">반드시 — 출력 보존 절차</div>
+    <ol style="margin: 4px 0; padding-left: 22px;">
+      <li>Jupyter에서 노트북 실행 → 출력 생성</li>
+      <li>저장 (Ctrl+S 또는 메뉴) → .ipynb 파일에 출력 직렬화됨</li>
+      <li><strong>nbstripout 실행 ❌</strong> — 자동 hook도 ❌</li>
+      <li><code>git add notebooks/01_collection.ipynb</code></li>
+      <li><code>git commit -m "feat: collection 완료 — 50건 sample (성공률 96%)"</code></li>
+      <li><code>git push</code> → PR → squash merge</li>
+    </ol>
+  </div>
+
+  <h3>주의 — 출력 보존의 부작용</h3>
+  <div class="card should">
+    <div class="track-label">주의 — 다음 정책으로 대응</div>
+    <ul>
+      <li><strong>API key 노출</strong> — <em>출력에 key가 들어가지 않게 코드에서 처리</em> → 다음 탭 "API key 안전 (강화)" 참조</li>
+      <li><strong>파일 크기 증가</strong> — wordcloud·시각화 PNG가 base64로 들어감. 100MB 넘으면 git LFS 고려 (현재는 미사용, raw 데이터는 gitignore이므로 노트북 자체는 보통 5~10MB)</li>
+      <li><strong>병합 충돌</strong> — 동시 편집 시 출력 셀에서 conflict 다발. <em>대응:</em> members/{이름}/ 개인 폴더로 격리 + 통합은 _integrated/에서 수동 선택</li>
+      <li><strong>고객·실명 등 민감 정보</strong> — 본 프로젝트는 공시 데이터만 다루므로 해당 없음. 단, KCGS 등급 원본 출력 시 회사명/등급 그대로 (공시이므로 OK)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ API key 안전 (강화) ============ -->
+<section class="section" data-section="apikey">
+  <h2>API key 안전 (강화) — 출력 보존 환경 대응</h2>
+  <p class="section-intro">출력이 git에 보존되므로 v0.2의 nbstripout 안전망이 사라짐. <strong>코드 레벨에서 마스킹</strong>이 유일한 보호선.</p>
+
+  <h3>반드시 지킬 4 가지</h3>
+  <div class="card must">
+    <div class="track-label">🔴 반드시 — API key 노출 0건 보장</div>
+    <ol>
+      <li><code>.env</code>에 key 저장, <code>.gitignore</code>에 <code>.env</code> 등재 (이미 적용됨)</li>
+      <li><code>print(response.url)</code> <strong>금지</strong> — URL params에 <code>crtfc_key</code>가 들어감</li>
+      <li><code>print(response.text)</code> 시 <code>mask_key()</code> 통과 의무</li>
+      <li>requests 호출 시 <code>params=</code>로 전달 (URL 생성 자동, 직접 문자열 조립 ❌)</li>
+    </ol>
+  </div>
+
+  <h3>표준 패턴 — 복사해서 사용</h3>
+  <div class="card info">
+    <h4>1) key 로딩</h4>
+    <pre>from dotenv import load_dotenv
+import os
+
+load_dotenv()
+API_KEY = os.getenv("OPENDART_API_KEY")
+assert API_KEY, ".env에 OPENDART_API_KEY 설정 필요"</pre>
+
+    <h4>2) mask_key 헬퍼</h4>
+    <pre>def mask_key(text: str) -&gt; str:
+    """문자열에서 API key를 &lt;MASKED&gt;로 치환. 출력 전 반드시 통과."""
+    if not API_KEY or not text:
+        return text
+    return text.replace(API_KEY, "&lt;MASKED&gt;")</pre>
+
+    <h4>3) requests 호출 (URL 노출 X)</h4>
+    <pre>response = requests.get(
+    "https://opendart.fss.or.kr/api/list.json",
+    params={
+        "crtfc_key": API_KEY,
+        "corp_code": corp_code,
+        "bgn_de": "20240101",
+    },
+)
+# response.url 출력 금지!
+# 디버깅 필요 시:
+print("Status:", response.status_code)
+print("URL 마스킹:", mask_key(response.url))   # ✅ 안전
+print("본문:", mask_key(response.text[:500]))</pre>
+
+    <h4>4) 에러 메시지도 마스킹</h4>
+    <pre>try:
+    response.raise_for_status()
+except requests.HTTPError as e:
+    # 에러 메시지에 URL이 들어갈 수 있음
+    print(mask_key(str(e)))
+    raise</pre>
+  </div>
+
+  <h3>점검 체크리스트 — 커밋 직전 확인</h3>
+  <ul class="check-list" style="padding-left: 0; list-style: none; font-size: 13.5px; color: var(--text-secondary);">
+    <li>☐ <code>git diff notebooks/01_collection.ipynb | grep -i crtfc_key</code> 결과 무 (key 패턴 비노출)</li>
+    <li>☐ <code>git diff notebooks/01_collection.ipynb | grep -i &quot;opendart.fss.or.kr/api&quot;</code> 결과 검토 — URL 파라미터에 key 없는지</li>
+    <li>☐ <code>response.url</code> 직접 출력 셀 없는지</li>
+    <li>☐ 에러 traceback에 key가 들어가지 않는지 (가능하면 try/except로 감싸기)</li>
+  </ul>
+
+  <div class="callout danger">
+    <strong>실수 발생 시 — 즉시 대응</strong>
+    <ol style="margin: 8px 0 0; padding-left: 20px;">
+      <li>OpenDART에서 해당 key revoke + 새 key 발급</li>
+      <li>새 key로 <code>.env</code> 갱신</li>
+      <li>git history rewrite (BFG 또는 <code>git filter-repo</code>) + force push (팀 합의 후)</li>
+      <li>GitHub Secret Scanning 알림이 왔다면 "resolved" 처리</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ archive 컨벤션 ============ -->
+<section class="section" data-section="archive">
+  <h2>archive/ 컨벤션 (규칙 1 상세)</h2>
+  <p class="section-intro">노트북 발전 시 기존 버전을 안전하게 보존하고 필요 시 rollback 하는 방법.</p>
+
+  <h3>폴더 구조</h3>
+  <pre style="background: var(--bg-soft); padding: 14px; border-radius: 8px; font-size: 13px; line-height: 1.7;">members/이동원/notebooks/
+├── 01_collection.ipynb              ← 활성 (최신, 매일 사용)
+├── 02_preprocessing.ipynb           ← 활성
+├── 03_mining.ipynb                  ← 활성
+└── archive/                         ← 스냅샷 보관
+    ├── 01_collection_2026-05-15_initial-pilot.ipynb
+    ├── 01_collection_2026-05-16_rate-limit-v2.ipynb
+    ├── 02_preprocessing_2026-05-17_okt-only.ipynb
+    └── 02_preprocessing_2026-05-18_okt+mecab-test.ipynb</pre>
+
+  <h3>네이밍 규칙</h3>
+  <p style="font-size: 14px; color: var(--text-secondary);">
+    <code>{원본명}_{YYYY-MM-DD}_{descriptor}.ipynb</code>
+  </p>
+  <ul style="font-size: 13.5px; color: var(--text-secondary);">
+    <li><strong>원본명</strong>: 활성 파일과 같은 prefix (01_collection, 02_preprocessing 등)</li>
+    <li><strong>YYYY-MM-DD</strong>: 스냅샷 만든 날짜 (수정일 아님)</li>
+    <li><strong>descriptor</strong>: 짧고 명확한 설명 (영문/숫자/-). 예: <code>initial-pilot</code>, <code>rate-limit-v2</code>, <code>okt-only</code>, <code>tfidf-vocab10k</code></li>
+  </ul>
+
+  <h3>언제 archive 스냅샷을 만드나</h3>
+  <div class="grid-2">
+    <div class="card could">
+      <h4>✅ 스냅샷 해야 할 때</h4>
+      <ul>
+        <li>전처리 파이프라인 큰 변경 (정규식 패턴 교체, 형태소 분석기 swap)</li>
+        <li>vocab 크기·임계값 등 파라미터 sweep 결과 보존</li>
+        <li>회의에서 "이 결정 후 결과가 안 좋아지면 돌아가자" 합의된 시점</li>
+        <li>Phase 2 batch 시작 직전 (Phase 1 파일럿 보존)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ 스냅샷 안 해도 되는 때</h4>
+      <ul>
+        <li>오타 수정, 변수명 변경, 주석 추가</li>
+        <li>마크다운만 보강</li>
+        <li>코드 한 줄 추가/제거 (이런 건 git history로 충분)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>스냅샷 만드는 순서</h3>
+  <div class="card info">
+    <pre># 1. 현재 활성 노트북을 archive로 복사 (출력 유지)
+cp members/이동원/notebooks/02_preprocessing.ipynb \
+   members/이동원/notebooks/archive/02_preprocessing_2026-05-17_okt-only.ipynb
+
+# 2. 활성 노트북 발전 (코드 수정, 새 실행)
+#    Jupyter에서 02_preprocessing.ipynb 편집 + 실행 + 저장
+
+# 3. 양쪽 commit
+git add members/이동원/notebooks/02_preprocessing.ipynb
+git add members/이동원/notebooks/archive/02_preprocessing_2026-05-17_okt-only.ipynb
+git commit -m "feat: 02_preprocessing — Mecab 추가 테스트 (Okt-only 버전 archive 보존)"
+git push</pre>
+  </div>
+
+  <h3>rollback 방법</h3>
+  <div class="card warn">
+    <pre># 결과가 안 좋아져서 이전 버전으로 돌아갈 때
+cp members/이동원/notebooks/archive/02_preprocessing_2026-05-17_okt-only.ipynb \
+   members/이동원/notebooks/02_preprocessing.ipynb
+
+# 활성으로 복귀. 그 사이 시도는 archive에 그대로 보존됨
+git add members/이동원/notebooks/02_preprocessing.ipynb
+git commit -m "revert: 02_preprocessing — Okt-only로 rollback (Mecab 결과 미달)"
+git push</pre>
+  </div>
+</section>
+
+<!-- ============ tqdm · 시각화 예제 ============ -->
+<section class="section" data-section="examples">
+  <h2>tqdm.notebook + 결과 시각화 예제 (규칙 3, 5)</h2>
+  <p class="section-intro">노트북에 바로 복사해서 사용 가능한 표준 코드 패턴.</p>
+
+  <h3>1) 진행률 — tqdm.notebook</h3>
+  <div class="card info">
+    <pre>from tqdm.notebook import tqdm
+import time
+
+# 수집 batch 50건 진행률
+results = []
+for stock_code in tqdm(stock_codes[:50], desc="Phase 2 1차 batch"):
+    time.sleep(0.5)              # rate limit
+    result = collect_one(stock_code)
+    results.append(result)
+
+print(f"수집 완료: {len(results)}건")</pre>
+  </div>
+
+  <h3>2) 수집 결과 시각화 — status 분포</h3>
+  <div class="card info">
+    <pre>import matplotlib.pyplot as plt
+import koreanize_matplotlib       # 한글 폰트 자동
+import pandas as pd
+
+log_df = pd.read_csv("logs/collection_log.csv")
+
+fig, ax = plt.subplots(figsize=(10, 4))
+log_df["status"].value_counts().plot(kind="barh", ax=ax, color="#4338ca")
+ax.set_title(f"수집 결과 — 총 {len(log_df)}건 firm-year")
+ax.set_xlabel("firm-year 수")
+for i, v in enumerate(log_df["status"].value_counts()):
+    ax.text(v + 0.5, i, str(v), va="center")
+plt.tight_layout()
+plt.show()</pre>
+  </div>
+
+  <h3>3) passage 분포 — 전처리 결과 sanity check</h3>
+  <div class="card info">
+    <pre>import seaborn as sns
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+# 히스토그램
+sns.histplot(passages_per_firm_year, bins=30, ax=axes[0], color="#4338ca")
+axes[0].axvline(20, color="red", linestyle="--", label="G8 임계 (중앙값 ≥ 20)")
+axes[0].set_title("firm-year별 ESG passage 수 분포")
+axes[0].set_xlabel("passage 수")
+axes[0].legend()
+
+# 산업별 boxplot
+sns.boxplot(data=df, x="industry", y="passage_count", ax=axes[1])
+axes[1].set_title("산업별 passage 분포 비교")
+axes[1].tick_params(axis="x", rotation=45)
+
+plt.tight_layout()
+plt.show()</pre>
+  </div>
+
+  <h3>4) wordcloud — E/S/G top 키워드</h3>
+  <div class="card info">
+    <pre>from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
+# E·S·G별 top 50 키워드 (TF-IDF 가중)
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+for ax, (esg, freq_dict) in zip(axes, [("E", e_freq), ("S", s_freq), ("G", g_freq)]):
+    wc = WordCloud(
+        font_path="C:/Windows/Fonts/malgun.ttf",   # 한글 폰트 경로
+        background_color="white",
+        width=400, height=400,
+    ).generate_from_frequencies(freq_dict)
+    ax.imshow(wc)
+    ax.set_title(f"{esg} top 50 키워드")
+    ax.axis("off")
+plt.tight_layout()
+plt.show()</pre>
+  </div>
+
+  <h3>5) cosine similarity heatmap</h3>
+  <div class="card info">
+    <pre>import seaborn as sns
+
+# 무작위 20개 firm-year × E/S/G score
+sample_df = analytical_dataset.sample(20).set_index("stock_code")
+esg_cols = ["E_tfidf", "S_tfidf", "G_tfidf", "E_embed", "S_embed", "G_embed"]
+
+fig, ax = plt.subplots(figsize=(8, 8))
+sns.heatmap(sample_df[esg_cols], annot=True, fmt=".2f", cmap="RdBu_r", center=0, ax=ax)
+ax.set_title("firm × E/S/G cosine similarity (sample 20)")
+plt.tight_layout()
+plt.show()</pre>
+  </div>
+
+  <div class="callout success">
+    <strong>이 예제들의 의도</strong> — 노트북마다 매번 처음부터 짜지 말고 본 코드를 복사해서 시작. 시각화 한 번 보면 G5(성공률 90%)·G8(passage 중앙값 20)·G10(NaN 없음) 게이트 통과 여부를 즉시 알 수 있음.
+  </div>
+</section>
+
+<footer>
+  <p><strong>출처</strong> — 2026-05-15 노트북 6 규칙 합의 (사용자 직접 제시), v0.2 COLLECTION 가이드, members/_TEMPLATE_노트북_표준헤더.md, 교수님 가이드 (01-04 md), CONTRIBUTING.md (PR-only 규칙).</p>
+  <p>v0.3 · 2026-05-15 작성 · v0.2 COLLECTION의 delta 업데이트 · nbstripout deprecate + 노트북 6 규칙 정식화 + 출력 보존 정책 + API key 안전 강화 + archive 컨벤션 + tqdm/시각화 예제. v0.2와 함께 참조.</p>
+</footer>
+
+</div>
+
+<script>
+const tabs = document.querySelectorAll('nav.tabs button');
+const sections = document.querySelectorAll('section.section');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    tabs.forEach(b => b.classList.toggle('active', b === btn));
+    sections.forEach(s => s.classList.toggle('active', s.dataset.section === target));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
