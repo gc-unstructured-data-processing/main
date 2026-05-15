@@ -3,11 +3,18 @@ pandas>=2.0
 numpy>=1.24
 scipy>=1.10
 
+# 직렬화 (parquet/xlsx I/O — 게이트 G7·G10·G12)
+pyarrow>=14.0
+openpyxl>=3.1
+
 # DART 수집
 requests>=2.31
 python-dotenv>=1.0
 lxml>=4.9
 beautifulsoup4>=4.12
+
+# 한국어 정규식 (Unicode property)
+regex>=2024.0
 
 # 한국어 형태소 분석
 konlpy>=0.6.0
@@ -22,17 +29,19 @@ gensim>=4.3
 scikit-learn>=1.3
 statsmodels>=0.14
 
-# 시각화
+# 시각화 (규칙 5 — 각 결과 시각화 의무)
 matplotlib>=3.7
 seaborn>=0.12
 koreanize-matplotlib>=0.1.1
 plotly>=5.18
+wordcloud>=1.9
 
-# 노트북
+# 노트북 (규칙 3 — tqdm.notebook은 ipywidgets 필요)
 jupyter>=1.0
 ipykernel>=6.25
-nbstripout>=0.6  # 노트북 conflict 방지
+ipywidgets>=8.0
 tqdm>=4.66
+# nbstripout 제거 (규칙 2 — GitHub에 출력 보존)
 
 # 진행 추적·로깅
 pyyaml>=6.0
