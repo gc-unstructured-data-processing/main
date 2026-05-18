@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>02 v1 → v2 발전 로드맵 — Mecab vs Okt fallback 두 시나리오 분기</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222d;
+    --border: #2a3140; --text: #e6e9ef; --muted: #9aa3b2;
+    --accent: #7aa2ff; --good: #5ed27a; --warn: #f7b955;
+    --bad: #ef6f6c; --info: #6cc7e6;
+    --mecab: #b48cff; --okt: #6cc7e6;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    line-height: 1.55; font-size: 14px; }
+  header { padding: 28px 32px 20px; border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #1a2030, #11141b); }
+  header h1 { margin: 0 0 8px; font-size: 23px; letter-spacing: -0.2px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  header .meta { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+  main { padding: 24px 32px 60px; max-width: 1380px; margin: 0 auto; display: grid; gap: 22px; }
+  section { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; }
+  section h2 { margin: 0 0 16px; font-size: 17px; display: flex; align-items: center; gap: 10px; }
+  section h2 .num { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 700; }
+  h3 { margin: 18px 0 10px; font-size: 14.5px; color: var(--accent); font-weight: 600; }
+  h4 { margin: 12px 0 6px; font-size: 13.5px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; background: var(--panel-2); }
+  tr:hover td { background: rgba(122,162,255,0.04); }
+  .pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); }
+  .pill.good { background: rgba(94,210,122,0.16); color: var(--good); }
+  .pill.warn { background: rgba(247,185,85,0.16); color: var(--warn); }
+  .pill.bad  { background: rgba(239,111,108,0.16); color: var(--bad); }
+  .pill.info { background: rgba(108,199,230,0.16); color: var(--info); }
+  .pill.mecab { background: rgba(180,140,255,0.16); color: var(--mecab); }
+  .pill.okt   { background: rgba(108,199,230,0.16); color: var(--okt); }
+  ul { margin: 6px 0 6px 18px; padding: 0; }
+  li { margin: 4px 0; }
+  code { background: rgba(122,162,255,0.10); padding: 1px 6px; border-radius: 4px; font-size: 12.5px;
+    color: #cbd6ff; font-family: ui-monospace, Consolas, monospace; }
+  pre { background: #0b0e14; border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; overflow-x: auto; font-size: 12.5px; color: #cbd6ff;
+    font-family: ui-monospace, Consolas, monospace; line-height: 1.5; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 980px) { .grid-2 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .card.mecab { border-color: var(--mecab); }
+  .card.okt   { border-color: var(--okt); }
+  .card.good  { border-color: var(--good); }
+  .card.warn  { border-color: var(--warn); }
+  .card.bad   { border-color: var(--bad); }
+  .quote { background: rgba(122,162,255,0.06); border-left: 3px solid var(--accent);
+    padding: 10px 14px; border-radius: 6px; font-size: 13px; margin: 8px 0; }
+  .footer { color: var(--muted); font-size: 12px; padding: 14px 0 0; text-align: center; }
+  .flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+  .flow .node { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 12.5px; }
+  .flow .node.mecab { border-color: var(--mecab); color: var(--mecab); }
+  .flow .node.okt { border-color: var(--okt); color: var(--okt); }
+  .flow .arrow { color: var(--muted); font-size: 16px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>02 v1 → v2 발전 로드맵 — Mecab vs Okt fallback 두 시나리오 분기 (2026-05-17)</h1>
+  <div class="sub">02_preprocessing_v1.ipynb 실행 결과 기반. Mecab 설치 성공 시(<span style="color:var(--mecab)">시나리오 A</span>) vs 미설치 시(<span style="color:var(--okt)">시나리오 B Okt fallback</span>) 두 갈래로 발전 경로 분리. 웹크롤링·벤치마킹·수업 교안·교수님 가이드 모두 매핑.</div>
+  <div class="meta">참고 사이트: <code>cherie-ssom.tistory.com/3</code> (Pusnow msvc 방식) · 추가 검색: PyPI mecab-ko / python-mecab-ko · 작성 2026-05-17 · 이동원</div>
+</header>
+
+<main>
+
+<!-- ===== 00. 분기 결정 ===== -->
+<section>
+  <h2><span class="num">00</span>분기 결정 — Mecab 설치 시도 → 결과에 따라 시나리오 분기</h2>
+  <p>Q2 결정(<code>00_phase2_entry_plan_v2_postfinal.html</code> §13): 본 02 노트북은 Mecab 우선 시도, 실패 시 Okt fallback. 본 로드맵은 두 결과 시나리오별 발전 경로를 분리하여 어떤 환경에서도 가이드 위반 0건·필수사항 누락 0건 보장.</p>
+
+  <div class="flow">
+    <span class="node">사용자 환경<br>(Windows / Linux)</span>
+    <span class="arrow">→</span>
+    <span class="node">Mecab 설치 시도</span>
+    <span class="arrow">→</span>
+    <span class="node mecab">✅ 시나리오 A<br>Mecab PRIMARY</span>
+    <span class="arrow">또는</span>
+    <span class="node okt">⚠️ 시나리오 B<br>Okt fallback PRIMARY</span>
+  </div>
+
+  <h3>설치 시도 권장 순서 (실무 안정성·복잡도 순)</h3>
+  <table>
+    <thead><tr><th>순위</th><th>패키지</th><th>설치 명령</th><th>장점</th><th>요구사항</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><code>python-mecab-ko</code> ⭐</td><td><code>pip install python-mecab-ko</code></td><td>Windows wheel 포함 · native binary + mecab-ko-dic 모두 번들 · Java 불필요</td><td>Visual C++ Redistributable (대부분 Windows 기본 설치)</td></tr>
+      <tr><td>2</td><td><code>mecab-ko</code></td><td><code>pip install mecab-ko</code></td><td>위와 동일 family · 인터페이스 약간 다름</td><td>동일</td></tr>
+      <tr><td>3</td><td><code>eunjeon</code></td><td><code>pip install eunjeon</code></td><td>python-mecab-ko 이전 wrapper · 한국 사용자 익숙</td><td>경우에 따라 native 별도</td></tr>
+      <tr><td>4</td><td><code>konlpy.tag.Mecab</code> + Pusnow msvc</td><td>cherie-ssom 가이드 절차</td><td>KoNLPy 표준 인터페이스</td><td>C:\mecab 폴더 + zip 풀기 + wheel 별도 + dicpath 인자</td></tr>
+    </tbody>
+  </table>
+
+  <div class="card good" style="margin-top: 10px;">
+    <h4>실측 검증 (sandbox Ubuntu 22.04, 2026-05-17)</h4>
+    <p style="margin: 4px 0;"><code>pip install python-mecab-ko</code> 한 줄로 즉시 동작 확인:</p>
+    <pre>>>> from mecab import MeCab
+>>> m = MeCab()
+>>> m.pos("당사는 2024년도 온실가스 배출량을 8.3% 감축하였으며, 재생에너지 사용 비율을 확대하였습니다.")
+[('당사','NNG'), ('는','JX'), ('2024','SN'), ('년','NNBC'), ('도','JX'),
+ ('온실가스','NNG'), ('배출','NNG'), ('량','NNG'), ('을','JKO'), ...]
+>>> m.nouns("당사는...")
+['당사', '년', '온실가스', '배출', '량', '전년', '대비', '감축', '재생', '에너지']</pre>
+    <p style="margin: 4px 0;">ESG seed term 모두 정확 분리 (온실가스·배출·재생·에너지). 본 패키지가 Windows wheel을 제공하므로 사용자 환경에서도 동일 결과 가능성 높음 (PyPI 공식 확인).</p>
+  </div>
+</section>
+
+<!-- ===== 01. 시나리오 A (Mecab 성공) ===== -->
+<section style="border-color: var(--mecab);">
+  <h2><span class="num" style="color: var(--mecab);">A</span>시나리오 A — Mecab PRIMARY (설치 성공)</h2>
+
+  <div class="badge-row" style="margin-bottom: 10px;">
+    <span class="pill mecab">tokenizer_used = 'mecab'</span>
+    <span class="pill good">속도 ~10배 (Okt 대비)</span>
+    <span class="pill good">vocab 일관성 ↑</span>
+    <span class="pill good">학술 표준 (Park &amp; Cha 2014)</span>
+  </div>
+
+  <h3>v1 → v2 발전 경로 (시나리오 A)</h3>
+  <table>
+    <thead><tr><th>단계</th><th>작업</th><th>완료 기준</th><th>가이드·교안 정합성</th></tr></thead>
+    <tbody>
+      <tr><td>v1 (5/17 오후)</td><td>Mecab으로 Samsung 1건 노트북 Run All</td><td>tokenizer_used='mecab', viewer 5/5 입력 정상, vocab/tokens 비교 표 출력</td><td>가이드 02 line 159 ✅ · Week 5 KoNLPy ✅ · 위반금지 #6 진단 (tokenizer_used 컬럼) ✅</td></tr>
+      <tr><td>v1 (5/18 오후)</td><td>Phase 2B 전체 corpus로 재실행</td><td>esg_features.parquet 행수 ≥ 300, FastText vocab ≥ 10,000 안정</td><td>가이드 04 §3 측정 validity 진입 가능 ✅</td></tr>
+      <tr><td><b>v2 (조건부)</b></td><td>다음 중 하나 발생 시 v2 신규 생성</td><td>—</td><td>—</td></tr>
+      <tr><td>v2 조건 (a)</td><td>Mecab vs Okt 차이가 큰 firm-year 발견 시 두 분석기 결과 보존</td><td>tokenizer_used = 'mecab'(v1) + 'okt'(v2) 별도 esg_features.parquet 2개</td><td>규칙 #1 버전 보존 ✅ · 규칙 #4 모든 경우의 수 ✅ · 보고서 §5에 두 결과 비교</td></tr>
+      <tr><td>v2 조건 (b)</td><td>min_df / max_df sweep (1·2·3·5) 결과 보존 필요</td><td>v2에 sweep 별도 셀 + vocab 크기·feature 분포 비교 표</td><td>가이드 04 §3 "측정 validity" feature 정당화 강화</td></tr>
+      <tr><td>v2 조건 (c)</td><td>seed_dictionary 자체 변경 (30개 → 보강)</td><td>v2 with 새 seed_dictionary_v2.csv</td><td>가이드 01 line 53 "팀이 정당화" 그대로 · 보고서 §3 근거</td></tr>
+    </tbody>
+  </table>
+
+  <h3>v2 alpha 분석 후보 (Q5: 03_mining 영역과 분리)</h3>
+  <div class="grid-2">
+    <div class="card mecab">
+      <h4>v2-alpha-1: 사용자 사전 정의 (Mecab 전용 강점)</h4>
+      <ul>
+        <li>ESG 도메인 신조어("ESG위원회", "스코프1", "Scope 1·2·3") 사용자 사전 등록</li>
+        <li>cherie-ssom 가이드 §5 "사용자 사전 정의" 절차 적용 (C:\mecab\user-dic 또는 python-mecab-ko 옵션)</li>
+        <li>등록 전후 vocab 변화 / seed term matched 비율 비교</li>
+        <li>가이드 위반 0건 (사전은 직접 검토 후 등록 — 위반금지 #3 준수)</li>
+      </ul>
+    </div>
+    <div class="card mecab">
+      <h4>v2-alpha-2: 합성어 분리 정밀도 비교</h4>
+      <ul>
+        <li>Mecab은 "온실가스" → "온실가스" (1토큰), Okt는 "온실+가스" 분리 가능</li>
+        <li>seed term 매칭률 비교 표 (가이드 line 75-94 30개 seed 기준)</li>
+        <li>Mecab 우위 / Okt 우위 차원 분석 → 보고서 §3 방법 정당화</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>시나리오 A 위반금지·필수사항 사전 검토</h3>
+  <table>
+    <thead><tr><th>#</th><th>항목</th><th>시나리오 A 적용</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>실패 행 가짜 0 ❌</td><td>SUCCESS firm-year만 corpus. tokenizer_used='mecab' 명시</td><td>✅</td></tr>
+      <tr><td>3</td><td>MCP/추출 그대로 신뢰 ❌</td><td>Mecab 결과를 그대로 expanded dict 확정 ❌. θ {0.60, 0.70, 0.80} 300단어 검토 의무 동일</td><td>✅</td></tr>
+      <tr><td>6</td><td>진단 부재 ❌</td><td>tokenizer_used='mecab' + 사용자 사전 등록 시 dict_version 컬럼</td><td>✅</td></tr>
+      <tr><td>—</td><td>가이드 04 §2-1 self-contained</td><td>Mecab도 노트북 try/except 안에서 import — 가용 시만 사용</td><td>✅</td></tr>
+      <tr><td>—</td><td>가이드 04 §3 모형 선택</td><td>04_modeling에서 OLS + Ordered logit + Binary logit 3종 모두 fit (Q5)</td><td>✅ (02 단계는 cheap-talk 컬럼만 생성)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 02. 시나리오 B (Okt fallback) ===== -->
+<section style="border-color: var(--okt);">
+  <h2><span class="num" style="color: var(--okt);">B</span>시나리오 B — Okt fallback PRIMARY (Mecab 미설치)</h2>
+
+  <div class="badge-row" style="margin-bottom: 10px;">
+    <span class="pill okt">tokenizer_used = 'okt'</span>
+    <span class="pill warn">Mecab 대비 느림 (~1/10)</span>
+    <span class="pill good">Java + JPype1만으로 동작</span>
+    <span class="pill good">KoNLPy 기본 — 설치 가장 쉬움</span>
+  </div>
+
+  <h3>v1 → v2 발전 경로 (시나리오 B)</h3>
+  <table>
+    <thead><tr><th>단계</th><th>작업</th><th>완료 기준</th><th>가이드·교안 정합성</th></tr></thead>
+    <tbody>
+      <tr><td>v1 (5/17 오후)</td><td>Okt로 Samsung 1건 노트북 Run All. 보고서 §5 한계에 "Mecab 미설치 이유"(Windows 환경 + VC++ Redistributable 미설치 등) 명시</td><td>tokenizer_used='okt', alt_df에서 4종 중 가용 분석기만 비교</td><td>가이드 02 line 159 ✅ (어떤 분석기든 7단계 충족) · 위반금지 #6 진단 (tokenizer_used + reason) ✅</td></tr>
+      <tr><td>v1 (5/18 오후)</td><td>Phase 2B 전체 corpus로 재실행. Okt가 Mecab보다 느려도 단발 실행이므로 시간 허용</td><td>esg_features.parquet 행수 ≥ 300</td><td>가이드 04 §3 측정 validity 진입 가능 ✅</td></tr>
+      <tr><td><b>v2 조건 (a)</b></td><td>5/18 시점에 Mecab 재설치 시도 성공 시 두 결과 비교 보존</td><td>v1 = Okt 결과, v2 = Mecab 결과. 두 esg_features.parquet 분리</td><td>규칙 #1 버전 보존 ✅ · 보고서 §5 "Mecab/Okt 차이" 분석</td></tr>
+      <tr><td>v2 조건 (b)</td><td>Okt POS 필터 sweep (Noun·Verb·Adjective·Alpha vs Noun-only)</td><td>v2에 alt 셀 + vocab 크기·feature 분포 비교</td><td>가이드 04 §3 측정 validity 강화</td></tr>
+      <tr><td>v2 조건 (c)</td><td>seed_dictionary 자체 변경 (시나리오 A와 동일)</td><td>v2 with 새 seed_dictionary_v2.csv</td><td>동일</td></tr>
+    </tbody>
+  </table>
+
+  <h3>시나리오 B 보고서 §5 한계 필수 기재 사항</h3>
+  <div class="quote">
+    "본 분석은 Okt 형태소 분석기를 사용했다. Q2 결정상 Mecab 우선이었으나 [Windows 환경 / VC++ Redistributable 미설치 / 권한 문제 / 등] 사유로 Mecab 설치 실패. Mecab은 한국어 NLP 학술 표준(Park &amp; Cha 2014)이며 속도·일관성 우위로 알려져 있어, 본 분석 결과가 Mecab 적용 시와 다를 가능성 있음. 후속 작업에서 Mecab 설치 후 재실행 검증 권장."
+  </div>
+
+  <h3>시나리오 B v2 alpha 분석 후보</h3>
+  <div class="grid-2">
+    <div class="card okt">
+      <h4>v2-alpha-1: Okt 사용자 사전 (Mecab 없이 신조어 대응)</h4>
+      <ul>
+        <li>Okt는 사용자 사전 직접 지원 ❌ → 사전·후처리 결합 전략</li>
+        <li>토큰화 후 정규식 후처리: ("스코프", "1") → "스코프1" 결합 규칙</li>
+        <li>가이드 위반 0건 (직접 검토 후 규칙 적용 — 위반금지 #3 준수)</li>
+      </ul>
+    </div>
+    <div class="card okt">
+      <h4>v2-alpha-2: ngram 기반 합성어 보강</h4>
+      <ul>
+        <li>Okt는 "온실가스" → "온실+가스" 분리 → bigram으로 "온실 가스" 합성 → seed 매칭률 회복</li>
+        <li>scikit-learn TfidfVectorizer의 ngram_range=(1,2) 활용</li>
+        <li>vocab 크기 폭증 → min_df / max_df 조정 함께 검토</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>시나리오 B 위반금지·필수사항 사전 검토</h3>
+  <table>
+    <thead><tr><th>#</th><th>항목</th><th>시나리오 B 적용</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>실패 행 가짜 0 ❌</td><td>SUCCESS firm-year만 corpus. tokenizer_used='okt' 명시</td><td>✅</td></tr>
+      <tr><td>3</td><td>MCP/추출 그대로 신뢰 ❌</td><td>θ sweep + 300단어 검토는 분석기 무관 동일 적용</td><td>✅</td></tr>
+      <tr><td>6</td><td>진단 부재 ❌</td><td>tokenizer_used='okt' + Mecab 시도 실패 reason 컬럼 (보고서 §5)</td><td>✅</td></tr>
+      <tr><td>—</td><td>가이드 02 line 159 (7단계)</td><td>"형태소 분석기로 한국어를 토큰화한다" — Okt도 충족 (KoNLPy 4종 모두 가이드 인정)</td><td>✅</td></tr>
+      <tr><td>—</td><td>가이드 04 §3 측정 validity</td><td>Spearman + Mann-Whitney는 분석기 무관. 결과가 다를 수는 있으나 절차는 동일</td><td>✅</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 03. 공통 발전 경로 (두 시나리오 모두) ===== -->
+<section>
+  <h2><span class="num">03</span>공통 발전 경로 — 두 시나리오 모두 적용</h2>
+  <p>아래 항목은 Mecab/Okt 어느 시나리오든 v1 → v2 전환 시 동일하게 적용. 분기 없음.</p>
+
+  <h3>공통 v2 트리거 조건</h3>
+  <table>
+    <thead><tr><th>트리거</th><th>v2 작업</th><th>가이드·교안 정합성</th></tr></thead>
+    <tbody>
+      <tr><td>FastText θ 채택 결과 변경</td><td>v1 채택 θ=0.70 → v2 채택 θ=0.60(or 0.80)</td><td>가이드 01 line 102 "팀 기준으로 θ 정당화" — v2가 정당화 갱신</td></tr>
+      <tr><td>expanded_dictionary.csv 검토 결과 대폭 변경</td><td>v2 = 새 kept/removed 라벨링 후 재계산</td><td>위반금지 #3 후속 (직접 검토 강화)</td></tr>
+      <tr><td>analysis_unit 변경 (예: body → text alt 채택)</td><td>v2 = source 변경 + 동일 파이프라인 재실행</td><td>v2.1 로드맵 §05 Q1 결정 재검토</td></tr>
+      <tr><td>section 결합 변경 (II+IV+VI → II only)</td><td>v2 = 분석 단위 좁힘</td><td>가이드 03 §1 "팀이 선택" Decision box 갱신</td></tr>
+      <tr><td>Phase 2B SUCCESS &lt; 300</td><td>v2 = 부분 corpus 진행 + 보고서 §5 표본 한계 강화</td><td>가이드 04 §4 line 101 "수업용 pilot panel" 그대로</td></tr>
+    </tbody>
+  </table>
+
+  <h3>공통 후속 노트북 흐름 (Q5 확정)</h3>
+  <div class="flow">
+    <span class="node">02 v1 (.parquet)</span>
+    <span class="arrow">→</span>
+    <span class="node">03_mining_v1<br>시각화·section·BERT</span>
+    <span class="arrow">→</span>
+    <span class="node">04_modeling_v1<br>OLS·Ordered·Binary 3종</span>
+    <span class="arrow">→</span>
+    <span class="node">05_reporting<br>최종 보고서</span>
+  </div>
+</section>
+
+<!-- ===== 04. 4-track 벤치마킹 매트릭스 (Mecab/Okt 분기) ===== -->
+<section>
+  <h2><span class="num">04</span>4-track 벤치마킹 매트릭스 — 두 시나리오 출처</h2>
+  <table>
+    <thead><tr><th>Track</th><th>출처</th><th>시나리오 A (Mecab)</th><th>시나리오 B (Okt fallback)</th></tr></thead>
+    <tbody>
+      <tr><td>강의 BASE</td><td>Week 5 한국어 전처리</td><td>Mecab POS 태그 (NNG·NNP·VV·VA·NR·SL)</td><td>Okt POS 태그 (Noun·Verb·Adjective·Alpha)</td></tr>
+      <tr><td>강의 BASE</td><td>Week 6 TF-IDF</td><td>동일 (분석기 무관)</td><td>동일</td></tr>
+      <tr><td>강의 BASE</td><td>Week 7 FastText</td><td>동일 입력 셀로 모델 학습 (vocab만 다름)</td><td>동일</td></tr>
+      <tr><td>강의 BASE</td><td>Week 8 cosine</td><td>동일</td><td>동일</td></tr>
+      <tr><td>공개 코드</td><td>KoNLPy 공식</td><td><a href="https://konlpy.org/en/latest/api/konlpy.tag/" style="color: var(--accent);">Mecab class</a> (별도 native binary 필요)</td><td><a href="https://konlpy.org/en/latest/api/konlpy.tag/" style="color: var(--accent);">Okt class</a> (Java + JPype1)</td></tr>
+      <tr><td>공개 코드</td><td>python-mecab-ko</td><td><a href="https://pypi.org/project/python-mecab-ko/" style="color: var(--accent);">PyPI</a> — Windows wheel + native + dic 번들</td><td>—</td></tr>
+      <tr><td>공개 코드</td><td>cherie-ssom 블로그</td><td><a href="https://cherie-ssom.tistory.com/3" style="color: var(--accent);">tistory.com/3</a> Pusnow msvc wheel 가이드</td><td>—</td></tr>
+      <tr><td>공개 코드</td><td>Pusnow GitHub</td><td><a href="https://github.com/Pusnow/mecab-ko-msvc/releases" style="color: var(--accent);">mecab-ko-msvc</a> + <a href="https://github.com/Pusnow/mecab-ko-dic-msvc/releases" style="color: var(--accent);">mecab-ko-dic-msvc</a></td><td>—</td></tr>
+      <tr><td>실무 ETL</td><td>idempotent parquet</td><td>esg_features.parquet 단일</td><td>esg_features.parquet 단일 (tokenizer_used 컬럼 차이)</td></tr>
+      <tr><td>학술</td><td>Park &amp; Cha (2014) "Korean Morphological Analyzers Comparison"</td><td>Mecab 속도·정확도 우위 학술 근거</td><td>Okt 한계 인정 보고서 §5 인용</td></tr>
+      <tr><td>학술</td><td>Li, Mai, Shen, Yan (2021, RFS) §4 NER</td><td>seed → TF-IDF firm-year score — 분석기 무관</td><td>동일</td></tr>
+      <tr><td>학술</td><td>Bao, Liang, Hou (2024)</td><td>θ sweep + 100단어 검토 — 분석기 무관</td><td>동일</td></tr>
+      <tr><td>학술</td><td>Loughran &amp; McDonald (2011, JF)</td><td>도메인 사전 잡음 검토 — 분석기 무관</td><td>동일</td></tr>
+      <tr><td>가이드</td><td>02_dart_data_collection.md line 159</td><td>"형태소 분석기로 한국어를 토큰화" — Mecab 충족</td><td>"형태소 분석기로 한국어를 토큰화" — Okt 충족</td></tr>
+      <tr><td>가이드</td><td>04 §3 측정 validity</td><td>Spearman + Mann-Whitney 동일</td><td>동일 — 결과만 다를 수 있음</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 05. 수업 교안 매핑 (분기 없음) ===== -->
+<section>
+  <h2><span class="num">05</span>수업 교안 매핑 — Week 5~9 (두 시나리오 동일)</h2>
+  <table>
+    <thead><tr><th>Week</th><th>주제</th><th>본 02 적용</th><th>시나리오 분기 영향</th></tr></thead>
+    <tbody>
+      <tr><td>Week 5</td><td>한국어 형태소 분석 (KoNLPy)</td><td>Step 3 토큰화 (4종 비교 alt 셀)</td><td><b>Mecab (A) vs Okt (B)</b></td></tr>
+      <tr><td>Week 6</td><td>TF-IDF, 불용어</td><td>Step 4-5</td><td>없음 (분석기 무관)</td></tr>
+      <tr><td>Week 7</td><td>단어 임베딩 FastText</td><td>Step 6 (θ {0.60, 0.70, 0.80} sweep)</td><td>없음 (모델 학습 입력 다름, 절차 동일)</td></tr>
+      <tr><td>Week 8</td><td>cosine similarity</td><td>Step 7 기준 문장</td><td>없음</td></tr>
+      <tr><td>Week 9</td><td>회귀 baseline</td><td>02는 cheap-talk만, 04_modeling 본격</td><td>없음</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 06. 웹크롤링 자료 매트릭스 ===== -->
+<section>
+  <h2><span class="num">06</span>웹크롤링 자료 — 두 시나리오 설치·검증 출처</h2>
+  <table>
+    <thead><tr><th>출처</th><th>URL</th><th>시나리오</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td>cherie-ssom 블로그</td><td><code>cherie-ssom.tistory.com/3</code></td><td>A only</td><td>Windows + C:\mecab 폴더 + Pusnow msvc wheel + 사용자 사전 정의 + powershell 권한 해결</td></tr>
+      <tr><td>python-mecab-ko PyPI</td><td><code>pypi.org/project/python-mecab-ko/</code></td><td>A only</td><td>Windows wheel + native binary + 사전 번들 (pip 한 줄)</td></tr>
+      <tr><td>mecab-ko PyPI</td><td><code>pypi.org/project/mecab-ko/</code></td><td>A only</td><td>Visual C++ Redistributable 요구사항 + 자동 사전 설치</td></tr>
+      <tr><td>Pusnow mecab-ko-msvc</td><td><code>github.com/Pusnow/mecab-ko-msvc/releases</code></td><td>A only</td><td>release-0.9.2-msvc-3 Windows binary</td></tr>
+      <tr><td>Pusnow mecab-ko-dic-msvc</td><td><code>github.com/Pusnow/mecab-ko-dic-msvc/releases</code></td><td>A only</td><td>mecab-ko-dic-2.1.1-20180720-msvc</td></tr>
+      <tr><td>KoNLPy 공식 문서</td><td><code>konlpy.org/en/latest/api/konlpy.tag/</code></td><td>A + B</td><td>Mecab/Okt/Kkma/Komoran 4종 API 비교</td></tr>
+      <tr><td>scikit-learn TfidfVectorizer</td><td><code>scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html</code></td><td>A + B</td><td>min_df·max_df·sublinear_tf 옵션</td></tr>
+      <tr><td>gensim FastText</td><td><code>radimrehurek.com/gensim/models/fasttext.html</code></td><td>A + B</td><td>vector_size·window·min_count·epochs 권장값</td></tr>
+    </tbody>
+  </table>
+
+  <div class="card warn" style="margin-top: 10px;">
+    <h4>웹크롤링 허용 범위 (v0.4 ROADMAP 매트릭스 그대로 — 두 시나리오 무관)</h4>
+    <ul>
+      <li>🟢 적극 권장: OpenDART API · DART viewer (수집 검증) · 공개 라이브러리 PyPI/GitHub 문서</li>
+      <li>🟡 조건부: KCGS 공시 (timing 참고용)</li>
+      <li>🔴 금지: 로그인/유료 사이트 · MCP가 만든 passage 직접 corpus 투입 · viewer 우회</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== 07. 가이드 line별 매핑 ===== -->
+<section>
+  <h2><span class="num">07</span>가이드 line별 매핑 — 두 시나리오 모두 충족</h2>
+  <table>
+    <thead><tr><th>가이드 line</th><th>요구</th><th>시나리오 A (Mecab)</th><th>시나리오 B (Okt)</th></tr></thead>
+    <tbody>
+      <tr><td>02 line 18</td><td>"사업보고서의 II, IV, VI 섹션 ESG 표현"</td><td>분석 단위 동일 (Q1)</td><td>동일</td></tr>
+      <tr><td>02 line 35</td><td>회사명 join silent 오매칭 ❌</td><td>stock_code × fiscal_year</td><td>동일</td></tr>
+      <tr><td>02 line 37</td><td>esg_year = fiscal_year + 1</td><td>동일</td><td>동일</td></tr>
+      <tr><td>02 line 159</td><td>"형태소 분석기로 한국어를 토큰화"</td><td>✅ Mecab</td><td>✅ Okt</td></tr>
+      <tr><td>02 line 160</td><td>"불용어를 제거"</td><td>4종 stopwords (기본 + 회사명 + 연도 + 법률)</td><td>동일</td></tr>
+      <tr><td>02 line 161</td><td>"seed dictionary와 TF-IDF feature"</td><td>seed 30개 + TfidfVectorizer</td><td>동일</td></tr>
+      <tr><td>02 line 162</td><td>"fastText로 seed 주변 후보"</td><td>θ {0.60, 0.70, 0.80}</td><td>동일</td></tr>
+      <tr><td>02 line 163</td><td>"후보 단어 검토. 그대로 확정 ❌"</td><td>300단어 직접 검토 (위반금지 #3)</td><td>동일</td></tr>
+      <tr><td>02 line 166</td><td>"실패·결측 행 보고서에 설명"</td><td>esg_features.parquet에 SUCCESS만 + reason</td><td>동일 + Mecab 미설치 reason 추가</td></tr>
+      <tr><td>02 line 172</td><td>"실패 행 가짜 0 ❌"</td><td>SUCCESS만 corpus</td><td>동일</td></tr>
+      <tr><td>02 line 216-222</td><td>API key .env 안전</td><td>02 API 호출 없음, mask_key 패턴 유지</td><td>동일</td></tr>
+      <tr><td>03 line 32-47</td><td>firm-year 1 = document 1</td><td>II+IV+VI body 결합</td><td>동일</td></tr>
+      <tr><td>03 line 80-88</td><td>E/S/G seed score 공식</td><td>seed_tfidf_E/S/G 컬럼</td><td>동일</td></tr>
+      <tr><td>03 line 102</td><td>θ별 상위 100단어 검토</td><td>3 × 100 = 300단어 × E·S·G</td><td>동일</td></tr>
+      <tr><td>03 line 188</td><td>ρ 0.10-0.20 약한 연관성 경고</td><td>Step 8 validity 표 판정</td><td>동일</td></tr>
+      <tr><td>03 line 234</td><td>cheap-talk 통제 (total_word_count)</td><td>Step 9 컬럼 생성</td><td>동일</td></tr>
+      <tr><td>04 §2-1 line 61</td><td>위→아래 Run All 재현</td><td>self-contained ipynb</td><td>동일</td></tr>
+      <tr><td>04 §3 측정 validity</td><td>Spearman + Mann-Whitney 검증</td><td>Step 8 게이트</td><td>동일</td></tr>
+      <tr><td>04 §3 모형 선택</td><td>OLS · Ordered logit · Binary logit 3종 비교</td><td>04_modeling (Q5)</td><td>동일</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size: 12.5px; color: var(--muted); margin-top: 6px;">결론: <b>두 시나리오 모두 가이드 line 단위에서 위반 0건, 누락 0건</b>. 차이는 "tokenizer_used 컬럼 값 + 보고서 §5 한계 기재 분량"뿐. 결과 quality는 다를 수 있으나 절차·기준은 일관.</p>
+</section>
+
+<!-- ===== 08. 위반금지 8항목 두 시나리오 self-check ===== -->
+<section>
+  <h2><span class="num">08</span>위반금지 8항목 — 두 시나리오 self-check</h2>
+  <table>
+    <thead><tr><th>#</th><th>항목</th><th>가이드</th><th>시나리오 A</th><th>시나리오 B</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>실패 행 가짜 0 ❌</td><td>02 line 172, 04 line 103</td><td>✅ SUCCESS만</td><td>✅ SUCCESS만</td></tr>
+      <tr><td>2</td><td>viewer 우회 ❌</td><td>02 line 67, 94</td><td>✅ raw fetch 없음</td><td>✅ 동일</td></tr>
+      <tr><td>3</td><td>MCP/추출 그대로 신뢰 ❌</td><td>02 line 94</td><td>✅ 300단어 검토</td><td>✅ 동일</td></tr>
+      <tr><td>4</td><td>API key 출력 노출 ❌</td><td>02 line 216-222</td><td>✅ mask_key</td><td>✅ 동일</td></tr>
+      <tr><td>5</td><td>raw 미보존 ❌</td><td>02 line 155</td><td>✅ data/raw + interim 보존</td><td>✅ 동일</td></tr>
+      <tr><td>6</td><td>진단 부재 ❌</td><td>02 line 143-146</td><td>✅ tokenizer_used + 진단 컬럼</td><td>✅ + Mecab 미설치 reason</td></tr>
+      <tr><td>7</td><td>silent 오매칭 ❌</td><td>02 line 35</td><td>✅ stock_code × fiscal_year</td><td>✅ 동일</td></tr>
+      <tr><td>8</td><td>평가 기준 부재 ❌</td><td>02 line 145</td><td>✅ Step 8 validity 게이트</td><td>✅ 동일</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 09. 마일스톤 분기 (Mecab 시도 시점) ===== -->
+<section>
+  <h2><span class="num">09</span>마일스톤 — Mecab 설치 시도 시점 분기</h2>
+  <table>
+    <thead><tr><th>날짜</th><th>공통 작업</th><th>시나리오 A 분기</th><th>시나리오 B 분기</th></tr></thead>
+    <tbody>
+      <tr><td>5/17 오전</td><td><b>Mecab 설치 시도</b> (pip install python-mecab-ko)</td><td>설치 성공 → A 채택</td><td>설치 실패 → B 채택, 보고서 §5에 reason</td></tr>
+      <tr><td>5/17 오전</td><td>Phase 2A 50건 batch</td><td>(공통)</td><td>(공통)</td></tr>
+      <tr><td>5/17 오후</td><td>02 v1 노트북 Samsung 1건 작성 + Run All</td><td>tokenizer_used='mecab'</td><td>tokenizer_used='okt'</td></tr>
+      <tr><td>5/18 오후</td><td>Phase 2B 전체 + 02 v1 alt 셀 완성</td><td>(공통)</td><td>(공통, 단 Mecab 재시도 권장)</td></tr>
+      <tr><td>5/18 야간</td><td>02 v1 전체 corpus Run All</td><td>esg_features.parquet (mecab)</td><td>esg_features.parquet (okt)</td></tr>
+      <tr><td>5/19 오전</td><td>v2 조건 발생 여부 점검</td><td>위 §A v2 조건 (a)(b)(c)</td><td>위 §B v2 조건 (a)(b)(c)</td></tr>
+      <tr><td>5/19 오후 (D-Day)</td><td>D-Day 게이트 12개 + 03·04 입력 확정</td><td>(공통)</td><td>(공통)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 10. 결정·확인 사항 ===== -->
+<section>
+  <h2><span class="num">10</span>이동원 님께 — 즉시 결정 1건</h2>
+  <div class="quote">
+    <b>액션:</b> 본인의 Windows 환경(파이썬 가상환경 활성화)에서 PowerShell/cmd 열고 다음 명령 1줄 실행:
+    <pre style="margin: 8px 0;">pip install python-mecab-ko</pre>
+    <b>예상 결과 (둘 중 하나):</b>
+    <ol style="margin: 4px 0;">
+      <li><b>성공</b> (Visual C++ Redistributable 있음, 대부분의 Windows) → 시나리오 A 채택. 02 노트북 Run All 시 tokenizer_used='python-mecab-ko' 자동 선택. 추가 설정 없음.</li>
+      <li><b>실패</b> ("Could not build wheels" 또는 DLL 오류) → 시나리오 B Okt fallback 자동 채택. 02 노트북 Run All 시 tokenizer_used='okt'. 보고서 §5에 실패 reason 1줄 추가하면 끝.</li>
+    </ol>
+  </div>
+  <p>두 시나리오 모두 가이드 위반 0건·필수사항 누락 0건·작업 생략 0건이 본 v2 발전 로드맵의 핵심 보장. 결정은 환경이 자동으로 내려주고, 본 노트북은 어떤 결과든 동일 절차로 처리합니다.</p>
+</section>
+
+<div class="footer">
+  v2 발전 로드맵 (Mecab vs Okt fallback) · 작성 2026-05-17 · 이동원 · 입력 노트북: <code>02_preprocessing_v1.ipynb</code> · 본 로드맵 위치: <code>members/이동원/reports/02_preprocessing/01_v2_evolution_roadmap_mecab_vs_okt.html</code> · 5/19 D-Day
+</div>
+
+</main>
+</body>
+</html>
