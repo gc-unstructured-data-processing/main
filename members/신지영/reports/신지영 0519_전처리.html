@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>ESG DART 전처리 코드 설명</title><style>
+body {font-family: -apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',Arial,sans-serif; line-height:1.65; color:#222; margin:0; background:#f6f8fb;}
+.container {max-width: 980px; margin: 32px auto; background:#fff; padding: 36px 44px; border-radius: 18px; box-shadow:0 8px 26px rgba(0,0,0,.08);}
+h1 {font-size: 30px; margin:0 0 8px; color:#17324d;}
+.subtitle {color:#667085; margin-bottom:28px;}
+.step {border-left:5px solid #2f80ed; padding:16px 18px; margin:18px 0; background:#f8fbff; border-radius:12px;}
+.step h2 {font-size:20px; margin:0 0 8px; color:#1f4e79;}
+.step p {margin:0;}
+.badge {display:inline-block; background:#e8f2ff; color:#1f4e79; padding:4px 10px; border-radius:999px; font-weight:700; font-size:13px; margin-right:8px;}
+.summary {background:#fff7e6; border:1px solid #ffd591; border-radius:12px; padding:16px 18px; margin:24px 0;}
+ul {margin:8px 0 0 22px;}
+code {background:#eef2f7; padding:2px 5px; border-radius:4px;}
+.footer {margin-top:28px; font-size:13px; color:#667085;}
+</style></head><body><div class="container">
+<h1>ESG DART 전처리 코드 설명</h1>
+<p class="subtitle">신지영_5_19_전처리(1).ipynb 기준 · 0단계~12-7단계 요약</p>
+<div class="summary"><strong>전체 목적</strong><br>
+이 노트북은 DART 사업보고서에서 ESG 관련 문장을 수집하고, 기업-연도 단위 문서로 통합한 뒤, Kiwi 형태소 분석기를 사용해 TF-IDF 분석 직전의 전처리 데이터를 만드는 흐름이다.</div>
+
+<div class="step"><h2><span class="badge">0단계</span>기본 설치 및 라이브러리 로드</h2><p>프로젝트 실행에 필요한 패키지를 설치하고, pandas·requests·BeautifulSoup·Kiwi·scikit-learn·statsmodels 등 데이터 수집, 전처리, 분석에 필요한 라이브러리를 불러온다.</p></div>
+<div class="step"><h2><span class="badge">1단계</span>구글 드라이브 연결 및 저장 경로 설정</h2><p>Colab 런타임이 끊겨도 중간 결과를 유지할 수 있도록 Google Drive를 마운트하고, 모든 체크포인트와 결과 파일을 저장할 폴더(SAVE_DIR)를 만든다.</p></div>
+<div class="step"><h2><span class="badge">2단계</span>OpenDART API KEY 입력</h2><p>DART API를 호출하기 위해 사용자의 OpenDART 인증키를 입력받는다. 코드에 직접 키를 남기지 않아 제출 시 보안 위험을 줄인다.</p></div>
+<div class="step"><h2><span class="badge">3단계</span>company_master.csv 업로드 및 기본 확인</h2><p>분석 대상 기업-연도 데이터셋을 업로드하고, stock_code를 6자리 문자열로 맞춘다. esg_year를 생성하고 ESG 등급(S~D)을 숫자형 변수로 변환한다.</p></div>
+<div class="step"><h2><span class="badge">4단계</span>corp_code 매핑 파일 다운로드 및 재사용</h2><p>OpenDART의 corpCode.xml을 이용해 stock_code와 corp_code를 연결한다. 이미 저장된 corp_code_mapping.csv가 있으면 재다운로드하지 않고 재사용한다.</p></div>
+<div class="step"><h2><span class="badge">5단계</span>company_master에 corp_code 붙이기</h2><p>회사명이 아니라 stock_code를 기준으로 master 데이터와 DART corp_code 매핑표를 병합한다. 중복 컬럼 문제를 방지하기 위해 기존 corp_code 관련 컬럼을 정리한다.</p></div>
+<div class="step"><h2><span class="badge">6단계</span>사업보고서 rcept_no 찾기</h2><p>corp_code와 fiscal_year를 이용해 해당 회계연도의 사업보고서 접수번호(rcept_no), 접수일(rcept_dt), 보고서명, viewer_url을 찾는다. 결과는 dart_report_log.csv로 저장해 재사용한다.</p></div>
+<div class="step"><h2><span class="badge">7단계</span>XML 원문 다운로드 함수 정의</h2><p>rcept_no를 이용해 OpenDART document.xml API에서 사업보고서 원문 ZIP을 다운로드하고 XML 텍스트로 변환하는 함수를 정의한다. 요청 속도를 높이기 위해 requests.Session을 사용한다.</p></div>
+<div class="step"><h2><span class="badge">8단계</span>ESG seed dictionary 및 passage 추출 함수 정의</h2><p>환경(E), 사회(S), 지배구조(G)의 seed 단어를 정의하고, XML 텍스트에서 ESG 관련 문장을 찾기 위한 기본 함수들을 만든다. 문장별로 포함된 seed 단어를 기준으로 E/S/G 차원을 판별한다.</p></div>
+<div class="step"><h2><span class="badge">9단계</span>전체 기업-연도 ESG passage 추출</h2><p>master_reports의 각 기업-연도에 대해 XML을 다운로드하고, ESG seed 단어가 2개 이상 포함된 문장만 passage로 추출한다. ThreadPoolExecutor로 병렬 처리하며, checkpoint CSV를 저장해 중간 재시작이 가능하게 한다.</p></div>
+<div class="step"><h2><span class="badge">10단계</span>firm-year 단위 document 생성</h2><p>같은 기업-연도에서 추출된 여러 ESG passage를 하나의 document로 통합한다. 이후 TF-IDF 분석을 위해 기업-연도당 1행 구조의 doc_df를 만든다.</p></div>
+<div class="step"><h2><span class="badge">11단계</span>Kiwi 형태소 분석기 준비 및 불용어 사전 구성</h2><p>Kiwi 형태소 분석기를 초기화하고, 일반 불용어·공시 반복어·회사명·DART 회사명을 불용어로 묶는다. 회사명이나 공시 형식 표현이 토큰으로 남지 않도록 사전을 구성한다.</p></div>
+<div class="step"><h2><span class="badge">12단계</span>Kiwi 형태소 분석 기반 최종 전처리</h2><p>문서를 정규화한 뒤 Kiwi로 형태소 분석을 수행한다. 명사류와 외국어 토큰만 남기고, 불용어·짧은 단어·숫자·시간 표현·코드성 표현을 제거하여 TF-IDF 직전의 tokenized_text를 만든다.</p></div>
+<div class="step"><h2><span class="badge">12-5단계</span>전처리 품질 점검</h2><p>전체 토큰 빈도, 문서별 토큰 수, 토큰 수가 지나치게 적은 문서를 확인한다. 상위 토큰에 의미 없는 단어가 많이 남았는지 점검한다.</p></div>
+<div class="step"><h2><span class="badge">12-6단계</span>ESG seed 단어 보존 여부 확인</h2><p>전처리 후에도 탄소, 온실가스, 공급망, 이사회 등 ESG seed 단어가 실제 토큰으로 살아 있는지 확인한다. 사라진 seed 단어가 있으면 전처리 규칙을 조정할 근거가 된다.</p></div>
+<div class="step"><h2><span class="badge">12-7단계</span>전처리 결과 저장</h2><p>최종 전처리된 doc_df를 doc_df_preprocessed_kiwi_v2.csv로 저장한다. 이후 TF-IDF 단계에서는 이 파일을 불러와 바로 분석을 이어갈 수 있다.</p></div>
+<div class="summary"><strong>TF-IDF 단계 전 확인할 것</strong>
+<ul>
+<li><code>passage_df</code>에 ESG 관련 문장이 적절히 추출되었는지 확인한다.</li>
+<li><code>doc_df</code>가 기업-연도당 1행 구조인지 확인한다.</li>
+<li><code>token_freq_df</code> 상위 토큰에 회사명·공시 형식어가 과도하게 남아 있지 않은지 확인한다.</li>
+<li><code>seed_check_df</code>에서 주요 ESG seed 단어가 전처리 후에도 남아 있는지 확인한다.</li>
+</ul></div>
+<p class="footer">※ 본 설명은 업로드된 노트북의 코드 흐름을 바탕으로 작성되었으며, HTML 파일은 보고서 보조자료 또는 팀원 공유용으로 사용할 수 있다.</p>
+</div></body></html>
