@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESG DART 기말 프로젝트 — 발표대비 QnA + 변형 가이드 v1</title>
+<style>
+:root {
+  --bg: #fafaf7;
+  --bg-card: #ffffff;
+  --bg-soft: #f3f1ea;
+  --bg-warn: #fff7ed;
+  --bg-danger: #fef2f2;
+  --bg-info: #eff6ff;
+  --bg-success: #f0fdf4;
+  --bg-purple: #f5f3ff;
+  --text-primary: #1c1c1a;
+  --text-secondary: #5a5a55;
+  --text-muted: #8a8a85;
+  --text-warn: #b45309;
+  --text-danger: #b91c1c;
+  --text-info: #1d4ed8;
+  --text-success: #15803d;
+  --text-purple: #6d28d9;
+  --border: rgba(0,0,0,0.10);
+  --accent: #4338ca;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 80px; }
+header.hero { border-bottom: 0.5px solid var(--border); padding-bottom: 24px; margin-bottom: 24px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+h1 { font-size: 26px; font-weight: 500; margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { font-size: 15px; color: var(--text-secondary); margin: 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.chip strong { font-weight: 500; color: var(--text-primary); }
+
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--bg-soft); border-radius: 12px; margin-bottom: 28px; position: sticky; top: 12px; z-index: 10; border: 0.5px solid var(--border); }
+nav.tabs button { flex: 1 1 auto; min-width: 110px; padding: 9px 12px; border: none; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; font-family: inherit; }
+nav.tabs button:hover { background: rgba(255,255,255,0.6); color: var(--text-primary); }
+nav.tabs button.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+.section { display: none; animation: fade 0.25s ease; }
+.section.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+h2 { font-size: 20px; font-weight: 500; margin: 0 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 17px; font-weight: 500; margin: 28px 0 10px; color: var(--text-primary); }
+h4 { font-size: 14px; font-weight: 600; margin: 16px 0 6px; color: var(--text-primary); }
+.section-intro { color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; max-width: 760px; }
+
+.qa-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 16px; }
+.q-num { font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 4px; }
+.q-text { font-size: 15px; font-weight: 600; color: var(--text-primary); margin: 0 0 12px; line-height: 1.5; }
+.q-text::before { content: "Q. "; color: var(--accent); font-weight: 700; }
+.a-block { background: var(--bg-info); border-left: 3px solid #2563eb; border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 8px 0; font-size: 13.5px; color: var(--text-secondary); }
+.a-block::before { content: "A. "; color: var(--text-info); font-weight: 700; }
+.a-block strong { color: var(--text-primary); font-weight: 500; }
+.a-block code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; }
+
+.followup { font-size: 12.5px; color: var(--text-muted); margin-top: 8px; font-style: italic; }
+.followup strong { color: var(--text-secondary); font-style: normal; }
+
+.source { font-size: 12px; color: var(--text-muted); margin-top: 6px; font-style: italic; }
+.label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 12px 0 6px; }
+
+.card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 14px; }
+.card.warn   { background: var(--bg-warn);  border-color: rgba(245,158,11,0.25); }
+.card.danger { background: var(--bg-danger); border-color: rgba(239,68,68,0.25); }
+.card.success{ background: var(--bg-success);border-color: rgba(34,197,94,0.25); }
+.card.purple { background: var(--bg-purple); border-color: rgba(124,58,237,0.25); }
+.card.soft   { background: var(--bg-soft); border: none; }
+.card h4 { margin-top: 0; }
+
+.callout { border-left: 3px solid var(--accent); background: var(--bg-card); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 14px; color: var(--text-secondary); }
+.callout strong { color: var(--text-primary); font-weight: 500; }
+.callout.warn   { border-left-color: #d97706; background: var(--bg-warn); }
+.callout.danger { border-left-color: #dc2626; background: var(--bg-danger); }
+.callout.success{ border-left-color: #16a34a; background: var(--bg-success); }
+.callout.purple { border-left-color: #7c3aed; background: var(--bg-purple); }
+
+table.clean { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 10px 0; }
+table.clean th, table.clean td { text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+table.clean th { font-weight: 500; color: var(--text-muted); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--bg-soft); }
+
+.copy-block { background: var(--bg-soft); border: 1px dashed var(--border-strong); border-radius: 8px; padding: 12px 14px; margin: 8px 0; font-size: 13px; color: var(--text-primary); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+.copy-block-label { font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; font-family: -apple-system, sans-serif; }
+
+footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">비정형데이터분석 · 기말 팀 프로젝트 · 발표대비 QnA v1</div>
+  <h1>발표 대비 QnA + 변형 가이드</h1>
+  <p class="sub">결정박스 8개 + 위반금지 11개 + 자주 나올 추가 질문에 대한 답변 초안. <strong>그대로 베끼지 말고 변형 가이드를 따라 팀 발견에 맞춰 살짝 바꿔서</strong> 보고서·발표에 사용하세요.</p>
+  <div class="meta-row">
+    <span class="chip"><strong>결정박스 답안</strong> 8개</span>
+    <span class="chip"><strong>위반금지 답안</strong> 11개</span>
+    <span class="chip"><strong>추가 예상 Q&amp;A</strong> 10개</span>
+    <span class="chip"><strong>변형 가이드</strong> 8 패턴</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="overview" class="active">발표 준비 흐름</button>
+  <button data-tab="decisions">결정박스 8 답안</button>
+  <button data-tab="forbidden">위반금지 11 답안</button>
+  <button data-tab="extra">추가 예상 Q&amp;A</button>
+  <button data-tab="variation">변형 가이드 8 패턴</button>
+</nav>
+
+<!-- ============ 발표 준비 흐름 ============ -->
+<section class="section active" data-section="overview">
+  <h2>발표 준비 흐름 — 30분 안에 끝내기</h2>
+  <p class="section-intro">
+    이 문서는 보고서 작성과 발표 Q&amp;A 둘 다에 쓸 수 있습니다. 다음 순서로 활용하세요.
+  </p>
+
+  <div class="card">
+    <h4>① 보고서 작성 시</h4>
+    <ul>
+      <li><strong>"결정박스 8 답안"</strong> 탭에서 자기 팀의 8개 결정에 맞는 답안 골라오기</li>
+      <li><strong>"변형 가이드 8 패턴"</strong>으로 답안 그대로가 아니라 팀 발견에 맞춰 변형 (베끼기 방지)</li>
+      <li><strong>"위반금지 11 답안"</strong>은 보고서 §방법론·§한계 절에 자연스럽게 녹이기</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4>② 발표 직전 (24-48시간 전)</h4>
+    <ul>
+      <li>모든 답안 묶음을 한 번 정독 (소요 ~20분)</li>
+      <li>각 발표자가 자기 담당 단계의 결정박스 답안 외우기</li>
+      <li><strong>"추가 예상 Q&amp;A"</strong>는 발표자 전체가 공유</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4>③ 발표 중 답변 패턴 (3단 구성 권장)</h4>
+    <ul>
+      <li><strong>1단</strong> — 결정 자체 (한 줄): "우리 팀은 ___를 선택했습니다."</li>
+      <li><strong>2단</strong> — 근거 (1-2 문장): 가이드 인용 + 데이터 근거 + 학술 근거</li>
+      <li><strong>3단</strong> — 한계 인정 (한 줄): "단 ___ 한계는 ___로 보완하려 했다."</li>
+    </ul>
+  </div>
+
+  <div class="callout success">
+    <strong>발표 답안 황금률 3가지</strong><br>
+    1. <strong>"확신 + 한계 인정"</strong> 한 쌍으로. 단정 X, 무한 회피 X<br>
+    2. <strong>가이드 문장 + 우리 데이터 근거</strong> 둘 다 인용 (가이드만 인용 = 베끼기)<br>
+    3. <strong>"이 표본에서는"</strong> 조심어 한 번은 꼭 사용 (인과로 단정 피하기)
+  </div>
+</section>
+
+<!-- ============ 결정박스 8 답안 ============ -->
+<section class="section" data-section="decisions">
+  <h2>심층가이드 결정박스 8개 — 예상 질문 + 답변 초안</h2>
+  <p class="section-intro">
+    심층분석가이드의 결정박스 8개는 발표 시 교수 질문 빈도 가장 높은 8문항입니다. 각각의 답변을 3단 구성으로 준비했습니다.
+  </p>
+
+  <!-- Q1 청사진 -->
+  <div class="qa-card">
+    <div class="q-num">결정박스 ①</div>
+    <p class="q-text">왜 Li 2021 코드를 100% 재현하지 않고 흐름만 차용했나요?</p>
+    <div class="a-block">
+      <strong>1단 — 결정</strong>: 우리 팀은 Li et al. (2021)의 <strong>방법론 흐름</strong>(seed → embedding → 확장 → 점수 → 회귀)을 차용하되 한국어 도구로 재작성했습니다.<br>
+      <strong>2단 — 근거</strong>: 원본은 spaCy/gensim 영어 환경. 한국어는 KoNLPy + fastText 한국어 모델로 인터페이스가 달라 100% 재현이 비효율적. 대신 raw API 응답과 collection_log를 보관해 재현성을 확보.<br>
+      <strong>3단 — 한계</strong>: 영어 NER 정확도가 한국어보다 높아 회사명 잡음 제거에 추가 작업이 필요했습니다.
+    </div>
+    <div class="followup"><strong>후속 질문 대비</strong>: "어떤 한국어 도구를 썼나?" → Okt 또는 Mecab + fastText (왜 그 선택인지는 결정박스 ③)</div>
+  </div>
+
+  <!-- Q2 Pilot -->
+  <div class="qa-card">
+    <div class="q-num">결정박스 ②</div>
+    <p class="q-text">dart-fss 같은 라이브러리 대신 OpenDART API를 직접 호출한 이유는?</p>
+    <div class="a-block">
+      <strong>1단 — 결정</strong>: <code>requests</code>로 OpenDART 공식 API를 직접 호출했습니다.<br>
+      <strong>2단 — 근거</strong>: 라이브러리 버전 의존성을 피하고 API 사양 변화에 대응이 쉽기 때문. 모든 응답 JSON과 zip을 raw로 보관해 명확한 lineage를 기록.<br>
+      <strong>3단 — 한계</strong>: 직접 호출은 코드 보일러플레이트가 늘지만 rate limit·backoff 패턴을 명시적으로 짤 수 있어 오히려 학습 효과가 있었습니다.
+    </div>
+    <div class="followup"><strong>후속 질문 대비</strong>: "rate limit은 어떻게 처리?" → 분당 600회 페이스(time.sleep(0.1)) + 지수 backoff 3회 재시도</div>
+  </div>
+
+  <!-- Q3 전처리 -->
+  <div class="qa-card">
+    <div class="q-num">결정박스 ③ — 핵심</div>
+    <p class="q-text">왜 명사만 추출했고, 형태소 분석기는 무엇을 선택했나요?</p>
+    <div class="a-block">
+      <strong>1단 — 결정</strong>: <strong>명사만</strong> 추출했고 분석기는 <strong>Okt(또는 Mecab)</strong>를 선택했습니다.<br>
+      <strong>2단 — 근거</strong>: ESG seed 30개가 모두 명사이고, Li et al. (2021)도 명사 중심 추출. 동사·조사를 포함하면 TF-IDF 잡음이 증가. 분석기는 (팀 환경에 Windows 있으면 Okt / 통일 가능하면 Mecab) — 신조어 처리(또는 합성어 유지)가 ESG 도메인에 적합.<br>
+      <strong>3단 — 한계</strong>: Okt는 "온실가스"가 "온실/가스"로 분해되는 경향이 있어 <strong>사용자 사전 추가</strong>(또는 Mecab은 Windows 설치가 까다로움) 등으로 보완했습니다.
+    </div>
+    <div class="followup"><strong>후속 질문 대비</strong>: "다른 분석기와 비교는?" → 4종(Okt/Mecab/Komoran/Kkma) 동일 문장 출력 비교 표 발표 자료에 첨부</div>
+  </div>
+
+  <!-- Q4 전체 수집 -->
+  <div class="qa-card">
+    <div class="q-num">결정박스 ④</div>
+    <p class="q-text">381 firm-year 수집은 어떻게 했고 실패는 얼마나 발생했나요?</p>
+    <div class="a-block">
+      <strong>1단 — 결정</strong>: 한 명이 약 2시간에 걸쳐 순차 처리(분당 600회 페이스)했고 실패한 N개 행은 <code>collection_log.csv</code>에 사유를 기록 후 분석 corpus에서 <strong>제외</strong>했습니다.<br>
+      <strong>2단 — 근거</strong>: OpenDART rate limit 분당 1,000회 안에서 안전 마진을 두기 위해 600회 페이스. 가이드 명시대로 실패행을 가짜 0으로 채우지 않음.<br>
+      <strong>3단 — 한계</strong>: N개 누락이 무작위 결측인지 특정 업종/연도 편향인지 확인하기 위해 누락 행의 stock_code 분포를 보고서에 표로 제시.
+    </div>
+    <div class="followup"><strong>후속 질문 대비</strong>: "재시도는?" → 지수 backoff 1초→2초→4초, 최대 3회, 실패 시 collection_log 기록</div>
+  </div>
+
+  <!-- Q5 θ sweep -->
+  <div class="qa-card">
+    <div class="q-num">결정박스 ⑤ — 핵심</div>
+    <p class="q-text">θ를 왜 그 값으로 정했나요? 어떻게 정당화했나요?</p>
+    <div class="a-block">
+      <strong>1단 — 결정</strong>: θ를 0.70 / 0.75 / 0.80 / 0.85 / 0.90 5개 값으로 sweep한 결과 <strong>θ = 0.80</strong>에서 후보 N개·잡음 비율 약 X%로 균형이 가장 좋아 채택했습니다.<br>
+      <strong>2단 — 근거</strong>: Bao et al. (2024)의 표준 sweep 범위. θ를 낮추면 후보가 늘지만 회사명·일반명사 잡음 비율이 25%까지 증가. 높이면 후보가 2-3개로 줄어 사전 확장 의미가 없음. 0.80에서 각 seed별 상위 100단어를 직접 검토해 회사명 K개·일반명사 L개를 manual 제외.<br>
+      <strong>3단 — 한계</strong>: θ 결정은 corpus 특성에 의존해 다른 도메인에서는 재현성이 제한될 수 있습니다.
+    </div>
+    <div class="followup"><strong>후속 질문 대비</strong>: "잡음 단어 예시?" → "재생에너지 → 대림에너지(회사명)", "이사회 → 회의(일반명사)" / "다른 θ에서 결과 어떻게?" → trade-off 표로 답변</div>
+  </div>
+
+  <!-- Q6 차원 분리 -->
+  <div class="qa-card">
+    <div class="q-num">결정박스 ⑥</div>
+    <p class="q-text">통합 점수만 쓰지 않고 E·S·G 차원별 점수도 만든 이유는?</p>
+    <div class="a-block">
+      <strong>1단 — 결정</strong>: ESG 통합 점수와 E·S·G 차원별 점수를 <strong>둘 다</strong> 생성했습니다.<br>
+      <strong>2단 — 근거</strong>: KCGS도 E·S·G 등급을 별도 제공하므로 차원별 매칭이 가능. 가이드 명시. 차원별로 신호 강도가 다를 수 있어 더 풍부한 해석 가능.<br>
+      <strong>3단 — 한계</strong>: 차원별 분석은 각 차원의 seed 단어가 10개로 적어 점수 안정성이 통합 점수보다 낮을 수 있어 robustness를 별도 확인했습니다.
+    </div>
+    <div class="followup"><strong>후속 질문 대비</strong>: "어느 차원이 가장 강했나?" → G 차원이 VI 섹션에서 가장 강한 신호(α-2 섹션별 점수 분석 결과)</div>
+  </div>
+
+  <!-- Q7 사전 검증 -->
+  <div class="qa-card">
+    <div class="q-num">결정박스 ⑦</div>
+    <p class="q-text">왜 Pearson이 아니라 Spearman을 썼고, t-test/Mann-Whitney 둘 중 무엇을?</p>
+    <div class="a-block">
+      <strong>1단 — 결정</strong>: Spearman 순위상관 + Mann-Whitney U test + 상하위 10% 문장 직접 읽기 <strong>3종</strong> 모두 보고했습니다.<br>
+      <strong>2단 — 근거</strong>: ESG 등급은 D~A+의 서열변수라 등간성을 가정하지 않는 Spearman이 자연스러움. feature 분포가 일부 치우쳐 Mann-Whitney가 t-test보다 robust. 문장 읽기로 cheap-talk 의심 패턴을 사람 눈으로 확인.<br>
+      <strong>3단 — 한계</strong>: ρ가 0.10-0.20 수준이라 통계 유의해도 효과는 약함으로 해석. 단순 강한 신호로 단정 X.
+    </div>
+    <div class="followup"><strong>후속 질문 대비</strong>: "ρ가 작으면 의미 없는 것 아닌가?" → 약한 신호도 cheap-talk 통제 후에도 유의하면 부분적 ESG 측정 가능성 의미 있음</div>
+  </div>
+
+  <!-- Q8 회귀 -->
+  <div class="qa-card">
+    <div class="q-num">결정박스 ⑧</div>
+    <p class="q-text">왜 OLS와 ordered logit 둘 다 보고했나요?</p>
+    <div class="a-block">
+      <strong>1단 — 결정</strong>: <strong>OLS를 baseline</strong>, <strong>ordered logit으로 robustness</strong>를 확인했습니다.<br>
+      <strong>2단 — 근거</strong>: 우리 팀 질문은 등급의 서열 관계가 핵심이므로 ordered logit이 더 적합. 단 OLS는 계수 해석이 직관적이라 baseline으로 같이 보고. β1의 방향(양수)과 유의성이 두 모형에서 일치해 결과가 안정적.<br>
+      <strong>3단 — 한계</strong>: ordered logit은 표본이 작거나 predictor가 많으면 불안정할 수 있어 OLS 결과와 일치 여부를 확인.
+    </div>
+    <div class="followup"><strong>후속 질문 대비</strong>: "binary logit은 왜 안 썼나?" → "A 이상 vs 미만"으로 압축 시 등급 미묘 차이 손실. 우리 질문에는 ordered가 더 적합</div>
+  </div>
+
+  <div class="callout purple">
+    <strong>발표 시 핵심 — 8개 답안의 공통 구조</strong><br>
+    각 답변이 <strong>"결정 → 가이드/학술 근거 + 우리 데이터 → 한계 인정"</strong> 3단으로 짜여 있어요. 외울 때 답변 전체가 아니라 이 3단 구조를 외우면 어떤 후속 질문이 와도 변형 답변이 가능합니다.
+  </div>
+</section>
+
+<!-- ============ 위반금지 11 답안 ============ -->
+<section class="section" data-section="forbidden">
+  <h2>위반금지 11개 — "왜 그렇게 했나" 답안</h2>
+  <p class="section-intro">
+    교수님이 위반 항목을 직접 물어볼 가능성도 있습니다. 11개에 대한 짧은 답안.
+  </p>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ①</div>
+    <p class="q-text">수집 실패한 행은 어떻게 처리했나요?</p>
+    <div class="a-block">
+      <code>collection_log.csv</code>에 (stock_code, fiscal_year, status, reason) 4컬럼으로 사유를 기록하고 <strong>분석 corpus와 회귀 패널에서 제외</strong>했습니다. 가짜 0으로 채우면 Missing Not At Random 편향이 들어가 회귀 결과가 왜곡되기 때문입니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ②</div>
+    <p class="q-text">KCGS 등급과 사업보고서를 어떻게 매칭했나요?</p>
+    <div class="a-block">
+      <code>stock_code × fiscal_year</code>를 기본 키로 사용했습니다. <strong>회사명 join은 피했습니다</strong> — 사명변경·분할로 인한 silent mismatch 위험이 있어서. company_name이 133개인데 stock_code는 127개로 차이가 있는 것이 그 증거입니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ③</div>
+    <p class="q-text">MCP로 추출한 ESG passage를 그대로 썼나요?</p>
+    <div class="a-block">
+      MCP 결과는 참고만 하고 <strong>반드시 Python 코드로 XML에서 재현</strong>한 뒤 DART viewer URL로 원문을 확인했습니다. MCP는 LLM 생성이라 실제 공시와 다를 수 있다는 가이드 02 주의 박스를 따랐습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ④</div>
+    <p class="q-text">정정공시는 어떻게 처리했나요?</p>
+    <div class="a-block">
+      <code>last_reprt_at=Y</code> 파라미터를 적용해 최종 보고서만 선택했습니다. 정정공시가 있는 경우에는 어떤 <code>rcept_no</code>를 사용했는지 noterepository에 기록했습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ⑤</div>
+    <p class="q-text">fastText 후보를 그대로 ESG 사전으로 썼나요?</p>
+    <div class="a-block">
+      아닙니다. 각 θ 값에서 cosine 상위 100단어를 <strong>직접 검토</strong>해 회사명·일반명사 K개·L개를 manual 제외했습니다. 검토 시트(word, cosine, keep/drop, 이유)를 보고서 부록에 첨부했습니다. — Bao et al. (2024) 패턴.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ⑥</div>
+    <p class="q-text">seed와 expanded 점수를 한 회귀에 같이 넣었나요?</p>
+    <div class="a-block">
+      아닙니다. 두 점수 상관이 약 0.95로 매우 높아 다중공선성 위험이 큽니다. M1a(seed only)와 M1b(expanded only) <strong>별도 모형</strong>으로 비교했습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ⑦</div>
+    <p class="q-text">feature를 만들고 바로 회귀로 갔나요?</p>
+    <div class="a-block">
+      아닙니다. 회귀 전에 <strong>Spearman 순위상관 + Mann-Whitney U + 상하위 10% 문장 직접 읽기 3종</strong>으로 사전 검증을 수행해 feature가 KCGS 등급과 통계·내용적으로 연결되는지 확인 후 회귀로 진입했습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ⑧</div>
+    <p class="q-text">esg_year와 fiscal_year의 관계는?</p>
+    <div class="a-block">
+      <code>esg_year = fiscal_year + 1</code>로 고정했습니다. 즉 2025 KCGS 등급은 2024.12 사업보고서와 연결. 가이드 명시 기준을 그대로 따랐습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ⑨</div>
+    <p class="q-text">381행으로 한국 상장기업 전체 결론이 가능한가요?</p>
+    <div class="a-block">
+      아닙니다. 381행은 수업용 pilot panel입니다. KCGS 전체 1,024개사 표본에서 무작위 추출이 아니므로 일반화에 한계가 있습니다. 보고서에서도 "<strong>이 표본에서는</strong>" 한정어를 사용해 표현했습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ⑩</div>
+    <p class="q-text">회귀 결과로 ESG 점수가 등급을 결정한다고 말할 수 있나요?</p>
+    <div class="a-block">
+      아닙니다. 회귀 결과는 <strong>연관성</strong>이지 인과관계가 아닙니다. "이 표본에서는 ESG 관련 공시 표현이 강한 firm-year일수록 KCGS 등급도 높은 경향이 있었다"는 식으로 조심스럽게 해석. 계수 크기를 등급 점수 차이로 단순 환산하지 않았습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="q-num">위반금지 ⑪</div>
+    <p class="q-text">API key는 어떻게 관리했나요?</p>
+    <div class="a-block">
+      <code>.env</code> 환경변수에만 저장하고 코드에는 <code>os.getenv("OPENDART_API_KEY")</code>로 읽어 사용했습니다. <code>.gitignore</code>에 <code>.env</code>를 추가했고, 제출 노트북에서는 API key 문자열이 보이지 않는지 grep으로 확인했습니다.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 추가 예상 Q&A ============ -->
+<section class="section" data-section="extra">
+  <h2>추가 예상 Q&amp;A — 10개</h2>
+  <p class="section-intro">
+    결정박스·위반금지 외에 자주 나올 수 있는 질문들입니다.
+  </p>
+
+  <div class="qa-card">
+    <p class="q-text">TF-IDF가 단순 단어 빈도보다 좋은 이유가 뭔가요?</p>
+    <div class="a-block">
+      TF만 쓰면 보고서 길이에 따라 점수가 좌우됩니다. IDF가 "다른 보고서에도 흔한 단어인가"를 측정해 흔한 단어(예: "당사", "보고서")의 가중치를 자동으로 낮춰줍니다. 결과적으로 그 firm-year를 <strong>특징짓는</strong> 단어가 높은 점수를 받습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <p class="q-text">fastText 대신 Word2Vec을 안 쓴 이유는?</p>
+    <div class="a-block">
+      한국어는 어미 변화가 많고 ESG 도메인엔 "온실가스배출량" 같은 합성어가 흔합니다. Word2Vec은 학습 안 한 단어(OOV)에 벡터를 못 줍니다. fastText는 단어를 글자 조각(subword)으로 쪼개 학습하므로 OOV에도 부분 의미를 추정합니다. Li 2021은 2018년 Word2Vec 시대 모델이라 차이가 있습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <p class="q-text">cosine similarity는 어떻게 해석하나요?</p>
+    <div class="a-block">
+      두 벡터 사이의 각도입니다. 같은 방향이면 1(매우 유사), 직각이면 0(무관). 크기 무시, 방향만 봅니다. 우리 프로젝트에서는 (1) fastText 사전 확장 시 "seed 단어 주변의 유사 단어 찾기"와 (2) 기준문장 vs firm-year 문서의 텍스트 유사도 둘 다에 사용합니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <p class="q-text">cheap-talk이 뭔가요? 어떻게 검증했나요?</p>
+    <div class="a-block">
+      <strong>cheap-talk</strong> = "사업보고서가 ESG 단어를 많이 쓰기만 해도 점수가 올라가는 함정"입니다. 진짜 ESG 성과가 아니라 disclosure verbosity(공시 장황함)을 측정할 위험. 검증: <strong>total_word_count를 통제변수</strong>로 회귀에 넣고 β1의 변화를 봅니다. 통제 후 β1이 거의 안 바뀌면 진짜 ESG 신호, 크게 감소하면 cheap-talk 가설이 강해집니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <p class="q-text">왜 II/IV/VI 섹션만 봤나요? V·VII·VIII 섹션은?</p>
+    <div class="a-block">
+      ESG 관련 표현이 가장 빈도 높게 등장하는 섹션이 II(사업의 내용), IV(이사의 경영진단·분석의견), VI(이사회 등 회사의 기관)이기 때문입니다. 가이드 명시. V(주주에 관한 사항)는 등록주식 분포 위주, VII·VIII은 재무·감사 표 위주라 ESG 정성 정보가 적습니다. 단 G(지배구조) 추출에는 VI에 추가로 V도 부분 활용 가능 — 알파 분석 후보.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <p class="q-text">381개 중 몇 개가 성공했나요? 실패 사유는?</p>
+    <div class="a-block">
+      [팀별 채워야 함 — 예: "381개 중 N개 성공, M개 실패"]. 실패 사유는 주로 (1) 사업보고서가 아닌 분기/반기 보고서만 있는 firm-year, (2) document.xml API 500 오류, (3) 정정공시 다중으로 인한 식별 모호. 실패 분포에 특정 업종 편향이 있는지 확인해 보고서에 표로 제시했습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <p class="q-text">왜 알파로 그 분석을 골랐나요?</p>
+    <div class="a-block">
+      [팀별 답변 — 4가지 중 1개에 맞춰] 예: "α-2 섹션별 점수"를 선택. 이유: G 차원이 어느 섹션에서 가장 강하게 나타나는지가 우리 팀의 추가 질문. VI 섹션만의 점수를 따로 만들어 KCGS의 G 등급과 검증한 결과 ρ가 약 X% 향상, 가설을 부분 지지.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <p class="q-text">결과가 약한데(ρ가 작은데) 의미가 있나요?</p>
+    <div class="a-block">
+      ρ가 0.10-0.20 수준이면 약한 신호로 해석합니다. 다만 cheap-talk 통제(word_count) 후에도 β1이 유의하게 남아있다면 "공시 장황함을 빼고도 부분적 ESG 신호 존재"라는 결론은 학술적으로 의미 있습니다. 우리 표본 크기와 KCGS 등급 노이즈를 고려할 때 강한 신호를 기대하기 어려운 영역.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <p class="q-text">왜 LLM(GPT 등)을 안 쓰고 TF-IDF로 했나요?</p>
+    <div class="a-block">
+      이번 학기 비정형데이터분석 수업의 학습 목표가 형태소·TF-IDF·임베딩 기반 텍스트 분석입니다. LLM은 black-box 위험이 커 "어떤 결정으로 점수가 나왔는가"를 보고하기 어렵습니다. Li 2021 RFS 같은 학술 표준도 word embedding + TF-IDF 합산 기반이라 재현성·해석 가능성이 높습니다.
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <p class="q-text">한국어 ESG 텍스트 분석의 한계는 뭔가요?</p>
+    <div class="a-block">
+      세 가지. (1) 한국어 NER 도구가 영어 spaCy보다 정확도가 낮아 회사명 자동 제거 누락 위험. 우리는 company_master 활용으로 보완. (2) ESG 표현이 정형구화돼 cheap-talk 비중이 영어 분석보다 클 수 있음. word_count 통제로 검증. (3) KCGS 등급은 외부 평가라 평가자 노이즈가 포함됨 — 회귀에서 종속변수 측정오차로 작용.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 변형 가이드 8 패턴 ============ -->
+<section class="section" data-section="variation">
+  <h2>변형 가이드 — 답안 그대로 베끼기 방지 8 패턴</h2>
+  <p class="section-intro">
+    심층가이드 결정박스의 "보고서에 쓸 판단" 문장을 모든 팀이 그대로 베끼면 8개 팀 보고서가 거의 같아져 평가표 변별이 사라집니다.
+    아래 8가지 패턴으로 답안을 자기 팀 발견에 맞춰 살짝씩 바꿔 쓰세요.
+  </p>
+
+  <div class="card warn">
+    <h4>패턴 ① 자기 팀이 측정한 숫자로 치환</h4>
+    <div class="copy-block">
+      <div class="copy-block-label">베끼기 ❌</div>
+      "θ를 sweep한 결과 후보 N개·잡음 비율 ~X%로 균형이 가장 좋아 채택했다."
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">변형 ✅</div>
+      "θ=0.80에서 후보 <strong>32개</strong>·잡음 비율 <strong>약 6.3%</strong>(2개)로 균형이 가장 좋아 채택. θ=0.75에서는 후보가 78개로 늘었으나 잡음 비율이 12.8%로 증가."
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h4>패턴 ② 자기 팀 선택의 차별점 강조</h4>
+    <div class="copy-block">
+      <div class="copy-block-label">베끼기 ❌</div>
+      "다양한 θ 값을 검토했으나 일반적 권장 범위에서 선택했다."
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">변형 ✅</div>
+      "Bao 2024 권장 범위(0.75-0.85) 내에서 검토했으나 <strong>우리 corpus가 사업보고서로 한정돼 도메인이 균질한 점을 감안</strong>해 중간값 0.80을 채택. 더 다양한 도메인이라면 0.75가 적절했을 것."
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h4>패턴 ③ 한계를 솔직히 인정</h4>
+    <div class="copy-block">
+      <div class="copy-block-label">베끼기 ❌</div>
+      "이 선택은 학술적으로 잘 정립된 방법이다."
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">변형 ✅</div>
+      "이 선택은 Bao 2024의 권장 패턴을 따르나, <strong>fastText 학습 corpus를 우리 보고서로만 한정해 일반 텍스트 코퍼스에서의 결과와 다를 가능성</strong>을 배제하지 않는다."
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h4>패턴 ④ 팀 토론 흔적 남기기</h4>
+    <div class="copy-block">
+      <div class="copy-block-label">베끼기 ❌</div>
+      "팀이 합의해 OLS와 ordered logit을 함께 사용했다."
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">변형 ✅</div>
+      "팀 내부에서 <strong>OLS만 vs ordered logit만 두 안을 검토</strong>했고, 등급 서열변수의 학술 표준이 ordered logit이라는 점과 발표 시 직관 설명에 OLS가 유리하다는 점을 절충해 <strong>둘 다 보고</strong>하기로 했다."
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h4>패턴 ⑤ 데이터로 결정 정당화</h4>
+    <div class="copy-block">
+      <div class="copy-block-label">베끼기 ❌</div>
+      "회사명을 불용어로 제거해 잡음을 줄였다."
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">변형 ✅</div>
+      "<strong>제거 전 fastText 후보 상위 100단어 중 12개가 회사명</strong>이었으며, 회사명 자동 불용어 추가 후 같은 검색에서 회사명 후보가 1개로 감소(보고서 부록 표 3)."
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h4>패턴 ⑥ 다음 단계로의 영향 의식</h4>
+    <div class="copy-block">
+      <div class="copy-block-label">베끼기 ❌</div>
+      "명사만 추출하는 결정은 ESG 사전 매칭에 유리하다."
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">변형 ✅</div>
+      "명사만 추출 결정은 <strong>다음 단계 TF-IDF 잡음을 줄였고, 5단계 fastText 사전 확장에서 동사·부사 잡음 후보가 보고된 다른 연구 대비 30% 적게 발생</strong>한 것을 정량적으로 확인했다."
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h4>패턴 ⑦ 선행연구와 명시적 연결</h4>
+    <div class="copy-block">
+      <div class="copy-block-label">베끼기 ❌</div>
+      "Li 2021을 따라 word embedding 기반 사전 확장을 수행했다."
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">변형 ✅</div>
+      "Li et al. (2021 RFS)이 영어 earnings call에 적용한 흐름(seed → embedding → 확장 → 회귀)을 한국어 사업보고서로 옮기되, <strong>그들의 5개 가치 seed(innovation 등)와 우리의 30개 ESG seed가 도메인이 달라 expanded 사전 크기는 그들보다 30% 작게 나타났다</strong>."
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h4>패턴 ⑧ cheap-talk 가능성 적극 인정</h4>
+    <div class="copy-block">
+      <div class="copy-block-label">베끼기 ❌</div>
+      "회귀 결과 텍스트 점수가 ESG 등급과 양의 관계를 보였다."
+    </div>
+    <div class="copy-block">
+      <div class="copy-block-label">변형 ✅</div>
+      "M1에서 expanded_score 계수 β1이 양수+유의했으나, word_count 통제 M2에서 <strong>β1이 약 30% 감소하고 유의 수준 경계로 이동</strong>. 신호의 일부는 disclosure verbosity(cheap-talk)에서 오는 것으로 해석되나, M2에서도 β1이 양수로 남아 부분적 ESG 신호 존재."
+    </div>
+  </div>
+
+  <div class="callout success">
+    <strong>변형의 핵심</strong> — 8개 팀이 같은 결정박스 답안을 베껴도 (1) 실제 측정한 숫자, (2) 자기 corpus의 특성, (3) 팀 토론 흔적, (4) cheap-talk 가능성 인정 정도가 다르면 자연스럽게 다른 보고서가 됩니다. 이 4가지를 자기 발견에 맞춰 채우면 평가표 변별이 살아납니다.
+  </div>
+</section>
+
+<footer>
+  ESG DART 기말 프로젝트 · 발표대비 QnA + 변형 가이드 v1 · 2026.05.12 작성<br>
+  본 답안은 초안입니다. 자기 팀이 실제로 측정한 숫자·발견·토론 결과로 변형 가이드(8 패턴)를 적용해 사용하세요.<br>
+  교수님 가이드(01-04 md) 우선, 충돌 시 가이드를 따릅니다.
+</footer>
+
+</div>
+
+<script>
+const tabs = document.querySelectorAll('nav.tabs button');
+const sections = document.querySelectorAll('section.section');
+tabs.forEach(btn => btn.addEventListener('click', () => {
+  tabs.forEach(b => b.classList.remove('active'));
+  sections.forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  const target = btn.dataset.tab;
+  document.querySelector(`section[data-section="${target}"]`).classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}));
+</script>
+
+</body>
+</html>

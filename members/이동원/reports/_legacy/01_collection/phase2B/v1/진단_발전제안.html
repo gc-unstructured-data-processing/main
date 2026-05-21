@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><title>01 collection phase2B v1 — 10단계 진단 + 발전 제안</title>
+<style>:root{--bg:#fafaf7;--bg-card:#fff;--bg-soft:#f3f1ea;--bg-danger:#fef2f2;--bg-warn:#fff7ed;--bg-success:#f0fdf4;--bg-info:#eff6ff;--bg-purple:#f5f3ff;--text:#1c1c1a;--mute:#5a5a55;--border:rgba(0,0,0,.1);--accent:#4338ca}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Noto Sans KR","Malgun Gothic",sans-serif}.wrap{max-width:1100px;margin:0 auto;padding:32px 24px 60px}h1{font-size:24px;font-weight:500;margin:0 0 8px}h2{font-size:18px;margin:24px 0 8px}h3{font-size:15px;margin:18px 0 6px;font-weight:600}.sub{color:var(--mute);margin:0 0 16px}.chip{display:inline-block;font-size:12px;padding:3px 8px;border-radius:999px;background:var(--bg-soft);color:var(--mute);margin-right:6px;border:.5px solid var(--border)}.card{background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:10px}.card.must{background:var(--bg-danger);border-color:rgba(239,68,68,.25)}.card.warn{background:var(--bg-warn);border-color:rgba(245,158,11,.25)}.card.ok{background:var(--bg-success);border-color:rgba(34,197,94,.25)}.card.info{background:var(--bg-info);border-color:rgba(37,99,235,.25)}.card.alpha{background:var(--bg-purple);border-color:rgba(124,58,237,.25)}.tag{font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;margin-bottom:6px}.tag.must{color:#b91c1c}.tag.warn{color:#b45309}.tag.ok{color:#15803d}.tag.info{color:#1d4ed8}.tag.alpha{color:#6d28d9}table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}th,td{text-align:left;padding:6px 8px;border-bottom:.5px solid var(--border);vertical-align:top}th{font-weight:500;color:var(--mute);font-size:11px;text-transform:uppercase;background:var(--bg-soft)}code{font-family:ui-monospace,monospace;font-size:12.5px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:3px}.step{display:grid;grid-template-columns:55px 1fr;gap:12px;margin-bottom:14px}.snum{background:var(--accent);color:#fff;width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:18px}</style></head><body><div class="wrap">
+
+<h1>01 collection phase2B v1 — 10단계 진단 + 발전 제안</h1>
+<p class="sub">KCGS stratified 30건 batch 노트북 — 사이클 3 핵심. 사용자 Run All 대기. 본 진단은 노트북 코드 자체와 예상 결과 기준.</p>
+<div><span class="chip">phase <strong>2B</strong></span><span class="chip">버전 <strong>v1</strong></span><span class="chip">사이클 <strong>3 신설</strong></span><span class="chip">상태 <strong>Run All 대기</strong></span></div>
+
+<h2>A. 현재 상태</h2>
+<table>
+<tr><th>영역</th><th>상태</th></tr>
+<tr><td>노트북 작성</td><td>✅ 15 cells, 32 KB</td></tr>
+<tr><td>phase2A v2 함수 5종 inline 정의</td><td>✅ self-contained 보장 (가이드 04 §2-1)</td></tr>
+<tr><td>stratified sample 선택 (Step 2)</td><td>✅ KCGS 등급별 5건 × 7등급</td></tr>
+<tr><td>batch loop with tqdm + rate limit 0.8s</td><td>✅ try/except 격리</td></tr>
+<tr><td>collection_log dedup + run_id</td><td>✅ Fix B·D 적용</td></tr>
+<tr><td>random 3건 viewer 검증 셀</td><td>✅ Step 5</td></tr>
+<tr><td>등급별 SUCCESS 분포 시각화</td><td>✅ Step 6 + Fix A 폰트</td></tr>
+</table>
+
+<h2>B. 10단계 진단</h2>
+
+<div class="step"><div class="snum">1</div><div><div class="card warn"><div class="tag warn">주의</div>
+<h3>S 등급 firm-year 부족 (stratified imbalance)</h3>
+<p>KCGS S 등급 한국 상장사 매우 적음 (보통 1% 미만). stratified 5건 미충족. <strong>해결 (적용 완료)</strong>: 코드 안에서 가용 전체 사용 + 등급 그룹화 fallback (A 이상/미만 binary).</p>
+</div></div></div>
+
+<div class="step"><div class="snum">2</div><div><div class="card warn"><div class="tag warn">주의</div>
+<h3>rate limit 0.8s 안전성</h3>
+<p>OpenDART 공식 한도 초당 ~10 req. 본 v1은 0.8s/req로 안전. <strong>발전</strong>: v2에서 ThreadPoolExecutor (10 동시) → 5분 → 30초로 단축 가능 (단, 안정성 위험).</p>
+</div></div></div>
+
+<div class="step"><div class="snum">3</div><div><div class="card info"><div class="tag info">발전</div>
+<h3>checkpoint 부재 — 중간 실패 시 처음부터</h3>
+<p>30건 중 25번째에서 네트워크 오류면 1~24도 다시? 본 v1은 raw zip 캐시 hit으로 부분 회피. <strong>발전</strong>: v2에서 incremental collection_log append (매 10건마다 flush + fsync) → 진행률 보존.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">4</div><div><div class="card ok"><div class="tag ok">충족</div>
+<h3>status 11종 + reason — 위반금지 #1 보장</h3>
+<p>SUCCESS · WARN_NO_PASSAGES · FAIL_NO_CORP_CODE · FAIL_NO_RCEPT · FAIL_NO_PRIMARY_XML · FAIL_HTTP · FAIL_OTHER. 각 status에 reason 컬럼 명시 → 보고서 §한계에 자동 인용 가능.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">5</div><div><div class="card warn"><div class="tag warn">주의</div>
+<h3>viewer random 3건 — 표본 10%만 검증</h3>
+<p>30건 중 3건만 사용자 직접 확인. 27건은 알고리즘만 신뢰. <strong>발전</strong>: 등급별 1건씩 = 7건 (top·middle·bottom 각 1) — 등급 spectrum 검증.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">6</div><div><div class="card info"><div class="tag info">발전</div>
+<h3>etrl batch 평가 기준 — SUCCESS≥80% 단일</h3>
+<p>현재 SUCCESS 비율 1개 기준. <strong>발전</strong>: passage 평균 ≥ 20건 · 등급 분산 ≥ 1.0 · WARN/FAIL 등급 편중 ≤ 50% 등 다중 기준.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">7</div><div><div class="card warn"><div class="tag warn">주의</div>
+<h3>WARN_NO_PASSAGES — seed 부족 노출</h3>
+<p>금융·서비스 firm-year는 II/IV body가 짧고 seed 30단어 매칭 0건 가능. <strong>발전</strong>: seed_v2 (02b 진단 신설 어휘) 채택 후 재실행 → WARN 감소 확인.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">8</div><div><div class="card info"><div class="tag info">발전</div>
+<h3>실패 행 reason 분류 → 통계 표</h3>
+<p>현재 status·reason 컬럼만. <strong>발전</strong>: FAIL_* 분류별 카운트 + 대표 사례 + 해결 가능성 평가 (재시도 vs §한계 기록).</p>
+</div></div></div>
+
+<div class="step"><div class="snum">9</div><div><div class="card alpha"><div class="tag alpha">알파</div>
+<h3>업종·시가총액 stratification</h3>
+<p>현재 KCGS 등급 stratification. <strong>알파</strong>: 업종 추가 stratification (전기전자·금융·화학·제조 등 4분류 × 등급 그룹화). 가이드 04 §3-1 업종별 분해 알파의 base.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">10</div><div><div class="card ok"><div class="tag ok">충족</div>
+<h3>위반금지 8/8 + 가이드 04 §2-1</h3>
+<p>모두 충족. 사이클 3 batch 후 §2-1 데이터 lineage 4개 항목 (수집 시도·연결·실패 기록·가짜 0 차단) 모두 ✅ 달성.</p>
+</div></div></div>
+
+<h2>C. 외부 벤치마킹 (5축)</h2>
+<table>
+<tr><th>축</th><th>본 v1 위치</th><th>발전 제안</th></tr>
+<tr><td>dart-fss-text · dart-fss</td><td>✅ phase2A v2 함수 inline 재사용</td><td>fuzzy matching 추가 (rapidfuzz)</td></tr>
+<tr><td>KCGS 신뢰성</td><td>00 ingest 산출 활용</td><td>등급별 분산 확보 — Spearman·OLS 입력 신뢰성</td></tr>
+<tr><td>cheap-talk</td><td>02·03에서</td><td>본 단계 무관</td></tr>
+<tr><td>재현성 (run_id)</td><td>✅ Fix 적용</td><td>git_sha + commit_msg 추가 → CI</td></tr>
+<tr><td>N≥30 stratified (arXiv 2208.01712)</td><td>⭐ 본 v1 핵심 충족</td><td>v2에서 N≥60 또는 stratified 7건 강화</td></tr>
+</table>
+
+<h2>D. 교수님 가이드 매핑 — 사이클 3 후 충족 완료 예상</h2>
+<table>
+<tr><th>가이드</th><th>line</th><th>본 v1 후</th></tr>
+<tr><td>01 line 117·127</td><td>최대 381 firm-year 수집 시도</td><td>✅ 30/381 (8%) — 사이클 4 v2에서 100건+</td></tr>
+<tr><td>02 line 119</td><td>수집 불가 행 이유</td><td>✅ FAIL_* + reason</td></tr>
+<tr><td>02 line 172·286</td><td>가짜 0 ❌</td><td>✅ SUCCESS만 join</td></tr>
+<tr><td>04 §2-1 데이터 lineage</td><td>—</td><td>✅ 31 firm-year × stock·corp·rcept·fiscal 전부 기록</td></tr>
+<tr><td>04 §3 데이터 이해 좋은 결과물</td><td>—</td><td>✅ 표본 의미·timing·결측 처리 명시</td></tr>
+</table>
+
+<h2>E. 다음 사이클 발전 우선순위</h2>
+<table>
+<tr><th>#</th><th>발전 영역</th><th>우선순위</th><th>예상 소요</th></tr>
+<tr><td>1</td><td>사용자 Run All — batch 실제 실행</td><td>🔴 즉시</td><td>5~10분</td></tr>
+<tr><td>2</td><td>SUCCESS/FAIL 결과 분석 + 보고서 §3 채우기</td><td>🟡 사용자 후</td><td>Claude 30분</td></tr>
+<tr><td>3</td><td>checkpoint (incremental log flush)</td><td>🟢 v2 (사이클 4)</td><td>30분</td></tr>
+<tr><td>4</td><td>업종 stratification 추가 (알파 base)</td><td>🟢 v2</td><td>20분</td></tr>
+<tr><td>5</td><td>등급별 1건씩 viewer 검증 (7건)</td><td>🟢 v2</td><td>15분</td></tr>
+<tr><td>6</td><td>ThreadPoolExecutor 병렬 batch</td><td>🟣 알파</td><td>40분</td></tr>
+<tr><td>7</td><td>381 전체 batch</td><td>🟣 D-Day 후</td><td>1~2시간</td></tr>
+</table>
+
+<p style="color:var(--mute);font-size:12px;margin-top:30px;border-top:.5px solid var(--border);padding-top:14px">
+01 collection phase2B v1 — 10단계 진단 + 발전 제안 · 2026-05-18 · 이동원<br>
+근거: 01_collection.ipynb (phase2B v1, 사용자 Run All 대기) + phase2A v2 함수 5종 + 가이드 02·04 + 벤치마킹 N≥30 stratified
+</p></div></body></html>

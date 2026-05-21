@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><title>03 mining v1 — 10단계 진단 + 발전 제안</title>
+<style>:root{--bg:#fafaf7;--bg-card:#fff;--bg-soft:#f3f1ea;--bg-danger:#fef2f2;--bg-warn:#fff7ed;--bg-success:#f0fdf4;--bg-info:#eff6ff;--bg-purple:#f5f3ff;--text:#1c1c1a;--mute:#5a5a55;--border:rgba(0,0,0,.1);--accent:#4338ca}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Noto Sans KR","Malgun Gothic",sans-serif}.wrap{max-width:1100px;margin:0 auto;padding:32px 24px 60px}h1{font-size:24px;font-weight:500;margin:0 0 8px}h2{font-size:18px;margin:24px 0 8px}h3{font-size:15px;margin:18px 0 6px;font-weight:600}.sub{color:var(--mute);margin:0 0 16px}.chip{display:inline-block;font-size:12px;padding:3px 8px;border-radius:999px;background:var(--bg-soft);color:var(--mute);margin-right:6px;border:.5px solid var(--border)}.card{background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:10px}.card.must{background:var(--bg-danger);border-color:rgba(239,68,68,.25)}.card.warn{background:var(--bg-warn);border-color:rgba(245,158,11,.25)}.card.ok{background:var(--bg-success);border-color:rgba(34,197,94,.25)}.card.info{background:var(--bg-info);border-color:rgba(37,99,235,.25)}.card.alpha{background:var(--bg-purple);border-color:rgba(124,58,237,.25)}.tag{font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;margin-bottom:6px}.tag.must{color:#b91c1c}.tag.warn{color:#b45309}.tag.ok{color:#15803d}.tag.info{color:#1d4ed8}.tag.alpha{color:#6d28d9}table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}th,td{text-align:left;padding:6px 8px;border-bottom:.5px solid var(--border);vertical-align:top}th{font-weight:500;color:var(--mute);font-size:11px;text-transform:uppercase;background:var(--bg-soft)}code{font-family:ui-monospace,monospace;font-size:12.5px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:3px}.step{display:grid;grid-template-columns:55px 1fr;gap:12px;margin-bottom:14px}.snum{background:var(--accent);color:#fff;width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:18px}</style></head><body><div class="wrap">
+
+<h1>03 mining v1 — 10단계 진단 + 발전 제안</h1>
+<p class="sub">Spearman·t-test·OLS·specificity 코드 형식 검증. N=1 → 모든 통계 NaN (의도). ClimateBert·재현성 벤치마킹.</p>
+<div><span class="chip">단계 <strong>03 mining</strong></span><span class="chip">버전 <strong>v1</strong></span><span class="chip">사이클 <strong>1·2 fix</strong></span><span class="chip">상태 <strong>N=1 NaN (의도)</strong></span></div>
+
+<h2>A. 현재 상태</h2>
+<table>
+<tr><th>영역</th><th>상태</th><th>증거</th></tr>
+<tr><td>feature_validity 함수</td><td>✅ 코드</td><td>Spearman + t-test + Mann-Whitney 통합</td></tr>
+<tr><td>9 (feature, grade) 쌍 검증</td><td>✅ 모두 NaN (의도)</td><td>N=1 → scipy 표준 동작</td></tr>
+<tr><td>OLS baseline (가이드 03 line 230)</td><td>✅ 코드</td><td>esg_grade_num ~ seed_tfidf_E + word_count</td></tr>
+<tr><td>모형 선택 근거 표</td><td>✅</td><td>OLS·ordered_logit·binary_logit 3종 비교</td></tr>
+<tr><td>specificity score (alpha)</td><td>✅</td><td>숫자 포함 토큰 비율</td></tr>
+<tr><td>cheap-talk word_count (가이드 03 line 234)</td><td>✅</td><td>02 v2 산출 컬럼 직접 사용</td></tr>
+</table>
+
+<h2>B. 10단계 진단</h2>
+
+<div class="step"><div class="snum">1</div><div><div class="card must"><div class="tag must">치명</div>
+<h3>N=1 — 모든 통계 NaN (scipy 표준 동작)</h3>
+<p>spearmanr·ttest_ind·OLS 모두 N≥3·자유도 ≥ 1 필수. <strong>해결</strong>: 사이클 3 phase2B Run All → N=31 → NaN 자동 해소 (코드 변경 0줄).</p>
+</div></div></div>
+
+<div class="step"><div class="snum">2</div><div><div class="card warn"><div class="tag warn">주의</div>
+<h3>OLS만 — ordered_logit·binary_logit 코드 부재</h3>
+<p>가이드 03 line 220-274가 3 옵션 비교 의무. 본 v1은 OLS 코드만 build. <strong>발전</strong>: v2에서 statsmodels.miscmodels.OrderedModel + Logit 추가 + 모형 선택 근거 보강.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">3</div><div><div class="card warn"><div class="tag warn">주의</div>
+<h3>median split t-test — 그룹 N=0 위험</h3>
+<p>현재 esg_grade_num ≥ median vs < median. N=1이면 high=1·low=0이라 NaN. <strong>발전</strong>: A 이상(≥4) vs 미만 binary split + 그룹 N 명시.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">4</div><div><div class="card info"><div class="tag info">발전</div>
+<h3>cheap-talk specificity 단순화</h3>
+<p>본 v1은 (숫자 토큰)/총 토큰. <strong>알파</strong>: 숫자·연도·금액·단위 분리 카운트 + commitment ratio ("계획·목표·달성") + non-material share (반복 어휘) — 3종 다중 통제.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">5</div><div><div class="card info"><div class="tag info">발전</div>
+<h3>9 쌍 — 차원 정합성만</h3>
+<p>현재 (feature_E, esg_grade_num), (feature_E, e_grade_num) 등. <strong>발전</strong>: cross dim 추가 — feature_E ↔ s_grade_num (특정 차원 신호 다른 차원에 노출 검증).</p>
+</div></div></div>
+
+<div class="step"><div class="snum">6</div><div><div class="card info"><div class="tag info">발전</div>
+<h3>모형 선택 — 정량 비교 부재</h3>
+<p>현재 표 형식만. <strong>발전</strong>: AIC·BIC + 결과 해석 가독성 score 표 + 3 모형 결과 cross check (가이드 03 line 261-269).</p>
+</div></div></div>
+
+<div class="step"><div class="snum">7</div><div><div class="card alpha"><div class="tag alpha">알파</div>
+<h3>업종별 분해 (가이드 04 §3-1)</h3>
+<p>company_master.industry 활용. 전기전자·금융·화학·제조 4분류 × OLS 분해. <strong>알파 후보 #2</strong> — 1개월 일정 적합도 ⭐⭐⭐.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">8</div><div><div class="card alpha"><div class="tag alpha">알파</div>
+<h3>section_weighted score</h3>
+<p>현재 firm-year score = II+IV+VI body concat. <strong>알파</strong>: w_II·score_II + w_IV·score_IV + w_VI·score_VI. 3개 weight 비교 (0.5·0.2·0.3 / 0.33·0.33·0.33 / 0.4·0.3·0.3).</p>
+</div></div></div>
+
+<div class="step"><div class="snum">9</div><div><div class="card alpha"><div class="tag alpha">알파</div>
+<h3>KLUE-RoBERTa baseline</h3>
+<p>TF-IDF cosine 대비 dense vector cosine 비교. <strong>D-Day 후</strong> 알파 후보 #4 — 인프라 부담 ↑.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">10</div><div><div class="card ok"><div class="tag ok">정상</div>
+<h3>인과 vs 연관 디시플린 (가이드 04 line 99-111)</h3>
+<p>본 v1 결과 NaN이지만 해석 마크다운은 가이드 line 168 "ρ 0.10-0.20은 약한 연관성" 디시플린 유지. 사이클 3 후에도 동일 패턴.</p>
+</div></div></div>
+
+<h2>C. NaN의 numpy/scipy 근본 원인</h2>
+<table>
+<tr><th>함수</th><th>N=1 동작</th><th>최소 요구</th></tr>
+<tr><td><code>scipy.stats.spearmanr</code></td><td>rank 분산 0 → Pearson 0/0 = NaN</td><td>N ≥ 3</td></tr>
+<tr><td><code>scipy.stats.ttest_ind</code></td><td>그룹별 분산 없음 → NaN</td><td>각 그룹 N ≥ 2</td></tr>
+<tr><td><code>statsmodels.OLS</code></td><td>df_residual 음수 → LinAlgError or NaN</td><td>N ≥ k+1, 권장 N ≥ 10k</td></tr>
+</table>
+
+<h2>D. 벤치마킹 + 가이드</h2>
+<table>
+<tr><th>벤치마킹·가이드</th><th>본 v1 매핑</th></tr>
+<tr><td>벤치마킹 4 (ClimateBert)</td><td>specificity 1종 — commitment·non-material 추가 권장 (알파)</td></tr>
+<tr><td>벤치마킹 5 (재현성 N≥30)</td><td>사이클 3 후 자동 충족</td></tr>
+<tr><td>가이드 03 line 159-197</td><td>Spearman + t-test 검증 — 본 v1 코드 형식 ✅</td></tr>
+<tr><td>가이드 03 line 220-274</td><td>3 모형 비교 — OLS만 build ⚠️</td></tr>
+<tr><td>가이드 03 line 234</td><td>word_count cheap-talk ✅</td></tr>
+<tr><td>가이드 04 §3 평가표</td><td>측정 validity·모형 선택·해석·알파 — 사이클 4 v2에서 100% 충족</td></tr>
+</table>
+
+<h2>E. 발전 우선순위</h2>
+<table>
+<tr><th>#</th><th>발전</th><th>우선순위</th><th>예상 소요</th></tr>
+<tr><td>1</td><td>사이클 3 phase2B 후 재실행 (N=31)</td><td>🔴 즉시</td><td>30초 (재실행)</td></tr>
+<tr><td>2</td><td>v2: ordered_logit + binary_logit 추가</td><td>🟢 v2</td><td>40분</td></tr>
+<tr><td>3</td><td>v2: 모형 AIC·BIC 정량 비교</td><td>🟢 v2</td><td>15분</td></tr>
+<tr><td>4</td><td>v2: A 이상/미만 binary split + 그룹 N 표시</td><td>🟢 v2</td><td>10분</td></tr>
+<tr><td>5</td><td>알파 #1: cheap-talk 3종 강화</td><td>🟣 알파 (강력 권장)</td><td>1시간</td></tr>
+<tr><td>6</td><td>알파 #2: 업종별 분해</td><td>🟣 알파 (가이드 명시)</td><td>45분</td></tr>
+<tr><td>7</td><td>알파 #3: section_weighted score</td><td>🟣 알파</td><td>30분</td></tr>
+<tr><td>8</td><td>알파 #4: KLUE-RoBERTa baseline</td><td>🟣 D-Day 후</td><td>4시간+</td></tr>
+</table>
+
+<p style="color:var(--mute);font-size:12px;margin-top:30px;border-top:.5px solid var(--border);padding-top:14px">
+03 mining v1 — 10단계 진단 + 발전 제안 · 2026-05-18 · 이동원<br>
+근거: 03_mining.ipynb (v1) + esg_features_v2 (N=1) + 가이드 03·04 + 벤치마킹 4·5 + scipy/statsmodels 표준 동작
+</p></div></body></html>

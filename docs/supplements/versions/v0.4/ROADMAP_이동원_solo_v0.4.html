@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESG DART 기말 프로젝트 — 이동원 솔로 워크플로우 ROADMAP v0.4</title>
+<style>
+:root {
+  --bg: #fafaf7;
+  --bg-card: #ffffff;
+  --bg-soft: #f3f1ea;
+  --bg-warn: #fff7ed;
+  --bg-danger: #fef2f2;
+  --bg-info: #eff6ff;
+  --bg-success: #f0fdf4;
+  --bg-purple: #f5f3ff;
+  --text-primary: #1c1c1a;
+  --text-secondary: #5a5a55;
+  --text-muted: #8a8a85;
+  --text-warn: #b45309;
+  --text-danger: #b91c1c;
+  --text-info: #1d4ed8;
+  --text-success: #15803d;
+  --text-purple: #6d28d9;
+  --border: rgba(0,0,0,0.10);
+  --accent: #4338ca;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 80px; }
+header.hero { border-bottom: 0.5px solid var(--border); padding-bottom: 24px; margin-bottom: 24px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+h1 { font-size: 26px; font-weight: 500; margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { font-size: 15px; color: var(--text-secondary); margin: 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.chip strong { font-weight: 500; color: var(--text-primary); }
+.chip.canonical { background: #f0fdf4; color: #15803d; border-color: rgba(34,197,94,0.25); }
+.chip.canonical strong { color: #15803d; }
+.chip.solo { background: #f5f3ff; color: #6d28d9; border-color: rgba(124,58,237,0.25); }
+.chip.solo strong { color: #6d28d9; }
+.chip.deadline { background: #fef2f2; color: #b91c1c; border-color: rgba(239,68,68,0.25); }
+.chip.deadline strong { color: #b91c1c; }
+
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--bg-soft); border-radius: 12px; margin-bottom: 28px; position: sticky; top: 12px; z-index: 10; border: 0.5px solid var(--border); }
+nav.tabs button { flex: 1 1 auto; min-width: 100px; padding: 9px 12px; border: none; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; font-family: inherit; }
+nav.tabs button:hover { background: rgba(255,255,255,0.6); color: var(--text-primary); }
+nav.tabs button.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+.section { display: none; animation: fade 0.25s ease; }
+.section.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+h2 { font-size: 20px; font-weight: 500; margin: 0 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 17px; font-weight: 500; margin: 28px 0 10px; }
+h4 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; }
+.section-intro { color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; max-width: 760px; }
+
+.card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 14px; }
+.card.must   { background: var(--bg-danger); border-color: rgba(239,68,68,0.25); }
+.card.should { background: var(--bg-warn);   border-color: rgba(245,158,11,0.25); }
+.card.could  { background: var(--bg-success);border-color: rgba(34,197,94,0.25); }
+.card.info   { background: var(--bg-info);   border-color: rgba(37,99,235,0.25); }
+.card.purple { background: var(--bg-purple); border-color: rgba(124,58,237,0.25); }
+.card.soft   { background: var(--bg-soft); border: none; }
+.card .track-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.card.must   .track-label { color: var(--text-danger); }
+.card.should .track-label { color: var(--text-warn); }
+.card.could  .track-label { color: var(--text-success); }
+.card.info   .track-label { color: var(--text-info); }
+.card.purple .track-label { color: var(--text-purple); }
+.card h4 { margin-top: 0; }
+.card ul { margin: 6px 0 8px; padding-left: 22px; color: var(--text-secondary); font-size: 14px; }
+.card li { margin-bottom: 6px; }
+.card li strong { color: var(--text-primary); font-weight: 500; }
+.card code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; background: rgba(0,0,0,0.05); padding: 1px 6px; border-radius: 4px; color: var(--text-primary); }
+.card pre { background: rgba(0,0,0,0.04); padding: 12px 14px; border-radius: 6px; font-size: 12.5px; color: var(--text-primary); overflow-x: auto; margin: 6px 0; line-height: 1.5; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+
+table.clean { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 10px 0; }
+table.clean th, table.clean td { text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+table.clean th { font-weight: 500; color: var(--text-muted); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--bg-soft); }
+table.clean tr:last-child td { border-bottom: none; }
+table.clean td.day-cell { font-weight: 600; color: var(--accent); white-space: nowrap; }
+
+.callout { border-left: 3px solid var(--accent); background: var(--bg-card); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 14px; color: var(--text-secondary); }
+.callout strong { color: var(--text-primary); font-weight: 500; }
+.callout.warn   { border-left-color: #d97706; background: var(--bg-warn); }
+.callout.danger { border-left-color: #dc2626; background: var(--bg-danger); }
+.callout.info   { border-left-color: #2563eb; background: var(--bg-info); }
+.callout.success{ border-left-color: #16a34a; background: var(--bg-success); }
+.callout.purple { border-left-color: #7c3aed; background: var(--bg-purple); }
+
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); font-weight: 500; margin-right: 4px; }
+.badge.v1 { background: #ecfeff; color: #0e7490; }
+.badge.v2 { background: #f5f3ff; color: #6d28d9; }
+.badge.v3 { background: #fdf2f8; color: #be185d; }
+.badge.ok { background: #f0fdf4; color: #15803d; }
+.badge.warn { background: #fff7ed; color: #b45309; }
+.badge.no { background: #fef2f2; color: #b91c1c; }
+.badge.today { background: #fef3c7; color: #92400e; }
+
+.constraint-row { display: grid; grid-template-columns: 30px 1fr 100px; gap: 12px; align-items: center; padding: 10px 14px; background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 8px; margin-bottom: 6px; }
+.constraint-row .c-num { background: var(--accent); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+.constraint-row .c-text { font-size: 13.5px; color: var(--text-primary); }
+.constraint-row .c-source { font-size: 11px; color: var(--text-muted); text-align: right; }
+
+footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">비정형데이터분석 · 기말 프로젝트 · 이동원 솔로 워크플로우 v0.4</div>
+  <h1>이동원 솔로 워크플로우 — 데이터 수집 / 전처리 / 정제 / 마이닝 ROADMAP v0.4</h1>
+  <p class="sub">v0.2 ROADMAP(4명 분업)을 <strong>이동원 1인 책임</strong>으로 재설계. 단계별 산출물·작업별 보고서·노트북 버전·시각화·웹크롤링·벤치마킹 매트릭스 + 위반금지 8항목 + 5/19 데드라인 수정안. v0.2 ROADMAP은 deprecate, 본 v0.4가 canonical.</p>
+  <div class="meta-row">
+    <span class="chip"><strong>오늘</strong> 2026-05-15 (금)</span>
+    <span class="chip canonical"><strong>canonical</strong> v0.4</span>
+    <span class="chip solo"><strong>주관</strong> 이동원 solo</span>
+    <span class="chip deadline"><strong>D-Day</strong> 2026-05-19 (화)</span>
+    <span class="chip"><strong>핵심 가설</strong> 전처리 quality = 분석 천장</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="overview" class="active">한 눈에 보기</button>
+  <button data-tab="stages">단계별 산출물</button>
+  <button data-tab="report">작업별 보고서 양식</button>
+  <button data-tab="versioning">노트북 버전 관리</button>
+  <button data-tab="constraints">위반금지 8항목</button>
+  <button data-tab="benchmark">웹크롤링·벤치마킹</button>
+  <button data-tab="cleanup">PR #11 정리</button>
+  <button data-tab="schedule">5/19 데드라인 수정안</button>
+</nav>
+
+<section class="section active" data-section="overview">
+  <h2>v0.4 한 페이지 요약 — 이동원 솔로 + 작업별 보고서</h2>
+  <p class="section-intro">v0.2 ROADMAP(4명 분업)이 작업 분담 측면에서는 깔끔했지만, 실제로는 이동원 1인이 전 단계를 끌고 가게 됨. v0.4는 이 현실을 반영하여 <strong>모든 단계의 산출물·보고서·버전 관리를 이동원 책임</strong>으로 재정렬. 통합 단계(<code>_integrated/</code>)는 추후 별도 1인.</p>
+  <div class="callout info"><strong>이 ROADMAP의 사용 방식</strong> — 작업 시작 전 해당 단계 카드를 한 번 읽고, 산출물 매트릭스에서 다음 파일명을 확인. 끝나면 위반금지 8항목 self-check + 보고서 마무리.</div>
+  <h3>v0.2 → v0.4 변경의 핵심 4가지</h3>
+  <div class="grid-2">
+    <div class="card purple"><div class="track-label">1 · 솔로 워크플로우</div><h4>4명 분업 → 1인 책임</h4><ul><li>v0.2의 A·B·C·D 역할 매트릭스 deprecate</li><li>이동원이 수집·전처리·정제·마이닝 전 단계 작업</li><li>모든 작업물은 <code>members/이동원/</code> 안에</li><li>통합은 5/19 이후 별도 1인 (이동원 또는 별도)</li></ul></div>
+    <div class="card info"><h4 style="margin-top: 0;">2 · 작업별 보고서</h4><div class="track-label">교수님 가이드 03 형식</div><ul><li>각 노트북당 1개 보고서 (.md)</li><li>양식: 목적 / 데이터 / 방법 / 결과 / 한계 / 다음 단계</li><li>작성 시점: 셀 단위 메모 (Q4-a) + 마무리 정리 (Q4-c)</li><li>파일명: <code>{NN}_{단계}_phase{N}_v{M}_보고서.md</code></li></ul></div>
+    <div class="card should"><h4 style="margin-top: 0;">3 · 노트북 버전 명시</h4><div class="track-label">v→v+1 모두 보존</div><ul><li>명명: <code>{NN}_{단계}_phase{N}_v{M}.ipynb</code></li><li>예: <code>01_collection_phase1_v1.ipynb</code> → <code>v2</code> → <code>v3</code></li><li>사소한 수정(주석·변수명)도 새 파일 (rule 1: 버전 보존)</li><li>구버전 삭제 ❌ — 결과 안 좋으면 rollback</li></ul></div>
+    <div class="card could"><h4 style="margin-top: 0;">4 · 웹크롤링·벤치마킹 지속</h4><div class="track-label">작업마다 1건 이상</div><ul><li>각 작업마다 외부 코드 1건 + 학술 논문 1건 이상 확인</li><li>벤치마킹 결과는 보고서 "방법" 섹션에 인용</li><li>v0.2 COLLECTION 4-track 벤치마킹 그대로 유지 (강의·공개코드·실무·논문)</li><li>웹크롤링은 가이드 매트릭스 안에서만 (DART API 주력)</li></ul></div>
+  </div>
+  <h3>이동원이 5/19까지 만들 산출물 8종</h3>
+  <table class="clean"><thead><tr><th>#</th><th>파일</th><th>유형</th><th>대상</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><code>members/이동원/notebooks/01_collection_phase1_v1.ipynb</code> + v2, v3...</td><td>노트북 + 보고서</td><td>Phase 1 파일럿 정밀 수집 (Samsung 005930×2024)</td></tr>
+    <tr><td>2</td><td><code>members/이동원/notebooks/01_collection_phase2_v1.ipynb</code></td><td>노트북 + 보고서</td><td>Phase 2 배치 수집 (50건 시범 → 381 전수)</td></tr>
+    <tr><td>3</td><td><code>members/이동원/notebooks/02_preprocessing_v1.ipynb</code></td><td>노트북 + 보고서</td><td>정제·형태소·stopword·ESG passage 필터</td></tr>
+    <tr><td>4</td><td><code>members/이동원/notebooks/03_mining_v1.ipynb</code></td><td>노트북 + 보고서</td><td>TF-IDF · fastText 임베딩 · cosine similarity</td></tr>
+    <tr><td>5</td><td><code>members/이동원/notebooks/04_integration_v1.ipynb</code></td><td>노트북 + 보고서</td><td>analytical_dataset 통합 (features × KCGS)</td></tr>
+    <tr><td>6</td><td><code>members/이동원/reports/01~04_*_보고서.md</code> (4개)</td><td>보고서</td><td>각 노트북당 1개</td></tr>
+    <tr><td>7</td><td><code>members/이동원/reports/data_quality_gate_보고서.md</code></td><td>최종 보고서</td><td>5/19 게이트 12개 통과 보고</td></tr>
+    <tr><td>8</td><td>archive 스냅샷 다수</td><td>버전 보존</td><td>v→v+1 전환 시점마다</td></tr>
+  </tbody></table>
+  <div class="callout danger"><strong>v0.4 시점부터 절대 금지</strong><ul style="margin: 8px 0 0; padding-left: 20px;"><li>구버전 노트북 삭제 (rollback 불가)</li><li>보고서 없는 노트북 commit (작업 완료 ≠ 보고서 완료)</li><li>가이드 위반 항목 (8개) 중 하나라도 어김</li><li>이전 PR #11처럼 자동 생성·자동 헤더 적용 — 모든 작업은 사용자(이동원) 확인 후 commit</li></ul></div>
+</section>
+
+<section class="section" data-section="stages">
+  <h2>단계별 산출물 매트릭스 — Phase 1 → 통합</h2>
+  <p class="section-intro">각 단계마다 <strong>노트북 (v1, v2, ...) + 보고서 + 시각화 + 벤치마킹</strong> 4종 산출. 단계 간 의존성 명시.</p>
+  <h3>1단계 · Phase 1 정밀 수집 (Samsung 005930 × 2024)</h3>
+  <div class="card should"><div class="track-label">시작일 2026-05-15 (오늘)</div>
+    <h4>목적</h4><p style="margin: 4px 0 10px; font-size: 14px;">전 파이프라인 (corp_code 매핑 → rcept_no 조회 → document.xml 다운로드 → 섹션 추출 → passage 후보 → log 기록) 1건으로 검증. 가이드 02 한 줄씩 대응.</p>
+    <h4>산출물</h4><ul><li><code>notebooks/01_collection_phase1_v1.ipynb</code> — 초기 정밀 버전 (가이드 02 line-by-line)</li><li><code>notebooks/01_collection_phase1_v2.ipynb</code> — 검증 후 개선 (있다면)</li><li><code>reports/01_collection_phase1_v1_보고서.md</code> — 작업 보고서</li><li><code>data/raw/005930_2024_disclosure.zip</code> + <code>data/interim/005930_2024_sections.json</code> (gitignore)</li><li><code>logs/collection_log.csv</code> 1행</li></ul>
+    <h4>가이드·자료 매핑</h4><ul><li>교수님 가이드: <code>docs/professor_md/02_dart_data_collection.md</code> 전체</li><li>v0.2 COLLECTION 가이드: "Phase 1 파일럿" 탭</li><li>v0.3 COLLECTION 가이드: API key 안전 강화 패턴</li><li>벤치마킹: dart-fss / opendart-py 공개 코드</li></ul>
+  </div>
+  <h3>2단계 · Phase 2 배치 수집 (50 시범 → 381 전수)</h3>
+  <div class="card"><div class="track-label">시작일 2026-05-16~17</div>
+    <h4>산출물</h4><ul><li><code>notebooks/01_collection_phase2_v1.ipynb</code> — 50건 시범 (3개 업종 × 17건)</li><li><code>notebooks/01_collection_phase2_v2.ipynb</code> — 잔여 330건 전수</li><li><code>reports/01_collection_phase2_v1_보고서.md</code> + <code>v2_보고서.md</code></li><li><code>data/raw/*.zip</code> ~380개 (gitignore)</li><li><code>logs/collection_log.csv</code> 381행</li></ul>
+    <h4>관문</h4><p style="margin: 4px 0; font-size: 13.5px; color: var(--text-secondary);">v1 (50건) 실패율 ≥ 20%이면 v2 진행 ❌ → Phase 1 정규식·rate limit 재점검 (Phase 1 v3 추가).</p>
+  </div>
+  <h3>3단계 · 전처리·정제 (02)</h3>
+  <div class="card"><div class="track-label">시작일 2026-05-17~18</div>
+    <h4>산출물</h4><ul><li><code>notebooks/02_preprocessing_v1.ipynb</code> — 정규식 정제 → 형태소(Okt) → stopword</li><li><code>notebooks/02_preprocessing_v2.ipynb</code> — Mecab 비교 (alt 셀 또는 별도 노트북)</li><li><code>notebooks/02_preprocessing_v3.ipynb</code> — seed_dictionary로 ESG passage 필터</li><li><code>reports/02_preprocessing_v1~v3_보고서.md</code></li><li><code>data/processed/esg_passages.parquet</code> (gitignore)</li></ul>
+    <h4>경우의 수 테스트 (가이드 위반금지 4 — 모든 경우의 수)</h4><ul><li>형태소 분석기 3종: Okt / Mecab / Kkma 비교</li><li>stopword 적용 vs 미적용</li><li>seed_dictionary 확장 vs 기본</li></ul>
+  </div>
+  <h3>4단계 · 마이닝 (03)</h3>
+  <div class="card"><div class="track-label">시작일 2026-05-18</div>
+    <h4>산출물</h4><ul><li><code>notebooks/03_mining_v1.ipynb</code> — TF-IDF (vocab 5k~10k sweep)</li><li><code>notebooks/03_mining_v2.ipynb</code> — fastText/Sentence-Transformer 임베딩</li><li><code>notebooks/03_mining_v3.ipynb</code> — cosine similarity로 E/S/G 점수 산출</li><li><code>reports/03_mining_v1~v3_보고서.md</code></li><li><code>data/processed/esg_features.parquet</code></li></ul>
+  </div>
+  <h3>5단계 · 통합 (04)</h3>
+  <div class="card info"><div class="track-label">시작일 2026-05-18~19</div>
+    <h4>산출물</h4><ul><li><code>notebooks/04_integration_v1.ipynb</code> — features × KCGS 등급 join</li><li><code>reports/04_integration_v1_보고서.md</code></li><li><code>data/processed/analytical_dataset.parquet</code> + hash 기록</li><li><code>reports/data_quality_gate_보고서.md</code> — 게이트 12개 통과 확인</li></ul>
+    <h4>FREEZE 조건</h4><p style="margin: 4px 0; font-size: 13.5px; color: var(--text-secondary);">v0.2 ROADMAP의 게이트 12개 모두 통과 → analytical_dataset.parquet hash 기록 → 5/20부터 회귀·알파 단계.</p>
+  </div>
+  <h3>단계 간 의존성</h3>
+  <pre style="background: var(--bg-soft); padding: 14px; border-radius: 8px; font-size: 13px; line-height: 1.7;">Phase 1 정밀 (01_collection_phase1_v1)
+   ↓ 검증 통과 (viewer URL 5개 정합성 + 위반금지 8항목)
+Phase 2 50건 시범 (01_collection_phase2_v1)
+   ↓ 실패율 &lt; 20%
+Phase 2 잔여 330건 (01_collection_phase2_v2)
+   ↓ sections.json 380개
+전처리 v1 (02_preprocessing_v1) ←→ alt 노트북 (Mecab 비교)
+   ↓ esg_passages.parquet
+마이닝 v1 (03_mining_v1) ←→ alt (vocab sweep)
+   ↓ esg_features.parquet
+통합 v1 (04_integration_v1)
+   ↓ analytical_dataset.parquet + hash
+[FREEZE] → 5/20 회귀·알파 단계</pre>
+</section>
+
+<section class="section" data-section="report">
+  <h2>작업별 보고서 양식 — 교수님 가이드 03 형식</h2>
+  <p class="section-intro">각 노트북 1개당 보고서 1개. 양식은 <code>docs/professor_md/03_minimal_analysis_example.md</code>를 참고. 작성 시점은 <strong>셀 작업 중 메모(Q4-a) + 노트북 끝난 후 정리(Q4-c)</strong> 병행.</p>
+  <h3>표준 양식 (.md 6 섹션)</h3>
+  <div class="card info">
+    <pre># {NN}_{단계}_phase{N}_v{M} — {짧은 제목}
+
+&gt; **작성자**: 이동원
+&gt; **작성일**: YYYY-MM-DD
+&gt; **노트북**: `members/이동원/notebooks/{NN}_{단계}_phase{N}_v{M}.ipynb`
+&gt; **노트북 버전**: v{M}
+&gt; **이전 버전**: archive 또는 v{M-1}
+
+## 1. 목적 (Why)
+
+이 작업이 왜 필요한가? 분석 가설과 어떻게 연결되는가? 가이드 어느 단계 / 어느 문장에 해당하는가?
+- 가이드 인용: `docs/professor_md/02_dart_data_collection.md` §N "..."
+- 분석 가설 연결: ESG 언어 → KCGS 등급 (전처리 quality가 천장)
+
+## 2. 데이터
+
+- 입력: {경로 + 형식 + 행수 + 컬럼}
+- 출력: {경로 + 형식 + 행수 + 컬럼}
+- gitignore 정책: raw/interim/processed는 gitignore. 코드/메타만 git에.
+
+## 3. 방법 (What &amp; How)
+
+단계별로 무엇을 했는지 + 왜 그 방법을 선택했는지 + 벤치마킹 출처.
+
+### 3.1 단계 A
+- What: ...
+- Why: ...
+- 근거: 교수님 가이드 §N / 공개 코드 dart-fss / 학술 Li 2021
+
+## 4. 결과
+- 정량: 행수, 시간, 성공률, 시각화 1~2개 첨부
+- 정성: 예상과 달랐던 점, 발견한 패턴
+
+## 5. 한계 · 위험
+- 알려진 한계 (예: 특정 firm-year의 보고서 양식이 달라 정규식 일부 누락)
+- 다음 버전에서 개선할 점
+- 위반금지 8항목 self-check 결과
+
+## 6. 다음 단계
+- 다음 노트북: `notebooks/{NN+1}_*_v1.ipynb`
+- 이 작업의 산출물을 어떻게 받아가는가
+- 검증 필요 항목</pre>
+  </div>
+  <h3>작성 시점 — Q4-a + c 병행</h3>
+  <div class="grid-2">
+    <div class="card could"><h4>Q4-a · 셀 작업 중 메모</h4><ul><li>각 셀 작업 끝날 때마다 보고서에 1~2줄 추가</li><li>특히 "왜 이 방법을 선택했는가" 메모 (잊기 전에)</li><li>실패한 시도도 메모 → "5. 한계"에서 발전</li><li>벤치마킹 출처 (확인한 외부 코드/논문) 즉시 기록</li></ul></div>
+    <div class="card info"><h4>Q4-c · 노트북 끝난 후 정리</h4><ul><li>전체 흐름·결과를 6 섹션 양식으로 재구성</li><li>시각화 추가 (1~2개)</li><li>위반금지 8항목 self-check 표 추가</li><li>다음 단계 명시 (다음 노트북 이름 + 의존성)</li></ul></div>
+  </div>
+  <div class="callout warn"><strong>보고서 없는 노트북 commit 금지</strong> — 노트북·보고서는 1:1 매칭. PR description에 보고서 .md 경로도 함께 명시.</div>
+</section>
+
+<section class="section" data-section="versioning">
+  <h2>노트북 버전 관리 — v→v+1 모두 보존</h2>
+  <p class="section-intro">사소한 수정도 새 파일. 결과 안 좋으면 rollback. v0.3 archive 컨벤션을 더 강화.</p>
+  <h3>명명 규칙</h3>
+  <p style="font-size: 14.5px; color: var(--text-secondary);"><code>{NN}_{단계}_phase{N}_v{M}.ipynb</code></p>
+  <ul style="font-size: 13.5px; color: var(--text-secondary);"><li><strong>NN</strong> — 단계 번호 (01 수집 / 02 전처리 / 03 마이닝 / 04 통합)</li><li><strong>단계 영문명</strong> — collection / preprocessing / mining / integration</li><li><strong>phaseN</strong> — 단계 내 sub-phase</li><li><strong>vM</strong> — 버전 번호 (v1 → v2 → ...)</li></ul>
+  <h3>예시 — 5/19까지 예상되는 파일 목록</h3>
+  <pre style="background: var(--bg-soft); padding: 14px; border-radius: 8px; font-size: 12.5px; line-height: 1.7;">members/이동원/notebooks/
+├── 01_collection_phase1_v1.ipynb       # Phase 1 초기 정밀 (오늘)
+├── 01_collection_phase1_v2.ipynb       # 검증 후 개선
+├── 01_collection_phase2_v1.ipynb       # 50건 시범
+├── 01_collection_phase2_v2.ipynb       # 잔여 330건
+├── 02_preprocessing_v1.ipynb            # Okt 기반
+├── 02_preprocessing_v2.ipynb            # Mecab 비교
+├── 02_preprocessing_v3.ipynb            # seed_dict 확장
+├── 03_mining_v1.ipynb                   # TF-IDF
+├── 03_mining_v2.ipynb                   # 임베딩
+├── 03_mining_v3.ipynb                   # cosine similarity
+├── 04_integration_v1.ipynb              # analytical_dataset
+└── archive/                             # 정말 안 쓸 버전만
+    └── (선택적)</pre>
+  <h3>v→v+1 전환 기준</h3>
+  <div class="grid-2">
+    <div class="card could"><h4>✅ 새 v 만들어야 할 때</h4><ul><li>가이드의 새 단계 추가</li><li>알고리즘·라이브러리 변경 (Okt → Mecab)</li><li>파라미터 sweep 결과 보존 (vocab 5k → 10k)</li><li>실패한 시도라도 학습 가치 있음</li></ul></div>
+    <div class="card soft"><h4>⚠️ 모호한 케이스</h4><ul><li>오타·변수명 수정만 → git history로 충분 (선택)</li><li>마크다운 보강만 → git history로 충분 (선택)</li><li>출력만 다시 실행 → 새 v로 (다른 결과 보존)</li></ul></div>
+  </div>
+  <div class="callout danger"><strong>구버전 삭제 금지</strong> — 5/19 FREEZE 시점에 모든 v 파일이 살아 있어야 함. 발표·보고서 작성 시 "v1 vs v3 비교" 같은 표 만들 수 있음.</div>
+</section>
+
+<section class="section" data-section="constraints">
+  <h2>위반금지 8항목 — 모든 작업에서 반복 검증</h2>
+  <p class="section-intro">교수님 가이드 (01-04 md) + v0.2~v0.3 supplements + 사용자 합의 사항을 종합한 8항목. <strong>각 노트북 헤더 셀에 체크리스트로 명시</strong> + 보고서 "5. 한계"에서 self-check 결과 기록.</p>
+  <div class="constraint-row"><div class="c-num">1</div><div class="c-text">모든 크롤링 경로에 출처·lineage 기록. <code>logs/collection_log.csv</code>에 stock_code, fiscal_year, corp_code, rcept_no, status, reason, timestamp 8개 컬럼 기본.</div><div class="c-source">교수님 02 + v0.2</div></div>
+  <div class="constraint-row"><div class="c-num">2</div><div class="c-text"><code>document.xml</code>이 표준 raw 텍스트 경로. viewer 페이지 Selenium 우회·MCP가 만든 passage를 corpus로 투입 금지.</div><div class="c-source">교수님 02 + v0.2</div></div>
+  <div class="constraint-row"><div class="c-num">3</div><div class="c-text">MCP는 발견·연습용. corpus 투입 전 반드시 Python으로 재현 검증.</div><div class="c-source">교수님 02 + v0.2</div></div>
+  <div class="constraint-row"><div class="c-num">4</div><div class="c-text">API key 코드 노출 없음 (<code>.env</code>만) + <strong>노트북 출력에도 노출 없음</strong> (<code>mask_key()</code> 헬퍼 필수, <code>response.url</code> 직접 출력 금지).</div><div class="c-source">v0.3 강화</div></div>
+  <div class="constraint-row"><div class="c-num">5</div><div class="c-text">rate limit (0.5초/req 또는 exponential backoff) + 캐시 (<code>data/cache/corp_code_map.parquet</code>, <code>data/raw/*.zip</code>) 적용. 재실행 시 캐시에서 로드.</div><div class="c-source">교수님 02 + v0.2</div></div>
+  <div class="constraint-row"><div class="c-num">6</div><div class="c-text">실패 행은 <code>collection_log.csv</code>에 status·reason 기록. <strong>가짜 0 금지</strong> (NaN으로 두고 사유 명시).</div><div class="c-source">교수님 02 + v0.2</div></div>
+  <div class="constraint-row"><div class="c-num">7</div><div class="c-text">join key는 <strong>stock_code</strong> 기준. 회사명 join 금지(silent mismatch 위험). 타이밍은 <code>esg_year = fiscal_year + 1</code> 고정.</div><div class="c-source">교수님 04 + v0.2</div></div>
+  <div class="constraint-row"><div class="c-num">8</div><div class="c-text"><strong>노트북 버전·출력 보존</strong>, <strong>진행률 시각화</strong> (tqdm.notebook), <strong>결과 시각화</strong> (matplotlib/seaborn/wordcloud), <strong>What/Why/근거 마크다운</strong>, <strong>작업별 보고서</strong> 1:1 매칭.</div><div class="c-source">v0.3~v0.4 정식화</div></div>
+  <div class="callout success"><strong>각 노트북 헤더 셀에 위 8항목을 체크리스트로 복사</strong> — <code>members/_TEMPLATE_노트북_표준헤더.md</code> 참고. 모두 ✅ 표시 후 작업 시작.</div>
+  <div class="callout danger"><strong>위반 발견 시 즉시 처리</strong><ul style="margin: 8px 0 0; padding-left: 20px;"><li>(4) API key 노출 → 즉시 revoke + 재발급 + git history rewrite</li><li>(6) 가짜 0 채움 → 즉시 NaN으로 되돌리고 log에 reason 명시</li><li>(7) 회사명 join → 즉시 stock_code로 재join + 보고서 한계 명시</li><li>기타 → 작업 중단, ROADMAP 재논의</li></ul></div>
+</section>
+
+<section class="section" data-section="benchmark">
+  <h2>웹크롤링 + 벤치마킹 — 지속적 진행</h2>
+  <p class="section-intro">v0.2 COLLECTION의 4-track 벤치마킹(강의·공개코드·실무·논문)을 작업마다 1건 이상 적용. <strong>벤치마킹 결과는 보고서 "3. 방법"의 근거로 인용</strong>.</p>
+  <h3>4-track 벤치마킹 (v0.2 계승)</h3>
+  <div class="grid-4">
+    <div class="card info"><h4 style="margin-top: 0;">강의 (BASE)</h4><p style="font-size: 13px; margin: 4px 0;">Week 4 (requests·BS4·MCP) + Week 10 (DART MCP·CLI). 가장 기본.</p></div>
+    <div class="card purple"><h4 style="margin-top: 0;">공개 코드</h4><p style="font-size: 13px; margin: 4px 0;">dart-fss · opendart-py · konlpy. 실무 패턴 학습.</p></div>
+    <div class="card could"><h4 style="margin-top: 0;">실무 ETL</h4><p style="font-size: 13px; margin: 4px 0;">캐시·rate limit·backoff·idempotent. 안정성 패턴.</p></div>
+    <div class="card should"><h4 style="margin-top: 0;">학술 논문</h4><p style="font-size: 13px; margin: 4px 0;">Li et al. 2021 (RFS) NER · Bao et al. 2024. 방법론 근거.</p></div>
+  </div>
+  <h3>작업별 벤치마킹 기록</h3>
+  <table class="clean"><thead><tr><th>작업</th><th>벤치마킹 항목</th><th>적용 결과</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Phase 1 v1</strong><br>(오늘)</td><td><span class="badge v1">강의</span> Week 4 requests<br><span class="badge v2">공개</span> dart-fss<br><span class="badge v3">실무</span> 캐시·idempotent<br><span class="badge ok">논문</span> Li 2021 §4 NER 전략</td><td>각 셀 코드의 근거로 보고서 인용</td></tr>
+    <tr><td><strong>전처리 v1</strong></td><td><span class="badge v1">강의</span> 한국어 토큰화<br><span class="badge v2">공개</span> KoNLPy 문서·Okt 예시<br><span class="badge v3">실무</span> stopword 패턴<br><span class="badge ok">논문</span> Loughran-McDonald 2011</td><td>방법론 선택 근거</td></tr>
+    <tr><td><strong>마이닝 v1</strong></td><td><span class="badge v1">강의</span> TF-IDF·임베딩<br><span class="badge v2">공개</span> gensim docs<br><span class="badge v3">실무</span> sklearn TfidfVectorizer 옵션<br><span class="badge ok">논문</span> Bao 2024 (Sentence-Transformer)</td><td>모델·파라미터 근거</td></tr>
+  </tbody></table>
+  <h3>웹크롤링 허용 범위 (v0.2 매트릭스 재게시)</h3>
+  <table class="clean"><thead><tr><th>판정</th><th>대상</th></tr></thead>
+  <tbody>
+    <tr><td><span class="badge ok">🟢 적극 권장</span></td><td>OpenDART API (list.json, document.xml, fnltt) · DART viewer 정합성 확인 · KRX 산업분류</td></tr>
+    <tr><td><span class="badge warn">🟡 조건부</span></td><td>KCGS 공시 페이지 (timing 참고용) · DART 정정공시</td></tr>
+    <tr><td><span class="badge no">🔴 금지</span></td><td>MCP가 만든 passage 직접 corpus 투입 · document.xml 우회 viewer 페이지 스크래핑 · 로그인/유료 사이트</td></tr>
+  </tbody></table>
+  <div class="callout info"><strong>벤치마킹 기록은 reports/ 보고서에 인용</strong> — 각 작업 보고서의 "3. 방법" 섹션에서 "이 방법을 선택한 근거: 공개코드 X / 학술 Y / 강의 Z" 형식으로 명시.</div>
+</section>
+
+<section class="section" data-section="cleanup">
+  <h2>PR #11 정리 — 수동 삭제 안내</h2>
+  <p class="section-intro">2026-05-15 자동 PR #11 (mygithub05253) / PR #5 (org)이 만든 stale 파일들 처리 방법.</p>
+  <h3>문제</h3>
+  <div class="card warn"><h4>PR #11이 만든 파일 (양쪽 레포 main에 있음)</h4><ul><li><code>members/이동원/notebooks/01_collection.ipynb</code> — 자동 헤더 적용된 기존 collection 노트북 복사본</li><li><code>members/이동원/notebooks/archive/01_collection_2026-05-15_initial.ipynb</code> — 위 노트북의 archive 스냅샷</li></ul>
+  <h4>왜 문제?</h4><ul><li>v0.4의 새 명명 규칙(<code>01_collection_phase1_v1.ipynb</code>)과 충돌</li><li>사용자가 확인하지 않은 자동 헤더 (Claude Code가 만든 것)</li><li>실제 작업 의도와 다른 위치·구조</li></ul>
+  </div>
+  <h3>해결 (수동 삭제)</h3>
+  <p style="font-size: 14px; color: var(--text-secondary);">GitHub MCP에 file delete 도구가 없어 자동 처리 불가. 사용자가 로컬에서 직접 삭제 + push.</p>
+  <div class="card info"><h4>로컬 PowerShell에서 (양쪽 레포 모두)</h4>
+    <pre>cd C:\Users\kik32\workspace\unstructured-data-processing-final-project
+git pull origin main
+
+git rm members\이동원\notebooks\01_collection.ipynb
+git rm members\이동원\notebooks\archive\01_collection_2026-05-15_initial.ipynb
+
+git commit -m "chore: PR #11 자동 생성 파일 삭제 (v0.4 명명 규칙 충돌)"
+git push origin main
+
+# team remote에도 (gc-unstructured-data-processing)
+git push team main</pre>
+  </div>
+  <h3>대안 — 그냥 두기</h3>
+  <div class="card soft"><p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);">삭제가 번거롭다면 그냥 둬도 큰 문제 없음. 새 작업은 <code>01_collection_phase1_v1.ipynb</code>부터 시작하면 됨. 다만 5/19 FREEZE 시점에는 정리 권장.</p></div>
+  <div class="callout warn"><strong>향후 자동 PR 생성 금지</strong> — Claude(이 세션)는 사용자 확인 없이 PR 자동 생성 ❌. PR #11 같은 사고 재발 방지. 모든 push는 사용자 검토 후.</div>
+</section>
+
+<section class="section" data-section="schedule">
+  <h2>5/19 데드라인 수정안 — 솔로 워크플로우 일정</h2>
+  <p class="section-intro">v0.2 ROADMAP의 4명 분업 5일 일정을 <strong>이동원 1인 기준</strong>으로 재조정. 작업·보고서 모두 1인이 책임지므로 밀도 ↑.</p>
+  <table class="clean"><thead><tr><th>일자</th><th>focus</th><th>산출물</th><th>벤치마킹</th></tr></thead>
+  <tbody>
+    <tr><td class="day-cell">5/15 (금)<br><span class="badge today">오늘</span></td><td>v0.4 ROADMAP 합의<br>+ Phase 1 v1 정밀 노트북 작성<br>+ Phase 1 v1 보고서 마무리</td><td><code>v0.4/_VERSION.md</code><br><code>v0.4/ROADMAP_*.html</code><br><code>01_collection_phase1_v1.ipynb</code><br><code>01_collection_phase1_v1_보고서.md</code></td><td>dart-fss · opendart-py · Li 2021</td></tr>
+    <tr><td class="day-cell">5/16 (토)</td><td>Phase 1 v1 검증 (viewer URL 5개 정합성)<br>+ Phase 1 v2 개선 (있다면)<br>+ Phase 2 v1 설계 (50건 시범)</td><td><code>01_collection_phase1_v2.ipynb</code> (선택)<br><code>01_collection_phase2_v1.ipynb</code> 50건 실행<br><code>collection_log.csv</code> 50행<br><code>01_collection_phase2_v1_보고서.md</code></td><td>3개 업종(IT/제조/금융) 코드 비교</td></tr>
+    <tr><td class="day-cell">5/17 (일)</td><td>Phase 2 v1 실패율 ≤ 20% 확인<br>+ Phase 2 v2 잔여 330건<br>+ 전처리 v1 설계</td><td><code>01_collection_phase2_v2.ipynb</code> 380건<br><code>01_collection_phase2_v2_보고서.md</code><br><code>02_preprocessing_v1.ipynb</code> 초안</td><td>KoNLPy 형태소 비교</td></tr>
+    <tr><td class="day-cell">5/18 (월)</td><td>전처리 v1~v3 완성<br>+ 마이닝 v1~v3</td><td><code>02_preprocessing_v1~v3.ipynb</code>+보고서<br><code>03_mining_v1~v3.ipynb</code>+보고서<br><code>esg_passages.parquet</code><br><code>esg_features.parquet</code></td><td>Loughran-McDonald 2011 · Bao 2024</td></tr>
+    <tr><td class="day-cell">5/19 (화)<br><span class="badge no">D-Day</span></td><td>통합 v1 + 게이트 12개 통과<br>+ FREEZE 선언<br>+ 최종 보고서 정리</td><td><code>04_integration_v1.ipynb</code>+보고서<br><code>analytical_dataset.parquet</code>+hash<br><code>data_quality_gate_보고서.md</code></td><td>전 단계 종합</td></tr>
+  </tbody></table>
+  <h3>v0.2 ROADMAP 게이트 12개 (그대로 적용)</h3>
+  <p style="font-size: 14px; color: var(--text-secondary);">5/19 D-Day의 통과 기준은 <code>v0.2/ROADMAP_5일_데드라인.html</code> "데이터 품질 게이트" 탭의 12개 그대로 유지. 식별자 3 + 수집 3 + 전처리 3 + Feature·통합 3.</p>
+  <div class="callout warn"><strong>1인 작업 위험</strong><ul style="margin: 8px 0 0; padding-left: 20px;"><li>blocker 발생 시 backup 없음 → 매일 진행상황 self-check 필수</li><li>전처리 코드 실행 시간 > 예상 → 50건 sample로 미리 측정</li><li>완벽주의로 일정 밀림 → 각 v는 "통과 기준" 명시</li></ul></div>
+  <div class="callout success"><strong>1인 작업 장점</strong><ul style="margin: 8px 0 0; padding-left: 20px;"><li>병합 충돌 0건</li><li>의사결정 빠름</li><li>전 단계 일관된 코드 스타일·네이밍</li><li>5/20 분석 단계 진입 시 코드 이해도 100%</li></ul></div>
+</section>
+
+<footer>
+  <p><strong>출처</strong> — 2026-05-15 사용자(이동원) 정정 (4가지 + Q4-a+c 병행), v0.2 ROADMAP (5일 일정 골격), v0.3 COLLECTION (노트북 6 규칙·출력 보존·API key 안전), 교수님 가이드 (01-04 md), CONTRIBUTING.md, members/_TEMPLATE_노트북_표준헤더.md.</p>
+  <p>v0.4 · 2026-05-15 작성 · 이동원 솔로 워크플로우 canonical · v0.2 ROADMAP deprecate (참고용으로 보존) · 모든 작업은 사용자 확인 후 commit (자동 PR 금지)</p>
+</footer>
+
+</div>
+
+<script>
+const tabs = document.querySelectorAll('nav.tabs button');
+const sections = document.querySelectorAll('section.section');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    tabs.forEach(b => b.classList.toggle('active', b === btn));
+    sections.forEach(s => s.classList.toggle('active', s.dataset.section === target));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>

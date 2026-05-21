@@ -1,0 +1,10 @@
+﻿term,orig_dim,pattern,samsung_freq,decision,final_dim,reason
+지속가능,S,지속가능|sustainability,21,KEPT,S,의미 명확(sustainability)·잡음 적음·Bloomberg/SASB 핵심·Samsung 21회. 단 ESG 전반 표지자라 S 단독으로 좁히면 약함. KEPT.
+ESG경영,S,ESG경영|ESG위원회|지속가능경영,19,KEPT,G,ESG위원회·지속가능경영 포함—G(지배구조 위원회)에 더 가까움. 차원을 G로 재분류 권장. 잡음 거의 없음·Samsung 19회. KEPT(G로 reassign).
+기부,S,기부|후원|봉사,17,KEPT,S,|후원|봉사 — 사회공헌 핵심. MSCI KLD Community 매핑. 잡음 거의 없음·Samsung 17회. KEPT.
+대화,S,대화|소통|커뮤니케이션,13,REMOVED,S,"|소통|커뮤니케이션 — **잡음 매우 큼** (""고객 대화"", ""전화 대화"" 등 비-ESG 표현 다수). Samsung 13회 중 ESG 관련 비율 의문. REMOVED — 패턴 강화 필요 (예: ""노사 대화|이해관계자 소통"") 시 재검토."
+나눔,S,나눔|기부금,8,REMOVED,S,"|기부금 — ""기부"" seed에 이미 후원·봉사 포함되어 **의미 중복**. 별도 seed로 두면 같은 문장이 2번 카운트됨. REMOVED — ""기부"" 패턴에 |나눔 추가하는 방식 권장."
+건강,S,건강|보건|체력,8,KEPT,S,"|보건|체력 — Refinitiv Workforce healthy workplace. 다만 ""재무 건강"", ""기업 건강"" 등 비-사회 잡음 가능. KEPT(중간 잡음 — 추후 패턴 강화 검토 필요)."
+사회공헌,S,사회공헌|CSR,6,KEPT,S,|CSR — 사회공헌 직접 표현. MSCI KLD Community 매핑. 잡음 0·Samsung 6회. **강력 권장 KEPT**.
+정보보호,S,정보보호|사이버|보안,5,KEPT,S,"|사이버|보안 — MSCI ESG Data Security. ""보안""이 일반 물리 보안 포함 가능하나 ESG 중요 — KEPT. S 차원 유지 (고객·데이터)."
+근속,S,근속|이직률,5,KEPT,S,|이직률 — Refinitiv Workforce engagement. 근속/이직률 직접 측정. **강력 권장 KEPT**.

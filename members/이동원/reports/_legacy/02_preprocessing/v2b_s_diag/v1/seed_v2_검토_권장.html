@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><title>seed_v2 9 후보 10단계 검토 + 채택 권장</title>
+<style>:root{--bg:#fafaf7;--bg-card:#fff;--bg-soft:#f3f1ea;--bg-danger:#fef2f2;--bg-warn:#fff7ed;--bg-success:#f0fdf4;--bg-info:#eff6ff;--bg-purple:#f5f3ff;--text:#1c1c1a;--mute:#5a5a55;--border:rgba(0,0,0,.1);--accent:#4338ca}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Noto Sans KR","Malgun Gothic",sans-serif}.wrap{max-width:1180px;margin:0 auto;padding:32px 24px 60px}h1{font-size:24px;font-weight:500;margin:0 0 8px}h2{font-size:18px;margin:24px 0 8px}h3{font-size:15px;margin:18px 0 6px;font-weight:600}.sub{color:var(--mute);margin:0 0 16px}.chip{display:inline-block;font-size:12px;padding:3px 8px;border-radius:999px;background:var(--bg-soft);color:var(--mute);margin-right:6px;border:.5px solid var(--border)}.chip.kept{background:#f0fdf4;color:#15803d}.chip.removed{background:#fef2f2;color:#b91c1c}.chip.reassign{background:#f5f3ff;color:#6d28d9}.card{background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:10px}.card.kept{background:var(--bg-success);border-color:rgba(34,197,94,.25)}.card.removed{background:var(--bg-danger);border-color:rgba(239,68,68,.25)}.card.reassign{background:var(--bg-purple);border-color:rgba(124,58,237,.25)}.tag{font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;margin-bottom:6px}.tag.kept{color:#15803d}.tag.removed{color:#b91c1c}.tag.reassign{color:#6d28d9}table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}th,td{text-align:left;padding:6px 8px;border-bottom:.5px solid var(--border);vertical-align:top}th{font-weight:500;color:var(--mute);font-size:11px;text-transform:uppercase;background:var(--bg-soft)}tr.kept td{background:rgba(34,197,94,0.04)}tr.removed td{background:rgba(239,68,68,0.04)}tr.reassign td{background:rgba(124,58,237,0.04)}code{font-family:ui-monospace,monospace;font-size:12.5px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:3px}.grade{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}.g-ok{background:#d1fae5;color:#065f46}.g-warn{background:#fed7aa;color:#9a3412}.g-bad{background:#fecaca;color:#7f1d1d}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}.metric{background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:12px 14px}.metric .label{font-size:11px;color:var(--mute);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}.metric .value{font-size:20px;font-weight:600}</style></head><body><div class="wrap">
+
+<h1>seed_dictionary_v2 — 9 후보 10단계 전문가 검토 + 채택 권장</h1>
+<p class="sub">02b s_diag 자동 추출 9 후보를 Claude가 의미·라벨·잡음·중복·학술 인용 등 10가지 관점으로 직접 검토. 위반금지 #3 (MCP/추출 결과 그대로 신뢰 ❌) 충족.</p>
+<div>
+<span class="chip">검토자 <strong>Claude (이동원 위임)</strong></span>
+<span class="chip">일자 <strong>2026-05-18</strong></span>
+<span class="chip">대상 <strong>9 후보</strong></span>
+<span class="chip kept">KEPT <strong>7</strong></span>
+<span class="chip removed">REMOVED <strong>2</strong></span>
+<span class="chip reassign">재분류 <strong>1 (S→G)</strong></span>
+</div>
+
+<div class="summary">
+<div class="metric"><div class="label">v1 seed</div><div class="value">30</div></div>
+<div class="metric"><div class="label">v2 추가</div><div class="value">+7</div></div>
+<div class="metric"><div class="label">v2 합계</div><div class="value">37</div></div>
+<div class="metric"><div class="label">E 차원</div><div class="value">10</div></div>
+<div class="metric"><div class="label">S 차원</div><div class="value">16</div></div>
+<div class="metric"><div class="label">G 차원</div><div class="value">11</div></div>
+</div>
+
+<h2>1. 10단계 검토 기준</h2>
+<table>
+<tr><th>단계</th><th>기준</th></tr>
+<tr><td>1</td><td>의미 명확성 — ESG 차원 정확히 매핑</td></tr>
+<tr><td>2</td><td>외부 라벨 일치 — MSCI KLD · Refinitiv · Bloomberg · ESG-Kor</td></tr>
+<tr><td>3</td><td>KCGS 평가항목 매칭</td></tr>
+<tr><td>4</td><td>Samsung body 빈도 (02b 측정값)</td></tr>
+<tr><td>5</td><td>잡음 가능성 — 비-ESG 표현 포함 위험</td></tr>
+<tr><td>6</td><td>기존 seed 중복 (의미 ↔ 패턴)</td></tr>
+<tr><td>7</td><td>정규식 패턴 robust</td></tr>
+<tr><td>8</td><td>학술 인용 근거 (Li 2021·Bao 2024·Bingler 2022 등)</td></tr>
+<tr><td>9</td><td>등급 변별력 예상</td></tr>
+<tr><td>10</td><td>최종 권장 + 차원 재분류</td></tr>
+</table>
+
+<h2>2. 9 후보 결정 표</h2>
+<table>
+<tr><th>#</th><th>후보</th><th>패턴</th><th>freq</th><th>의미명확</th><th>잡음</th><th>중복</th><th>차원</th><th>결정</th></tr>
+<tr class="kept"><td>1</td><td><strong>지속가능</strong></td><td><code>지속가능|sustainability</code></td><td>21</td><td><span class="grade g-ok">높음</span></td><td><span class="grade g-ok">낮음</span></td><td><span class="grade g-ok">없음</span></td><td>S 유지</td><td><span class="chip kept">KEPT</span></td></tr>
+<tr class="reassign"><td>2</td><td><strong>ESG경영</strong></td><td><code>ESG경영|ESG위원회|지속가능경영</code></td><td>19</td><td><span class="grade g-ok">높음</span></td><td><span class="grade g-ok">낮음</span></td><td><span class="grade g-ok">없음</span></td><td><strong>S→G</strong></td><td><span class="chip reassign">KEPT 재분류</span></td></tr>
+<tr class="kept"><td>3</td><td><strong>기부</strong></td><td><code>기부|후원|봉사</code></td><td>17</td><td><span class="grade g-ok">높음</span></td><td><span class="grade g-ok">낮음</span></td><td><span class="grade g-ok">없음</span></td><td>S 유지</td><td><span class="chip kept">KEPT</span></td></tr>
+<tr class="removed"><td>4</td><td><strong>대화</strong></td><td><code>대화|소통|커뮤니케이션</code></td><td>13</td><td><span class="grade g-warn">중간</span></td><td><span class="grade g-bad">매우 큼</span></td><td><span class="grade g-ok">없음</span></td><td>S</td><td><span class="chip removed">REMOVED</span></td></tr>
+<tr class="removed"><td>5</td><td><strong>나눔</strong></td><td><code>나눔|기부금</code></td><td>8</td><td><span class="grade g-ok">높음</span></td><td><span class="grade g-ok">낮음</span></td><td><span class="grade g-bad">"기부"와 중복</span></td><td>S</td><td><span class="chip removed">REMOVED</span></td></tr>
+<tr class="kept"><td>6</td><td><strong>건강</strong></td><td><code>건강|보건|체력</code></td><td>8</td><td><span class="grade g-ok">높음</span></td><td><span class="grade g-warn">중간</span></td><td><span class="grade g-ok">없음</span></td><td>S 유지</td><td><span class="chip kept">KEPT</span></td></tr>
+<tr class="kept"><td>7</td><td><strong>사회공헌</strong></td><td><code>사회공헌|CSR</code></td><td>6</td><td><span class="grade g-ok">매우 높음</span></td><td><span class="grade g-ok">없음</span></td><td><span class="grade g-ok">없음</span></td><td>S 유지</td><td><span class="chip kept">KEPT ⭐</span></td></tr>
+<tr class="kept"><td>8</td><td><strong>정보보호</strong></td><td><code>정보보호|사이버|보안</code></td><td>5</td><td><span class="grade g-ok">높음</span></td><td><span class="grade g-warn">중간</span></td><td><span class="grade g-ok">없음</span></td><td>S 유지</td><td><span class="chip kept">KEPT</span></td></tr>
+<tr class="kept"><td>9</td><td><strong>근속</strong></td><td><code>근속|이직률</code></td><td>5</td><td><span class="grade g-ok">매우 높음</span></td><td><span class="grade g-ok">없음</span></td><td><span class="grade g-ok">없음</span></td><td>S 유지</td><td><span class="chip kept">KEPT ⭐</span></td></tr>
+</table>
+
+<h2>3. KEPT 7개 — 학술 라벨 매핑</h2>
+
+<div class="card kept"><div class="tag kept">KEPT #1</div>
+<h3>지속가능 (S 차원, freq=21)</h3>
+<p><strong>패턴</strong>: <code>지속가능|sustainability</code></p>
+<p><strong>라벨 매핑</strong>: GRI · SASB · TCFD · Bloomberg ESG · ESG-Kor 전부</p>
+<p><strong>학술</strong>: Guiso et al. (2015), Bao et al. (2024)</p>
+<p><strong>주의</strong>: ESG 전반 표지자 — S 단독 보다는 ESG overall 시그널. 사이클 4에서 cross-dim 검증 권장.</p>
+</div>
+
+<div class="card reassign"><div class="tag reassign">KEPT 재분류 #2</div>
+<h3>ESG경영 (S → G 재분류, freq=19)</h3>
+<p><strong>패턴</strong>: <code>ESG경영|ESG위원회|지속가능경영</code></p>
+<p><strong>재분류 근거</strong>: ESG위원회는 거버넌스 구조 (board ESG oversight). 지속가능경영도 경영 시스템 = G.</p>
+<p><strong>라벨</strong>: MSCI Governance · Bloomberg ESG board oversight</p>
+</div>
+
+<div class="card kept"><div class="tag kept">KEPT #3</div>
+<h3>기부 (S 유지, freq=17)</h3>
+<p><strong>패턴</strong>: <code>기부|후원|봉사</code></p>
+<p><strong>라벨</strong>: MSCI KLD <strong>Community</strong> 카테고리 직접 매핑</p>
+<p><strong>KCGS</strong>: 사회 책임 — 지역사회</p>
+</div>
+
+<div class="card kept"><div class="tag kept">KEPT #4</div>
+<h3>건강 (S 유지, freq=8)</h3>
+<p><strong>패턴</strong>: <code>건강|보건|체력</code></p>
+<p><strong>라벨</strong>: Refinitiv Workforce Health & Safety · MSCI Employee Health</p>
+<p><strong>잡음</strong>: 중간 — "재무 건강", "기업 건강" 등. 사이클 4에서 패턴 강화 권장 (<code>임직원 건강|보건|건강검진|건강관리</code>).</p>
+</div>
+
+<div class="card kept"><div class="tag kept">KEPT #5 ⭐</div>
+<h3>사회공헌 (S 유지, freq=6)</h3>
+<p><strong>패턴</strong>: <code>사회공헌|CSR</code></p>
+<p><strong>라벨</strong>: MSCI KLD Community · ESG-Kor S 라벨</p>
+<p><strong>잡음</strong>: 0 — 정확히 ESG 표현. <strong>강력 권장.</strong></p>
+</div>
+
+<div class="card kept"><div class="tag kept">KEPT #6</div>
+<h3>정보보호 (S 유지, freq=5)</h3>
+<p><strong>패턴</strong>: <code>정보보호|사이버|보안</code></p>
+<p><strong>라벨</strong>: MSCI ESG Data Security · ESG-Kor S 카테고리</p>
+<p><strong>차원 모호</strong>: S(고객) vs G(위험관리). 본 검토는 S 유지하되 cross-dim 검증 권장.</p>
+</div>
+
+<div class="card kept"><div class="tag kept">KEPT #7 ⭐</div>
+<h3>근속 (S 유지, freq=5)</h3>
+<p><strong>패턴</strong>: <code>근속|이직률</code></p>
+<p><strong>라벨</strong>: Refinitiv Workforce engagement · MSCI Employee Retention</p>
+<p><strong>잡음</strong>: 0 — HR 도메인 정확. <strong>강력 권장.</strong></p>
+</div>
+
+<h2>4. REMOVED 2개 — 근거</h2>
+
+<div class="card removed"><div class="tag removed">REMOVED #1</div>
+<h3>대화 (freq=13)</h3>
+<p><strong>패턴</strong>: <code>대화|소통|커뮤니케이션</code></p>
+<p><strong>이유</strong>: 잡음 매우 큼 — "고객 대화", "전화 대화", "마케팅 커뮤니케이션" 등 비-ESG 표현 다수. Samsung 13회 중 실제 ESG 관련 비율 미정량.</p>
+<p><strong>대안</strong>: 패턴 강화 시 재검토 — <code>노사 대화|이해관계자 소통|stakeholder engagement</code></p>
+</div>
+
+<div class="card removed"><div class="tag removed">REMOVED #2</div>
+<h3>나눔 (freq=8)</h3>
+<p><strong>패턴</strong>: <code>나눔|기부금</code></p>
+<p><strong>이유</strong>: "기부" seed가 이미 <code>기부|후원|봉사</code> 패턴 보유 → 의미 중복. 같은 문장 "나눔의 기부"가 있으면 이중 카운트 위험.</p>
+<p><strong>대안</strong>: "기부" 패턴에 |나눔 추가 (<code>기부|후원|봉사|나눔</code>)</p>
+</div>
+
+<h2>5. 사용자 액션</h2>
+<div class="card" style="background:var(--bg-info);border-color:rgba(37,99,235,0.25)">
+<h3>다음 선택지</h3>
+<ol>
+<li>✅ <strong>본 권장 그대로 채택</strong> — seed_v2.csv 37개 그대로 사용 (Claude 권장)</li>
+<li>⚠️ <strong>일부 수정</strong> — 특정 후보의 결정 차이를 알려주시면 즉시 수정 (예: "건강은 잡음 우려라 REMOVED 원함")</li>
+<li>🔄 <strong>대안 패턴 강화 후 재검토</strong> — "대화" 또는 "나눔" 패턴 강화 적용 시 재추가</li>
+</ol>
+<p style="margin-top:14px;color:var(--mute)">현재 <code>data/seed_dictionary_v2.csv</code>는 본 권장(37개) 그대로 저장됨. 의견 차이 시 알려주시면 즉시 수정.</p>
+</div>
+
+<h2>6. 사이클 4 (최종 v_final) 영향</h2>
+<table>
+<tr><th>노트북</th><th>seed_v2 적용 영향</th></tr>
+<tr><td>02_preprocessing v_final</td><td>TfidfVectorizer 입력 = 37개 (vs v1 30) — seed_tfidf_S·G 점수 증가 예상</td></tr>
+<tr><td>02b s_diag v_final</td><td>seed_v2 사용 후 Samsung 다시 진단 — S 점수 변화 정량 비교</td></tr>
+<tr><td>03_mining v_final</td><td>회귀 입력 변경 — seed_v1 vs seed_v2 결과 비교 (alt 분석)</td></tr>
+</table>
+
+<p style="color:var(--mute);font-size:12px;margin-top:30px;border-top:.5px solid var(--border);padding-top:14px">
+seed_v2 9 후보 10단계 검토 + 채택 권장 · 2026-05-18 · Claude (이동원 위임)<br>
+근거: 02b s_diag v1 산출 + Bloomberg ESG · MSCI KLD · Refinitiv Workforce · ESG-Kor · 학술 라인 + 위반금지 #3 검토 디시플린<br>
+산출: data/seed_dictionary_v2.csv (37행) · seed_v2_decision_analysis.csv · 본 보고서·HTML
+</p>
+</div></body></html>

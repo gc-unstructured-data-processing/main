@@ -1,0 +1,7 @@
+﻿theta,dimension,seed_origin,candidate_term,cosine,kept_or_removed,reason
+0.6,E,온실가스,탄소중립,0.92,kept,
+0.6,E,재생에너지,태양광,0.85,kept,
+0.6,S,안전,산업안전,0.88,kept,
+0.6,S,공급망,대림에너지,0.78,removed,회사명 잡음
+0.6,G,이사회,감사위원회,0.91,kept,
+0.7,G,윤리,준법경영,0.83,kept,

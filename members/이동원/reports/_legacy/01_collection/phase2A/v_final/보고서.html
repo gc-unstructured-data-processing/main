@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>01 collection phase2A v_final — 단계별 보고서</title>
+<style>
+:root { --bg:#fafaf7; --bg-card:#fff; --bg-soft:#f3f1ea; --bg-danger:#fef2f2; --bg-warn:#fff7ed; --bg-success:#f0fdf4; --bg-info:#eff6ff; --text:#1c1c1a; --mute:#5a5a55; --border:rgba(0,0,0,.1); --accent:#4338ca; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font: 16px/1.7 -apple-system, "Noto Sans KR", "Malgun Gothic", sans-serif; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
+h1 { font-size: 28px; font-weight: 600; margin: 0 0 16px; border-bottom: 2px solid var(--accent); padding-bottom: 12px; letter-spacing: -0.01em; }
+h2 { font-size: 22px; font-weight: 600; margin: 32px 0 12px; color: var(--accent); }
+h3 { font-size: 17px; font-weight: 600; margin: 20px 0 8px; color: var(--text); }
+h4 { font-size: 15px; font-weight: 600; margin: 16px 0 6px; }
+p { margin: 8px 0 14px; }
+blockquote { margin: 16px 0; padding: 12px 18px; background: var(--bg-soft); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; color: var(--mute); }
+blockquote p { margin: 4px 0; }
+ul, ol { padding-left: 28px; margin: 8px 0 14px; }
+li { margin: 4px 0; }
+code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; background: rgba(0,0,0,.06); padding: 2px 6px; border-radius: 4px; color: #b91c1c; }
+pre { background: rgba(0,0,0,.04); padding: 14px 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; line-height: 1.5; }
+pre code { background: transparent; color: var(--text); padding: 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; background: var(--bg-card); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+thead { background: var(--bg-soft); }
+th { font-weight: 600; padding: 10px 12px; text-align: left; color: var(--mute); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+strong { color: var(--accent); font-weight: 600; }
+img { max-width: 100%; height: auto; margin: 14px 0; border-radius: 8px; border: 0.5px solid var(--border); display: block; }
+.fig-caption { color: var(--mute); font-size: 12px; text-align: center; margin: -10px 0 18px; font-style: italic; }
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(67,56,202,.2); }
+a:hover { border-bottom-color: var(--accent); }
+.meta-banner { background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%); padding: 16px 22px; border-radius: 10px; margin-bottom: 24px; border: 0.5px solid rgba(67,56,202,.15); }
+.meta-banner strong { color: var(--accent); }
+.toc { background: var(--bg-card); padding: 16px 22px; border-radius: 8px; border: 0.5px solid var(--border); margin-bottom: 24px; }
+.toc ul { padding-left: 22px; }
+.toc a { color: var(--text); border: none; }
+.toc a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="meta-banner">
+📋 <strong>본 문서</strong>는 회의·발표 시각 자료. 제출용 .md는 동일 디렉토리에 별도 보존.
+</div>
+<h1 id="01-collection-phase2a-v_final">01 collection phase2A v_final — 단계별 보고서 (실측)</h1>
+<blockquote>
+<p><strong>작성</strong>: 이동원 · <strong>2026-05-18</strong>
+<strong>노트북</strong>: <code>notebooks/01_collection/phase2A/v_final/01_collection.ipynb</code> (23 cells, 28,079 B)</p>
+</blockquote>
+<hr />
+<h2 id="1">1. 데이터 (실측)</h2>
+<h3 id="11-firm-year">1.1 파일럿 firm-year</h3>
+<ul>
+<li>stock_code: <strong>005930</strong> (삼성전자)</li>
+<li>fiscal_year: <strong>2024</strong></li>
+<li>esg_year: <strong>2025</strong> (= fiscal+1)</li>
+<li>KCGS 등급: <strong>A (4)</strong> · E: B+ · S: A+ · G: B+</li>
+</ul>
+<h3 id="12-lineage">1.2 식별자 lineage</h3>
+<ul>
+<li>corp_code: <strong>00126380</strong> (corpCode.xml 캐시, 3,965 상장사 중 매칭)</li>
+<li>rcept_no: <strong>20250311001085</strong> (PRIMARY_BIZ fallback)</li>
+<li>viewer: https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20250311001085</li>
+</ul>
+<h3 id="13">1.3 산출물 (실측)</h3>
+<ul>
+<li><code>data/raw/005930_2024_disclosure.zip</code> — <strong>660 KB</strong> (idempotent 캐시 hit)</li>
+<li><code>data/interim/005930_2024_sections.json</code> — <strong>2.8 MB</strong> (recover mode 적용 후)</li>
+<li><code>data/interim/005930_2024_aux_audit_consolidated.json</code> — 782 KB</li>
+<li><code>data/interim/005930_2024_aux_audit_separate.json</code> — 664 KB</li>
+</ul>
+<hr />
+<h2 id="2">2. 방법</h2>
+<h3 id="21-10-fix-f">2.1 10단계 + Fix F 적용</h3>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What</th>
+<th>가이드 매핑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Safety</td>
+<td>Fix A·E + 🆕 <strong>Fix F (recover XML parser + 정규식 pre-처리)</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>1</td>
+<td>환경 + .env API key + run_id</td>
+<td>line 216-222</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Samsung 파일럿 + company_master 검증</td>
+<td>line 117</td>
+</tr>
+<tr>
+<td>3</td>
+<td>stock→corp_code</td>
+<td>line 153</td>
+</tr>
+<tr>
+<td>4</td>
+<td>corp_code→rcept_no (3단 fallback)</td>
+<td>line 154</td>
+</tr>
+<tr>
+<td>5</td>
+<td>document.xml ZIP + DOCUMENT-NAME 분류</td>
+<td>line 155</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>lxml SECTION-1 14 + Fix F (recover)</strong></td>
+<td>line 156-157</td>
+</tr>
+<tr>
+<td>7</td>
+<td>seed v1 30 + expanded_manual 7 동시 매칭</td>
+<td>line 158</td>
+</tr>
+<tr>
+<td>8</td>
+<td>viewer 5 sample 사용자 검증</td>
+<td>line 67</td>
+</tr>
+<tr>
+<td>9</td>
+<td>collection_log dedup + run_id</td>
+<td>line 69</td>
+</tr>
+<tr>
+<td>10</td>
+<td>위반금지 8 self-check</td>
+<td>04 §2-1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-fix-f-4">2.2 Fix F (사이클 4 신규)</h3>
+<ul>
+<li><code>lxml.etree.XMLParser(recover=True, encoding='utf-8')</code> + <code>preprocess_xml_text()</code> 정규식 <code>&amp;</code> escape</li>
+<li>사이클 3 phase2B FAIL_OTHER 30/30 → 사이클 4 batch FAIL_OTHER 0/30 완전 해결</li>
+</ul>
+<hr />
+<h2 id="3">3. 결과 (실측)</h2>
+<h3 id="31-section-1-14">3.1 SECTION-1 14 매칭</h3>
+<p><strong>14/14 노드 모두 매칭</strong> (Samsung은 well-formed XML이라 recover mode 영향 없음)
+- II (020000) body 26,663자 / tables 10,945자 (29% 표) — AASSOCNOTE
+- IV (040000) body 10,919자 / tables 4,803자 (31% 표) — AASSOCNOTE
+- VI (060000) body 5,653자 / tables 23,686자 (80% 표) — TITLE_text</p>
+<h3 id="32-passage-body">3.2 passage 추출 (body 기준)</h3>
+<ul>
+<li><strong>n_passages_body = 55</strong> (사이클 2·3 v2와 동일)</li>
+<li>차원 분포: G 33 · E 15 · S 5 · E|G 1 · G|S 1</li>
+</ul>
+<h3 id="33-collection_log">3.3 collection_log</h3>
+<ul>
+<li>v_final 행 1건 SUCCESS (위반금지 #1 충족)</li>
+<li>사이클 2·3과 동일한 신뢰성 (Samsung은 항상 SUCCESS)</li>
+</ul>
+<hr />
+<h2 id="4">4. 한계</h2>
+<ul>
+<li>IV passage 1건 — Samsung IV 정량 분석문 위주 (보고서 §해석에 기록)</li>
+<li>VI 표 80% — body only 정책으로 G 신호 본문 절반 미만 (사이클 6+ alt sweep 권장)</li>
+</ul>
+<hr />
+<h2 id="5-88">5. 위반금지 8/8 충족</h2>
+<p>모두 ✅ — 사이클 4 진단 v_final 표 그대로 유지.</p>
+<h2 id="6">6. 다음 단계</h2>
+<p>산출 sections.json → phase2B batch input + 02_preprocessing TF-IDF input.</p>
+</div>
+</body>
+</html>

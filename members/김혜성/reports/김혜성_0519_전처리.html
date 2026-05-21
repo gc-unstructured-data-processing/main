@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESG DART 프로젝트 — Phase 2 전처리 과정 셀별 해설</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a1a17;
+    --ink-soft:#41413a;
+    --ink-faint:#6b6b60;
+    --paper:#f4f1ea;
+    --paper-raised:#fbfaf5;
+    --line:#d9d4c7;
+    --line-soft:#e6e2d6;
+    --accent:#2f5d50;       /* deep forest — ESG/E */
+    --accent-warm:#9c5a2d;  /* ochre — S */
+    --accent-cool:#3a577e;  /* slate blue — G */
+    --code-bg:#1c2620;
+    --code-ink:#d6e0d4;
+    --code-key:#7fb89d;
+    --code-str:#c9a86a;
+    --code-com:#5e7468;
+    --code-num:#d28a6a;
+    --flag:#a8442f;
+    --ok:#2f5d50;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans KR',sans-serif;
+    font-weight:400;
+    line-height:1.78;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 28px}
+
+  /* ---------- masthead ---------- */
+  header.masthead{
+    border-bottom:2px solid var(--ink);
+    padding:64px 0 36px;
+    margin-bottom:8px;
+    position:relative;
+  }
+  .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.74rem;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:18px;
+  }
+  h1.title{
+    font-family:'Gowun Batang',serif;
+    font-weight:700;
+    font-size:2.85rem;
+    line-height:1.18;
+    letter-spacing:-.01em;
+    margin-bottom:20px;
+  }
+  .standfirst{
+    font-size:1.06rem;
+    color:var(--ink-soft);
+    max-width:60ch;
+    border-left:3px solid var(--accent);
+    padding-left:18px;
+  }
+  .meta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 28px;
+    margin-top:30px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:.78rem;
+    color:var(--ink-faint);
+  }
+  .meta-row b{color:var(--ink);font-weight:500}
+
+  /* ---------- overview / TOC ---------- */
+  .overview{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:30px 34px;
+    margin:46px 0 56px;
+  }
+  .overview h2{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.8rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin-bottom:20px;
+    font-weight:500;
+  }
+  .flow{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:2px;
+    background:var(--line-soft);
+    border:1px solid var(--line-soft);
+  }
+  .flow a{
+    background:var(--paper-raised);
+    padding:16px 14px;
+    text-decoration:none;
+    color:var(--ink);
+    transition:background .18s,color .18s;
+    display:block;
+  }
+  .flow a:hover{background:var(--accent);color:#fff}
+  .flow .step-no{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.7rem;
+    color:var(--accent);
+    letter-spacing:.1em;
+  }
+  .flow a:hover .step-no{color:#cfe3da}
+  .flow .step-name{
+    font-size:.92rem;
+    font-weight:500;
+    margin-top:5px;
+    line-height:1.4;
+  }
+
+  /* ---------- section blocks ---------- */
+  section.step{
+    margin:0 0 16px;
+    padding:48px 0 8px;
+    border-top:1px solid var(--line-soft);
+  }
+  section.step:first-of-type{border-top:none}
+  .step-head{
+    display:flex;
+    align-items:baseline;
+    gap:16px;
+    margin-bottom:8px;
+  }
+  .step-tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.82rem;
+    font-weight:700;
+    color:#fff;
+    background:var(--accent);
+    padding:4px 11px;
+    border-radius:2px;
+    letter-spacing:.04em;
+    white-space:nowrap;
+  }
+  .step-tag.warm{background:var(--accent-warm)}
+  .step-tag.cool{background:var(--accent-cool)}
+  h2.step-title{
+    font-family:'Gowun Batang',serif;
+    font-size:1.72rem;
+    font-weight:700;
+    line-height:1.3;
+  }
+  .cell-ref{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.74rem;
+    color:var(--ink-faint);
+    margin:6px 0 24px;
+    padding-left:2px;
+  }
+  .cell-ref span{
+    background:var(--line-soft);
+    padding:2px 8px;
+    border-radius:2px;
+    margin-right:6px;
+  }
+
+  p.lede{
+    font-size:1.04rem;
+    margin-bottom:20px;
+    color:var(--ink-soft);
+  }
+  p{margin-bottom:16px}
+  strong{font-weight:600;color:var(--ink)}
+  .term{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.88em;
+    background:var(--line-soft);
+    padding:1px 6px;
+    border-radius:2px;
+    color:var(--accent);
+  }
+
+  h3.sub{
+    font-family:'IBM Plex Sans KR',sans-serif;
+    font-size:1.04rem;
+    font-weight:600;
+    margin:30px 0 12px;
+    padding-bottom:7px;
+    border-bottom:1px dashed var(--line);
+    color:var(--ink);
+  }
+
+  ul.clean{list-style:none;margin:16px 0 22px}
+  ul.clean li{
+    position:relative;
+    padding-left:24px;
+    margin-bottom:10px;
+    color:var(--ink-soft);
+  }
+  ul.clean li::before{
+    content:"—";
+    position:absolute;
+    left:0;
+    color:var(--accent);
+    font-weight:700;
+  }
+  ul.clean li strong{color:var(--ink)}
+
+  /* ---------- code ---------- */
+  .code-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.7rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:24px 0 0;
+  }
+  pre{
+    background:var(--code-bg);
+    color:var(--code-ink);
+    font-family:'JetBrains Mono',monospace;
+    font-size:.8rem;
+    line-height:1.65;
+    padding:20px 22px;
+    border-radius:4px;
+    overflow-x:auto;
+    margin:8px 0 24px;
+    border:1px solid #0f1612;
+  }
+  pre .c{color:var(--code-com);font-style:italic}
+  pre .k{color:var(--code-key)}
+  pre .s{color:var(--code-str)}
+  pre .n{color:var(--code-num)}
+  pre .f{color:#9fc7e0}
+
+  /* ---------- callouts ---------- */
+  .why{
+    background:linear-gradient(0deg,var(--paper-raised),var(--paper-raised));
+    border:1px solid var(--line);
+    border-left:4px solid var(--accent);
+    padding:20px 24px;
+    border-radius:0 3px 3px 0;
+    margin:24px 0;
+  }
+  .why .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:700;
+    display:block;
+    margin-bottom:9px;
+  }
+  .why p:last-child{margin-bottom:0}
+
+  .pitfall{
+    background:#faf0ec;
+    border:1px solid #e9cabd;
+    border-left:4px solid var(--flag);
+    padding:20px 24px;
+    border-radius:0 3px 3px 0;
+    margin:24px 0;
+  }
+  .pitfall .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--flag);
+    font-weight:700;
+    display:block;
+    margin-bottom:9px;
+  }
+  .pitfall p:last-child{margin-bottom:0}
+
+  .check{
+    background:#eef4f0;
+    border:1px solid #c7dcd1;
+    padding:18px 24px;
+    border-radius:3px;
+    margin:24px 0;
+  }
+  .check .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ok);
+    font-weight:700;
+    display:block;
+    margin-bottom:11px;
+  }
+  .check ul{list-style:none}
+  .check li{
+    padding-left:26px;
+    position:relative;
+    margin-bottom:8px;
+    color:var(--ink-soft);
+    font-size:.96rem;
+  }
+  .check li::before{
+    content:"✓";
+    position:absolute;
+    left:0;
+    color:var(--ok);
+    font-weight:700;
+  }
+  .check li:last-child{margin-bottom:0}
+
+  /* ---------- tables ---------- */
+  .tbl-wrap{overflow-x:auto;margin:22px 0}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.9rem;
+  }
+  th{
+    background:var(--ink);
+    color:var(--paper);
+    font-weight:500;
+    text-align:left;
+    padding:11px 14px;
+    font-family:'IBM Plex Sans KR',sans-serif;
+  }
+  td{
+    padding:10px 14px;
+    border-bottom:1px solid var(--line-soft);
+    color:var(--ink-soft);
+  }
+  tbody tr:nth-child(even){background:var(--paper-raised)}
+  td.mono,th.mono{font-family:'JetBrains Mono',monospace;font-size:.84rem}
+  td .flag{color:var(--flag);font-weight:600}
+
+  /* ---------- insight / phase wrap ---------- */
+  .insight-banner{
+    background:var(--code-bg);
+    color:var(--code-ink);
+    padding:40px 38px;
+    border-radius:5px;
+    margin:50px 0 30px;
+  }
+  .insight-banner h2{
+    font-family:'Gowun Batang',serif;
+    color:#fff;
+    font-size:1.7rem;
+    margin-bottom:8px;
+  }
+  .insight-banner .sub{
+    color:var(--code-com);
+    font-family:'JetBrains Mono',monospace;
+    font-size:.78rem;
+    letter-spacing:.1em;
+    margin-bottom:26px;
+  }
+  .finding{
+    border-top:1px solid #33433a;
+    padding:22px 0;
+  }
+  .finding:first-of-type{border-top:none;padding-top:0}
+  .finding h3{
+    color:#fff;
+    font-size:1.08rem;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  .finding h3 .fn{color:var(--code-key);font-family:'JetBrains Mono',monospace;font-size:.85rem;margin-right:8px}
+  .finding p{color:#b9c4bc;margin-bottom:10px;font-size:.95rem}
+  .finding .takeaway{
+    color:var(--code-str);
+    font-size:.92rem;
+    border-left:2px solid var(--code-str);
+    padding-left:14px;
+    margin-top:12px;
+  }
+  .mini-tbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.8rem;
+    margin:14px 0;
+    width:auto;
+  }
+  .mini-tbl td{
+    border-bottom:1px solid #2c3a32;
+    color:#b9c4bc;
+    padding:6px 18px 6px 0;
+  }
+  .mini-tbl td.v{color:var(--code-str);text-align:right}
+
+  footer{
+    border-top:2px solid var(--ink);
+    margin-top:60px;
+    padding:34px 0 70px;
+    font-size:.86rem;
+    color:var(--ink-faint);
+  }
+  footer .fn-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+  }
+  footer b{color:var(--ink);font-weight:600;display:block;margin-bottom:6px}
+  footer code{
+    font-family:'JetBrains Mono',monospace;
+    background:var(--line-soft);
+    padding:1px 6px;
+    border-radius:2px;
+    font-size:.8rem;
+  }
+
+  @media (max-width:640px){
+    h1.title{font-size:2rem}
+    h2.step-title{font-size:1.34rem}
+    .step-head{flex-direction:column;gap:8px}
+    footer .fn-grid{grid-template-columns:1fr}
+    .wrap{padding:0 18px}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="kicker">ESG DART · 기말 프로젝트 · 작업.ipynb</div>
+    <h1 class="title">Phase 2 — 한국어 텍스트 전처리<br>셀별 상세 해설</h1>
+    <p class="standfirst">수집한 381개 firm-year 사업보고서를 형태소 분석으로 토큰화하고, ESG 측정어를 보존하면서 잡음을 걷어내 Phase 3의 TF-IDF 입력으로 만드는 과정. 각 셀이 <em>무엇을</em> 하고, <em>왜</em> 그렇게 했고, 어떤 <em>한계·검증 포인트</em>를 남기는지 정리한다.</p>
+    <div class="meta-row">
+      <span><b>대상 노트북</b> 작업.ipynb</span>
+      <span><b>범위</b> 셀 38 → 54</span>
+      <span><b>입력</b> corpus/*.json (381)</span>
+      <span><b>출력</b> corpus_tokens.json</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="overview">
+    <h2>전처리 흐름 — 7개 단계</h2>
+    <div class="flow">
+      <a href="#s21"><span class="step-no">2-1</span><span class="step-name">corpus 로드 · 길이 진단</span></a>
+      <a href="#s22"><span class="step-no">2-2</span><span class="step-name">Kiwi 명사 토큰화</span></a>
+      <a href="#s23"><span class="step-no">2-3</span><span class="step-name">복합명사 보존 (사용자 사전)</span></a>
+      <a href="#s23b"><span class="step-no">2-3+</span><span class="step-name">score 가중 강제 우선</span></a>
+      <a href="#s24"><span class="step-no">2-4</span><span class="step-name">불용어 설계 + 전체 토큰화</span></a>
+      <a href="#s25"><span class="step-no">2-5</span><span class="step-name">토큰 품질 점검</span></a>
+      <a href="#insight"><span class="step-no">▶</span><span class="step-name">핵심 발견 (보고서용)</span></a>
+    </div>
+  </div>
+
+  <!-- ===================== 2-1 ===================== -->
+  <section class="step" id="s21">
+    <div class="step-head">
+      <span class="step-tag">STEP 2-1</span>
+      <h2 class="step-title">corpus 로드 및 기초 통계</h2>
+    </div>
+    <div class="cell-ref"><span>셀 38 · markdown</span><span>셀 39 · code</span></div>
+
+    <p class="lede">Phase 1에서 수집한 <span class="term">outputs/corpus/{stock_code}_{fiscal_year}.json</span> 381개를 하나의 데이터프레임으로 불러오고, 문서 길이 분포를 진단한다. 토큰화에 들어가기 전 데이터가 온전한지부터 확인하는 단계다.</p>
+
+    <h3 class="sub">이 셀이 하는 일</h3>
+    <ul class="clean">
+      <li><strong>381개 JSON 로드</strong> — 각 파일에서 stock_code(6자리 zfill 복구), fiscal_year, esg_year, rcept_no, 본문(firm_year_doc)을 꺼내 <span class="term">corpus_df</span> 생성</li>
+      <li><strong>메타 정합성 검증</strong> — collection_meta.csv의 SUCCESS 행 수와 corpus 수가 일치하는지 <span class="term">assert len(corpus_df) == 381</span>로 단언. 어긋나면 즉시 멈춤</li>
+      <li><strong>문서 길이 분포</strong> — 평균·중앙값·표준편차·분위수(5/25/50/75/95%)를 출력하고, 가장 짧은/긴 문서 5개를 회사명과 함께 표시</li>
+    </ul>
+
+    <div class="why">
+      <span class="lbl">왜 길이부터 보는가</span>
+      <p>사업보고서 본문 길이는 기업마다 수십 배 차이가 난다(천일고속 같은 소형사 ↔ POSCO·삼성 같은 대형사). 이 편차는 단순 노이즈가 아니라 <strong>cheap-talk 통제 변수의 근거</strong>가 된다. "텍스트 점수가 높은 게 진짜 ESG 신호인가, 그냥 공시가 장황한 것인가"를 Phase 3 회귀에서 분리하려면, 길이 편차가 실재함을 여기서 먼저 확인해 두어야 한다.</p>
+    </div>
+
+    <div class="check">
+      <span class="lbl">이 단계에서 확인할 것</span>
+      <ul>
+        <li>corpus 파일 수 = 381 (수집 실패분을 가짜 0으로 채우지 않았으므로 SUCCESS 행과 정확히 일치)</li>
+        <li>가장 짧은 문서가 비정상적으로 짧지 않은지 (추출 실패가 섞이지 않았는지)</li>
+        <li>최대/최소 길이 비율이 수십 배 — Phase 3 n_tokens 통제의 근거로 기록</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== 2-2 ===================== -->
+  <section class="step" id="s22">
+    <div class="step-head">
+      <span class="step-tag">STEP 2-2</span>
+      <h2 class="step-title">형태소 분석 — Kiwi 명사 토큰화</h2>
+    </div>
+    <div class="cell-ref"><span>셀 40 · markdown</span><span>셀 41 · code</span><span>셀 42 · code</span></div>
+
+    <p class="lede">한국어 형태소 분석기로 <strong>Kiwi</strong>를 선택하고, 사업보고서 본문에서 <strong>명사(NNG 일반명사, NNP 고유명사)만</strong> 추출하는 함수를 정의한다.</p>
+
+    <h3 class="sub">분석기·품사 선택의 근거</h3>
+    <ul class="clean">
+      <li><strong>왜 Kiwi인가</strong> — C++ 기반으로 381개(평균 3.4만 자, 최대 19만 자) 처리 속도가 빠르고, 최신 사전·신조어 대응이 좋다. 재현성을 위해 기본 모델을 고정</li>
+      <li><strong>왜 명사만인가</strong> — 30개 seed 단어가 전부 명사(탄소, 이사회, 공급망 …)이고, TF-IDF의 측정 목적이 "ESG 명사의 빈도"이기 때문. 형용사·동사는 측정 대상이 아니므로 noise로 본다</li>
+      <li><strong>1글자·숫자 토큰 제외</strong> — <span class="term">min_len=2</span>, <span class="term">form.isdigit()</span> 필터. 1글자 명사는 의미 모호 토큰이 많아 기본적으로 버린다</li>
+    </ul>
+
+    <p class="code-label">핵심 함수 — extract_nouns()</p>
+<pre><span class="k">def</span> <span class="f">extract_nouns</span>(text, kiwi_inst, min_len=<span class="n">2</span>):
+    tokens = kiwi_inst.tokenize(text)
+    nouns = []
+    <span class="k">for</span> t <span class="k">in</span> tokens:
+        <span class="c"># NNG: 일반명사, NNP: 고유명사만</span>
+        <span class="k">if</span> t.tag <span class="k">in</span> (<span class="s">"NNG"</span>, <span class="s">"NNP"</span>):
+            form = t.form.strip()
+            <span class="k">if</span> len(form) &gt;= min_len <span class="k">and</span> <span class="k">not</span> form.isdigit():
+                nouns.append(form)
+    <span class="k">return</span> nouns</pre>
+
+    <p>셀 42 끝에서 ESG 예시 문장(<span class="term">"…온실가스 배출량을 감축하고 재생에너지 사용을 확대하며…"</span>)으로 seed 단어가 실제로 명사로 잡히는지 즉석 검증한다. 이 검증이 다음 단계(2-3)의 문제 발견으로 이어진다.</p>
+
+    <div class="check">
+      <span class="lbl">이 단계에서 확인할 것</span>
+      <ul>
+        <li>kiwipiepy 버전이 출력됨 (재현성 기록용)</li>
+        <li>샘플 문장에서 명사가 정상 추출되나, <strong>재생에너지·감사위원회 같은 복합 seed가 쪼개져 나오는 현상을 여기서 포착</strong> → 2-3의 동기</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== 2-3 ===================== -->
+  <section class="step" id="s23">
+    <div class="step-head">
+      <span class="step-tag">STEP 2-3</span>
+      <h2 class="step-title">복합명사 보존 — seed 사용자 사전 등록</h2>
+    </div>
+    <div class="cell-ref"><span>셀 43 · markdown</span><span>셀 44 · code</span><span>셀 45 · code</span></div>
+
+    <p class="lede">Kiwi 기본 분석은 복합명사를 분리한다 — <span class="term">재생에너지 → 재생 + 에너지</span>, <span class="term">감사위원회 → 감사 + 위원회</span>. seed 단어가 쪼개지면 TF-IDF 사전 매칭이 원천적으로 불가능해진다. 이 단계가 그것을 막는다.</p>
+
+    <div class="pitfall">
+      <span class="lbl">문제의 본질</span>
+      <p>TF-IDF는 "토큰 = 단어"로 매칭한다. <span class="term">재생에너지</span>가 corpus에서 <span class="term">재생</span> + <span class="term">에너지</span> 두 토큰으로 흩어지면, seed dictionary의 "재생에너지"와는 영원히 매칭되지 않는다. 즉 측정 대상 단어 자체가 사라지는, 측정의 전제를 무너뜨리는 문제다.</p>
+    </div>
+
+    <h3 class="sub">해결 — 사용자 사전 등록</h3>
+    <p>seed_dictionary.csv를 로드해 30개 seed_term을 전부 Kiwi 사용자 사전에 <strong>고유명사(NNP)</strong>로 등록한다. 그러면 분석기가 이들을 분리하지 않고 한 토큰으로 인식한다.</p>
+
+    <p class="code-label">셀 45 — 사용자 사전 등록 + 30개 일괄 검증</p>
+<pre>kiwi = Kiwi()  <span class="c"># 깨끗하게 재생성</span>
+<span class="k">for</span> term <span class="k">in</span> seed_terms:
+    kiwi.add_user_word(term, <span class="s">"NNP"</span>)
+
+<span class="c"># 30개 seed가 단일 토큰으로 보존되는지 일괄 검증</span>
+broken = []
+<span class="k">for</span> term <span class="k">in</span> seed_terms:
+    toks = extract_nouns(term, kiwi)
+    <span class="k">if</span> term <span class="k">not</span> <span class="k">in</span> toks:
+        broken.append((term, toks))</pre>
+
+    <div class="why">
+      <span class="lbl">보고서에 남길 판단</span>
+      <p>사용자 사전 등록은 "측정 대상 단어를 우선 보존한다"는 <strong>명시적 분석 선택</strong>이다. 자연어를 있는 그대로 분석하지 않고 ESG 어휘를 인위적으로 보호하는 것이므로, 그 사실과 한계를 보고서에 기록한다. 같은 원칙은 Phase 3의 expanded dictionary 확장에도 동일하게 적용된다.</p>
+    </div>
+
+    <div class="check">
+      <span class="lbl">이 단계에서 확인할 것</span>
+      <ul>
+        <li>seed 단어 자체를 토큰화했을 때 30개 전부 단일 토큰으로 보존 (broken 리스트가 비어야 정상)</li>
+        <li>단, 이 셀은 "단어 단독" 검증까지만 — <strong>문장 속에서도 보존되는지는 다음 셀(2-3+)에서 더 강하게 검증</strong></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== 2-3+ ===================== -->
+  <section class="step" id="s23b">
+    <div class="step-head">
+      <span class="step-tag warm">STEP 2-3+</span>
+      <h2 class="step-title">score 가중 — 문맥 속 강제 우선 인식</h2>
+    </div>
+    <div class="cell-ref"><span>셀 46 · code</span></div>
+
+    <p class="lede">사용자 사전 등록만으로는 <em>단어 단독</em>은 보존돼도, 실제 문장 속에서 조사·접미사와 붙으면 Kiwi가 여전히 다르게 쪼갤 수 있다. 이 셀은 등록 시 <span class="term">score=50.0</span>을 부여해 분석기가 이 단어를 <strong>문맥과 무관하게 우선 인식</strong>하도록 강제한다.</p>
+
+    <p class="code-label">셀 46 — score 가중 등록 + 까다로운 문장 검증</p>
+<pre><span class="k">for</span> term <span class="k">in</span> seed_terms:
+    kiwi.add_user_word(term, <span class="s">"NNP"</span>, score=<span class="n">50.0</span>)
+    <span class="c"># score 기본 0 → 50으로 올리면 분석 시 강제 우선</span>
+
+<span class="c"># 30개 seed를 자연 문맥에 넣어 일괄 재검증</span>
+<span class="k">for</span> term <span class="k">in</span> seed_terms:
+    test = <span class="s">f"당사는 {term} 관련 활동을 강화하였습니다"</span>
+    toks = extract_nouns(test, kiwi)
+    <span class="k">if</span> term <span class="k">not</span> <span class="k">in</span> toks:
+        broken.append((term, toks))</pre>
+
+    <p>까다로운 케이스(<span class="term">"재생에너지로 전환하고 폐기물을 재활용하며"</span>, <span class="term">"부패방지 및 준법 컴플라이언스 강화"</span> 등)와 30개 seed를 모두 문장에 삽입해 재검증한다. 인수인계 기록상 이 단계에서 <strong>30개 seed 전부 문장 속에서도 보존됨이 확인</strong>되었다.</p>
+
+    <div class="why">
+      <span class="lbl">왜 2-3과 2-3+를 나눴는가</span>
+      <p>2-3은 "사용자 사전에 넣으면 단어가 보존되는가"라는 1차 가설을 검증하는 셀이고, 2-3+는 그것이 <strong>실제 문장 문맥에서도 깨지지 않는가</strong>를 더 강한 조건으로 재검증하는 셀이다. 분석적 선택을 단계적으로 정당화하는 흐름 — 한 번에 score=50을 주지 않고, 문제 → 1차 해결 → 강한 재검증 순으로 기록한 것이 보고서의 "선택의 정당화" 요건에 부합한다.</p>
+    </div>
+
+    <div class="check">
+      <span class="lbl">이 단계에서 확인할 것</span>
+      <ul>
+        <li>까다로운 5개 문장에서 seed가 전부 단일 토큰으로 등장</li>
+        <li>"당사는 {term} 관련 …" 삽입 검증에서 broken 리스트가 비어 있음 (30/30 보존)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== 2-4 ===================== -->
+  <section class="step" id="s24">
+    <div class="step-head">
+      <span class="step-tag cool">STEP 2-4</span>
+      <h2 class="step-title">불용어 설계 + 전체 corpus 토큰화</h2>
+    </div>
+    <div class="cell-ref"><span>셀 47 · markdown</span><span>셀 48 · code</span><span>셀 49 · code</span><span>셀 50 · code</span></div>
+
+    <p class="lede">381개 문서를 전부 명사 토큰화하고 불용어를 제거한다. 불용어는 세 갈래로 설계하되, <strong>seed 단어가 불용어에 잘못 섞이지 않도록 보호하는 로직</strong>이 이 단계의 핵심 안전장치다.</p>
+
+    <h3 class="sub">불용어 3계층 설계</h3>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>계층</th><th>출처</th><th class="mono">규모</th><th>예시·근거</th></tr></thead>
+      <tbody>
+        <tr><td>기본 불용어</td><td>data/stopwords_ko_esg.txt</td><td class="mono">33</td><td>"및", "관련", "통해" 등 일반 조사·부사 (가이드 제공 초안)</td></tr>
+        <tr><td>회사명 기반</td><td>company_master 전체 회사명</td><td class="mono">182</td><td>"삼성전자"뿐 아니라 Kiwi로 쪼갠 "삼성", "전자"까지 — ESG 신호 아닌데 자사 보고서에 빈출</td></tr>
+        <tr><td>보고서 상투어</td><td>회계·법률 반복 용어 집합</td><td class="mono">63</td><td>"당사", "재무", "공시", "백만원" 등 사업보고서 정형 표현</td></tr>
+        <tr><td><strong>통합</strong></td><td>합집합</td><td class="mono">266</td><td>중복 제거 후 최종 불용어 집합</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="pitfall">
+      <span class="lbl">반드시 막아야 할 함정 — seed가 불용어에 섞임</span>
+      <p>회사명 기반 불용어를 만들 때 회사명을 Kiwi로 쪼개 명사를 넣는다. 그런데 사명에 "<strong>에너지</strong>"가 들어간 기업이 있으면, seed인 <span class="term">에너지</span>가 회사명 불용어로 빨려 들어간다. 그대로 두면 E 차원 측정어 하나가 통째로 사라진다.</p>
+      <p style="margin-top:10px">셀 49 끝의 방어 코드가 이를 자동 감지해 되돌린다:</p>
+    </div>
+
+    <p class="code-label">셀 49 — seed 보호 로직</p>
+<pre>seed_in_stop = [s <span class="k">for</span> s <span class="k">in</span> seed_terms <span class="k">if</span> s <span class="k">in</span> all_stopwords]
+<span class="k">if</span> seed_in_stop:
+    all_stopwords -= set(seed_terms)   <span class="c"># seed는 무조건 불용어에서 제외</span>
+    <span class="c"># → seed 보호: 측정 대상은 흔하다는 이유로도 못 지운다</span></pre>
+
+    <h3 class="sub">전체 토큰화 (셀 50)</h3>
+    <ul class="clean">
+      <li><strong>캐시 우선</strong> — <span class="term">corpus_tokens.json</span>이 있으면 로드, 없으면 381개를 전부 처리(약 8분)하고 저장. 재실행 시 시간 절약 + 재현성</li>
+      <li><strong>처리 흐름</strong> — firm-year마다: 명사 추출 → 불용어 제거 → <span class="term">token_data[key]</span>에 저장</li>
+      <li><strong>즉시 진단</strong> — 토큰 수 통계, 샘플 40개, seed 단어 corpus 등장 빈도를 바로 출력해 결과가 정상인지 확인</li>
+    </ul>
+
+    <div class="check">
+      <span class="lbl">이 단계에서 확인할 것</span>
+      <ul>
+        <li>통합 불용어 약 266개, seed 보호 메시지 출력 ("seed가 불용어에 포함됨 → 제외" 또는 "안전")</li>
+        <li>381개 전부 토큰화 완료, 토큰 0개 문서가 없어야 정상</li>
+        <li>seed 빈도 출력에서 희소 seed(넷제로·부패방지 등)가 눈에 띔 → Phase 3 expanded 동기</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== 2-5 ===================== -->
+  <section class="step" id="s25">
+    <div class="step-head">
+      <span class="step-tag">STEP 2-5</span>
+      <h2 class="step-title">Phase 2 마무리 — 토큰 품질 점검</h2>
+    </div>
+    <div class="cell-ref"><span>셀 51 · markdown</span><span>셀 52 · code</span><span>셀 53 · code</span></div>
+
+    <p class="lede">Phase 3(TF-IDF) 진입 전 마지막 점검. 토큰화 결과가 분석에 쓸 만한지 세 가지로 검증하고, TF-IDF 입력 형태까지 만들어 둔다.</p>
+
+    <h3 class="sub">세 가지 품질 점검</h3>
+    <ul class="clean">
+      <li><strong>seed 30개 등장 빈도(셀 52)</strong> — E/S/G별로 각 seed의 총 빈도와 등장 문서 수를 출력. 50회 미만은 ⚠️희소 플래그. 희소 seed 식별이 곧 expanded dictionary의 직접 근거</li>
+      <li><strong>고빈도 일반명사 Top 30(셀 52)</strong> — seed 제외 후 가장 흔한 토큰 확인. "시장·위험·자산" 같은 경영 용어가 상위 → 불용어 보강 필요성·cosine 분석의 노이즈 위험 판단</li>
+      <li><strong>원문 길이 ↔ 토큰 수 상관(셀 53)</strong> — 0.9 이상이어야 정상(긴 문서가 토큰도 많음). 인수인계 기록상 <strong>상관 0.9977</strong> — 토큰화가 길이를 왜곡 없이 보존했다는 정상성 증거</li>
+    </ul>
+
+    <h3 class="sub">Phase 3 입력 준비</h3>
+    <ul class="clean">
+      <li><strong>n_tokens</strong>를 corpus_df에 병합 — Phase 3의 cheap-talk 통제 변수로 그대로 사용</li>
+      <li><strong>tokens_joined</strong> 생성 — 토큰 리스트를 공백으로 이어붙여 <span class="term">TfidfVectorizer</span> 입력 형태로 변환</li>
+      <li><strong>최종 정합성 단언</strong> — <span class="term">len(corpus_df)==381</span>, <span class="term">n_tokens==0 문서 0개</span>를 assert로 확정</li>
+    </ul>
+
+    <div class="check">
+      <span class="lbl">이 단계에서 확인할 것</span>
+      <ul>
+        <li>원문 길이 vs 토큰 수 상관 ≈ 0.99 (정상성 핵심 지표)</li>
+        <li>희소 seed 목록이 명확히 드러남 (넷제로·부패방지·교육훈련 등)</li>
+        <li>모든 assert 통과 — "Phase 2 완료, Phase 3 진입 준비 완료" 메시지</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== INSIGHT ===================== -->
+  <div class="insight-banner" id="insight">
+    <h2>핵심 발견 — 보고서에 쓸 인사이트</h2>
+    <div class="sub">셀 54 · markdown — 전처리가 끝나며 드러난 4가지 구조적 관찰</div>
+
+    <div class="finding">
+      <h3><span class="fn">발견 1</span>희소 seed 5개 — expanded dictionary 확장의 직접 근거</h3>
+      <table class="mini-tbl">
+        <tr><td>넷제로</td><td class="v">9회 / 7문서</td><td>거의 안 씀</td></tr>
+        <tr><td>부패방지</td><td class="v">8회 / 5문서</td><td>가장 희소</td></tr>
+        <tr><td>교육훈련</td><td class="v">17회 / 17문서</td><td>매우 희소</td></tr>
+        <tr><td>산업재해</td><td class="v">48회 / 20문서</td><td>제한적</td></tr>
+        <tr><td>컴플라이언스</td><td class="v">50회 / 32문서</td><td>경계선</td></tr>
+      </table>
+      <p>국내 기업은 '넷제로' 대신 <strong>탄소중립</strong>(423회), '부패방지' 대신 반부패·청렴·윤리경영을 쓴다. seed-only로는 신호가 빈약하다.</p>
+      <p class="takeaway">→ 가이드가 요구한 FastText 기반 expanded dictionary 확장의 직접적 정당화. 희소 단어의 semantic expansion이 사전 구축의 핵심.</p>
+    </div>
+
+    <div class="finding">
+      <h3><span class="fn">발견 2</span>G 차원 seed의 압도적 빈도 — cheap-talk 위험</h3>
+      <table class="mini-tbl">
+        <tr><td>이사회</td><td class="v">7,928회</td><td>381/381 문서</td></tr>
+        <tr><td>사외이사</td><td class="v">7,460회</td><td>381/381 문서</td></tr>
+        <tr><td>주주</td><td class="v">7,329회</td><td>381/381 문서</td></tr>
+        <tr><td>감사위원회</td><td class="v">4,249회</td><td>362/381 문서</td></tr>
+      </table>
+      <p>이사회·사외이사·감사위원회는 <strong>법정 의무 공시</strong> 항목이라 거의 모든 보고서에 등장한다. G 점수가 높다고 지배구조가 우수한 게 아니다.</p>
+      <p class="takeaway">→ G 점수 해석에는 cheap-talk 주의가 필수. (Phase 3에서 IDF≈1.0 → Spearman 음의 상관으로 실제 확인됨)</p>
+    </div>
+
+    <div class="finding">
+      <h3><span class="fn">발견 3</span>차원 간 극단적 빈도 불균형 — 차원별 분석의 근거</h3>
+      <p>이사회 7,928회 vs 교육훈련 17회 — 약 <strong>466배 차이</strong>. G 합계 ≫ E 합계 &gt; S 합계 구조. 단순 raw frequency 비교는 왜곡되고, TF-IDF가 일부 보정해도 차원 간 직접 비교는 부적절하다.</p>
+      <p class="takeaway">→ 회귀·점수 해석은 차원별(E/S/G separately) 접근. 차원 내 기업 간 상대 비교만 유효.</p>
+    </div>
+
+    <div class="finding">
+      <h3><span class="fn">발견 4</span>고빈도 일반 경영 용어(noise) 존재</h3>
+      <table class="mini-tbl">
+        <tr><td>시장</td><td class="v">25,138</td></tr>
+        <tr><td>위험</td><td class="v">22,651</td></tr>
+        <tr><td>자산</td><td class="v">18,471</td></tr>
+        <tr><td>영업</td><td class="v">13,940</td></tr>
+      </table>
+      <p>seed TF-IDF 점수에는 직접 영향이 작지만(seed만 합산), <strong>기준 문장 cosine similarity</strong> 분석에서는 이런 용어가 노이즈로 작용할 수 있다.</p>
+      <p class="takeaway">→ stopword 정제·TF-IDF weighting·도메인 특화 필터링의 중요성 확인.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="fn-grid">
+      <div>
+        <b>Phase 2 산출물</b>
+        <code>corpus_tokens.json</code> — 381개 firm-year의 Kiwi 명사 토큰(불용어 제거 후). Phase 3 TF-IDF의 직접 입력.
+      </div>
+      <div>
+        <b>Phase 2 → Phase 3 핸드오프</b>
+        <code>corpus_df</code> (key, n_tokens, tokens_joined 포함) · <code>token_data</code> dict · seed 보존된 <code>kiwi</code> 인스턴스 · <code>seed_df</code> (30 seed)
+      </div>
+    </div>
+    <p style="margin-top:24px;font-size:.8rem">ESG DART 기말 프로젝트 · 작업.ipynb Phase 2 (셀 38–54) 해설 · 분석 단위: stock_code × fiscal_year · 실패 행은 가짜 0으로 채우지 않음</p>
+  </footer>
+
+</div>
+</body>
+</html>

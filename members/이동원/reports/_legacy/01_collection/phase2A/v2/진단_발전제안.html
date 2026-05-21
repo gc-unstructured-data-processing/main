@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><title>01 collection phase2A v2 — 10단계 진단 + 발전 제안</title>
+<style>
+:root{--bg:#fafaf7;--bg-card:#fff;--bg-soft:#f3f1ea;--bg-danger:#fef2f2;--bg-warn:#fff7ed;--bg-success:#f0fdf4;--bg-info:#eff6ff;--bg-purple:#f5f3ff;--text:#1c1c1a;--mute:#5a5a55;--border:rgba(0,0,0,.1);--accent:#4338ca}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Noto Sans KR","Malgun Gothic",sans-serif}.wrap{max-width:1100px;margin:0 auto;padding:32px 24px 60px}
+h1{font-size:24px;font-weight:500;margin:0 0 8px}h2{font-size:18px;margin:24px 0 8px}h3{font-size:15px;margin:18px 0 6px;font-weight:600}.sub{color:var(--mute);margin:0 0 16px}.chip{display:inline-block;font-size:12px;padding:3px 8px;border-radius:999px;background:var(--bg-soft);color:var(--mute);margin-right:6px;border:.5px solid var(--border)}
+.card{background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:10px}.card.must{background:var(--bg-danger);border-color:rgba(239,68,68,.25)}.card.warn{background:var(--bg-warn);border-color:rgba(245,158,11,.25)}.card.ok{background:var(--bg-success);border-color:rgba(34,197,94,.25)}.card.info{background:var(--bg-info);border-color:rgba(37,99,235,.25)}.card.alpha{background:var(--bg-purple);border-color:rgba(124,58,237,.25)}.tag{font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;margin-bottom:6px}.tag.must{color:#b91c1c}.tag.warn{color:#b45309}.tag.ok{color:#15803d}.tag.info{color:#1d4ed8}.tag.alpha{color:#6d28d9}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}th,td{text-align:left;padding:6px 8px;border-bottom:.5px solid var(--border);vertical-align:top}th{font-weight:500;color:var(--mute);font-size:11px;text-transform:uppercase;background:var(--bg-soft)}
+code{font-family:ui-monospace,monospace;font-size:12.5px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:3px}
+.step{display:grid;grid-template-columns:55px 1fr;gap:12px;margin-bottom:14px}.snum{background:var(--accent);color:#fff;width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:18px}
+</style></head><body><div class="wrap">
+
+<h1>01 collection phase2A v2 — 10단계 진단 + 발전 제안</h1>
+<p class="sub">Samsung 1건 안정 Run All 노트북의 현재 상태·문제·발전 영역. dart-fss·dart-fss-text 벤치마킹 + 가이드 02 line 153-158.</p>
+<div>
+  <span class="chip">단계 <strong>01 collection</strong></span>
+  <span class="chip">phase <strong>2A</strong></span>
+  <span class="chip">버전 <strong>v2</strong></span>
+  <span class="chip">사이클 <strong>1·2 fix 적용</strong></span>
+</div>
+
+<h2>A. 현재 상태</h2>
+<table>
+<tr><th>영역</th><th>상태</th><th>증거</th></tr>
+<tr><td>식별자 lineage</td><td>✅</td><td>005930 → 00126380 → 20250311001085 (viewer 5/5 확인)</td></tr>
+<tr><td>SECTION-1 14 매칭</td><td>✅</td><td>14/14 노드. II/IV/VI 모두 매칭 (AASSOCNOTE + TITLE_text)</td></tr>
+<tr><td>passage body 추출</td><td>✅ 55건</td><td>II=24, IV=1, VI=30 — IV 1건은 정량 분석문 한계</td></tr>
+<tr><td>passage tables 추출</td><td>⚠️ G 편중</td><td>84건 중 G=73 (87%). VI 80% 표 영향</td></tr>
+<tr><td>collection_log dedup + run_id</td><td>✅</td><td>Fix D 진단 셀 + 강제 보강</td></tr>
+<tr><td>raw·interim 보존</td><td>✅</td><td>660KB zip + 2.3MB sections.json + aux 1.4MB</td></tr>
+<tr><td>한글 폰트</td><td>✅ Fix A</td><td>font_manager 자동 detect</td></tr>
+<tr><td>stock_code dtype</td><td>✅ Fix B</td><td>str + zfill(6)</td></tr>
+</table>
+
+<h2>B. 10단계 진단</h2>
+
+<div class="step"><div class="snum">1</div><div>
+<div class="card ok"><div class="tag ok">정상</div>
+<h3>API 호출 + 캐시 hit (Step 1·3)</h3>
+<p>corpCode.xml 3,965건 캐시. 재실행 시 API 호출 0건 → rate limit 보호.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">2</div><div>
+<div class="card ok"><div class="tag ok">정상</div>
+<h3>정정공시 fallback 3단 (Step 4)</h3>
+<p>PRIMARY_BIZ → CORR_BIZ → ANY_BIZ_2024 순. Samsung은 PRIMARY_BIZ로 1차 성공. correction_log에 후보 기록.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">3</div><div>
+<div class="card ok"><div class="tag ok">정상</div>
+<h3>SECTION-1 14 매칭 (Step 6, v4 lxml 접근)</h3>
+<p>AASSOCNOTE 매칭 9개 + TITLE_text 보조 3개 (VI 포함). 메모리 project_v4_approach 검증된 핵심 알고리즘.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">4</div><div>
+<div class="card warn"><div class="tag warn">주의</div>
+<h3>VI 80% 표 비중 — body only 정책</h3>
+<p>VI body=5,653 vs tables=23,686. body only로 G 신호 손실. <strong>발전</strong>: v3에서 body vs body+tables vs tables 3종 alt sweep + 결과 비교.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">5</div><div>
+<div class="card warn"><div class="tag warn">주의</div>
+<h3>IV passage 1건 — Samsung 정량 분석 위주</h3>
+<p>Samsung 2024 IV는 28 sub-table로 정량 분석문. seed 30단어 매칭 거의 안 됨. <strong>발전</strong>: 사이클 3 batch에서 다른 firm-year의 IV passage 수 분포 분석.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">6</div><div>
+<div class="card warn"><div class="tag warn">주의</div>
+<h3>tables passage G 87% 편중</h3>
+<p>tables 84건 중 G=73. VI 거버넌스 표(이사회 명단·감사위원회) 영향. <strong>발전</strong>: 표 footnote 분리 + 격자 텍스트 vs 자유 텍스트 구분.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">7</div><div>
+<div class="card ok"><div class="tag ok">정상</div>
+<h3>aux 보조 보고서 별도 보존 (Step 5+)</h3>
+<p>연결감사보고서 (763 KB) + 감사보고서 (648 KB) data/interim/에 분리. 본 분석 corpus에는 안 쓰지만 lineage 보존.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">8</div><div>
+<div class="card info"><div class="tag info">발전</div>
+<h3>viewer 5 sample → random sampling</h3>
+<p>본 v2는 top 5 passage. <strong>발전</strong>: random 5건 (seed=42)으로 위반금지 #3 검증 강도 강화. batch 시 firm-year별 random 1건 확인.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">9</div><div>
+<div class="card info"><div class="tag info">발전</div>
+<h3>Step 5+ aux passage 추출 alt</h3>
+<p>현재 aux는 raw만 보존. <strong>알파</strong>: aux body에서도 seed 매칭 → passage 추출 → 사업보고서 vs 감사보고서 ESG 표현 비교.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">10</div><div>
+<div class="card ok"><div class="tag ok">정상</div>
+<h3>위반금지 8항목 + 가이드 04 §2-1</h3>
+<p>8/8 모두 충족. 사이클 2 Fix A·B·D·E 추가로 §2-1 데이터 lineage·재현성 완전 충족.</p>
+</div></div></div>
+
+<h2>C. 외부 벤치마킹 (5축)</h2>
+<table>
+<tr><th>축</th><th>본 v2 위치</th><th>발전 제안</th></tr>
+<tr><td>1. dart-fss-text</td><td>⭐ 본 단계 핵심</td><td>SECTION-1 lxml 직접 순회 — <strong>현재 사용 ✅</strong>. 발전: TITLE 텍스트 fuzzy matching (rapidfuzz) 추가 → 표기 변형 대응</td></tr>
+<tr><td>2. dart-fss (josw123)</td><td>⭐ 본 단계 적용 가능</td><td>parsers/disclosure.py 표 분리 패턴. <strong>발전</strong>: TABLE 분리 → body·tables·footnote 3종 컬럼</td></tr>
+<tr><td>3. KCGS 신뢰성</td><td>본 단계 무관 (00 단계)</td><td>—</td></tr>
+<tr><td>4. cheap-talk</td><td>본 단계 무관 (02 단계)</td><td>—</td></tr>
+<tr><td>5. 재현성 (run_id)</td><td>✅ Fix 적용</td><td>현재 run_id = hash(date+parser+seed). <strong>발전</strong>: git_sha 추가 → CI 재현성 강화</td></tr>
+</table>
+
+<h2>D. 교수님 가이드 매핑</h2>
+<table>
+<tr><th>가이드</th><th>line</th><th>본 v2 충족</th></tr>
+<tr><td>02 line 21-35</td><td>식별자 3종 구분</td><td>✅ stock·corp·rcept 모두 분리 + Fix B</td></tr>
+<tr><td>02 line 37-38</td><td>esg_year = fiscal_year + 1</td><td>✅ Step 2 명시</td></tr>
+<tr><td>02 line 67·94</td><td>viewer URL + MCP 검증</td><td>✅ Step 8 5 sample 안내</td></tr>
+<tr><td>02 line 69</td><td>정정공시 rcept 기록</td><td>✅ correction_log 1행</td></tr>
+<tr><td>02 line 153-158</td><td>1~6단계</td><td>✅ Step 3~7 1:1 매핑</td></tr>
+<tr><td>02 line 155</td><td>raw ZIP 보존</td><td>✅ data/raw/*.zip</td></tr>
+<tr><td>02 line 172·286</td><td>가짜 0 ❌</td><td>✅ SUCCESS만 join</td></tr>
+<tr><td>02 line 216-222</td><td>API key mask</td><td>✅ mask_key + KEY_CANDIDATES</td></tr>
+<tr><td>04 §2-1</td><td>제출 전 체크리스트</td><td>✅ Step 10 self-check 표</td></tr>
+</table>
+
+<h2>E. 다음 사이클 발전 우선순위</h2>
+<table>
+<tr><th>#</th><th>발전 영역</th><th>우선순위</th><th>예상 소요</th></tr>
+<tr><td>1</td><td>phase2B v1 (batch 30건 stratified)</td><td>🔴 즉시 (사이클 3)</td><td>10분 (Run All)</td></tr>
+<tr><td>2</td><td>body vs body+tables vs tables alt sweep</td><td>🟢 중기 (v3)</td><td>30분</td></tr>
+<tr><td>3</td><td>TITLE fuzzy matching (rapidfuzz)</td><td>🟢 중기</td><td>20분</td></tr>
+<tr><td>4</td><td>표 footnote 분리</td><td>🟢 중기</td><td>40분</td></tr>
+<tr><td>5</td><td>random sampling viewer 검증</td><td>🟢 중기</td><td>15분</td></tr>
+<tr><td>6</td><td>aux 보조 보고서 passage 추출 (알파)</td><td>🟣 알파</td><td>1시간</td></tr>
+<tr><td>7</td><td>git_sha 컬럼 추가 (재현성 강화)</td><td>🟣 알파</td><td>10분</td></tr>
+</table>
+
+<p style="color:var(--mute);font-size:12px;margin-top:30px;border-top:.5px solid var(--border);padding-top:14px">
+01 collection phase2A v2 — 10단계 진단 + 발전 제안 · 2026-05-18 · 이동원<br>
+근거: 01_collection.ipynb (v2) 산출 + collection_log.csv + section_match.csv + 가이드 02·04 + 벤치마킹 5축 (dart-fss-text·dart-fss·재현성)
+</p>
+</div></body></html>

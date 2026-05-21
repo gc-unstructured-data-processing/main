@@ -1,0 +1,2 @@
+﻿model,feature,control,N,coefficient,p_value,note,timestamp
+OLS_baseline,seed_tfidf_E,word_count,1,,,N=1 — v3 batch (N≥30) 후 재실행 필요,2026-05-18T17:39:36

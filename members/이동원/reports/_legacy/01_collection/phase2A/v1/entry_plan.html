@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Phase 2 진입 계획 — DART 50건 batch + 모듈화 + 전체 381건 확장</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #161a22; --panel-2: #1d222d;
+    --border: #2a3140; --text: #e6e9ef; --muted: #9aa3b2;
+    --accent: #7aa2ff; --good: #5ed27a; --warn: #f7b955;
+    --bad: #ef6f6c; --info: #6cc7e6; --chip: #283044;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    line-height: 1.55; font-size: 14px; }
+  header { padding: 28px 32px 20px; border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #1a2030, #11141b); }
+  header h1 { margin: 0 0 8px; font-size: 23px; letter-spacing: -0.2px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  main { padding: 24px 32px 60px; max-width: 1300px; margin: 0 auto; display: grid; gap: 22px; }
+  section { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; }
+  section h2 { margin: 0 0 16px; font-size: 17px; display: flex; align-items: center; gap: 10px; }
+  section h2 .num { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 700; }
+  h3 { margin: 16px 0 10px; font-size: 14.5px; color: var(--accent); font-weight: 600; }
+  h4 { margin: 12px 0 6px; font-size: 13.5px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; background: var(--panel-2); }
+  tr:hover td { background: rgba(122,162,255,0.04); }
+  .pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--chip); }
+  .pill.good { background: rgba(94,210,122,0.16); color: var(--good); }
+  .pill.warn { background: rgba(247,185,85,0.16); color: var(--warn); }
+  .pill.bad { background: rgba(239,111,108,0.16); color: var(--bad); }
+  .pill.info { background: rgba(108,199,230,0.16); color: var(--info); }
+  ul { margin: 6px 0 6px 18px; padding: 0; }
+  li { margin: 4px 0; }
+  code { background: rgba(122,162,255,0.10); padding: 1px 6px; border-radius: 4px; font-size: 12.5px;
+    color: #cbd6ff; font-family: ui-monospace, Consolas, monospace; }
+  pre { background: #0b0e14; border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; overflow-x: auto; font-size: 12.5px; color: #cbd6ff;
+    font-family: ui-monospace, Consolas, monospace; line-height: 1.5; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .card.bad { border-color: var(--bad); }
+  .card.good { border-color: var(--good); }
+  .card.warn { border-color: var(--warn); }
+  .quote { background: rgba(122,162,255,0.06); border-left: 3px solid var(--accent);
+    padding: 10px 14px; border-radius: 6px; font-size: 13px; margin: 8px 0; }
+  .footer { color: var(--muted); font-size: 12px; padding: 14px 0 0; text-align: center; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 10px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Phase 2 진입 계획 (v5 기준) — 50건 batch + 모듈화 + 전체 381건 확장</h1>
+  <div class="sub">v5 게이트 통과 (viewer 5/5 ✅ · 표/본문 분리 ✅ · fallback ready ✅ · self-contained ipynb 재현성 확인 ✅) → 5/17 오전 50건 → 5/19 전체 381 firm-year · 2026-05-16 · 이동원</div>
+</header>
+
+<main>
+
+<!-- 0. v5 결과 한 줄 -->
+<section>
+  <h2><span class="num">00</span>v5 게이트 통과 — Phase 2 진입 조건 완벽 충족</h2>
+  <div class="badge-row">
+    <span class="pill good">viewer 5/5 일치 ✅ (사용자 직접 검증)</span>
+    <span class="pill good">SECTION-1 14 노드 모두 식별 ✅</span>
+    <span class="pill good">표/본문 분리 보존 (Fix #12) ✅</span>
+    <span class="pill good">정정공시 fallback ready (Fix #13) ✅</span>
+    <span class="pill good">위반금지 8항목 모두 ✅</span>
+    <span class="pill good">수집 단계 완성도 ↑ (사용자 지적 반영)</span>
+    <span class="pill good">노트북 self-contained 재현성 ✅ (가이드 04 §2-1 준수)</span>
+  </div>
+  <table>
+    <thead><tr><th>지표</th><th>v5 실측 (Samsung 2024)</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td>SECTION-1 노드 수</td><td>14 (예상과 정확히 일치)</td><td><span class="pill good">✅</span></td></tr>
+      <tr><td>II char_count (text/body/tables)</td><td>37,632 / 26,663 / 10,945 (table_ratio 29.1%)</td><td><span class="pill good">✅ Samsung II 실제 분량</span></td></tr>
+      <tr><td>IV char_count (text/body/tables)</td><td>15,726 / 10,919 / 4,803 (table_ratio 30.5%)</td><td><span class="pill good">✅ Samsung IV 실제 분량</span></td></tr>
+      <tr><td>VI char_count (text/body/tables)</td><td>29,728 / 5,653 / 23,686 (<b>table_ratio 79.7%</b>)</td><td><span class="pill good">✅ G 차원 본문/표 분리 보존</span></td></tr>
+      <tr><td>fallback_used</td><td>PRIMARY_BIZ (Samsung 사업보고서 직접 hit)</td><td><span class="pill good">✅ 코드는 변종 대응 ready</span></td></tr>
+      <tr><td><b>viewer 5/5 정합성</b></td><td><b>5/5 일치</b> (v4 4/5 → v5 5/5 개선)</td><td><span class="pill good">✅ 완벽 통과</span></td></tr>
+      <tr><td>매칭 method 분포</td><td>AASSOCNOTE 8 / TITLE_text 3 / no_match 3</td><td><span class="pill good">✅ no_match 3은 표지·XII·전문가 확인 (정상)</span></td></tr>
+    </tbody>
+  </table>
+  <p style="margin: 8px 0 0;">
+    <b>VI 79.7% 표 분포</b>는 G 차원 ESG passage 추출에서 body·tables 분리 보존의 정당성을 증명. v4의 평탄화만으로는 G corpus가 표 텍스트에 지배될 위험 있었음. v5는 02_preprocessing에서 body primary / tables secondary 선택 가능 — 분석 유연성 ↑.
+  </p>
+</section>
+
+<!-- 1. Phase 2 목표 + 범위 -->
+<section>
+  <h2><span class="num">01</span>Phase 2 목표 · 범위 · 게이트</h2>
+
+  <h3>목표 (가이드 line 117 + line 137-146 매핑)</h3>
+  <table>
+    <tbody>
+      <tr><td>가이드 line 117</td><td>최대 127 stock × 3 fiscal_year = <b>381 firm-year</b> 수집</td></tr>
+      <tr><td>가이드 line 137-146</td><td>각 행에 rcept_no, rcept_dt, viewer_url, ESG passage 기록 + 실패 행 이유 명시</td></tr>
+      <tr><td>가이드 line 170-172</td><td>실패 행 가짜 0 ❌ — 본 노트북 status 세분화로 대응 (FAIL_HTTP / FAIL_LIST / FAIL_NO_BUSINESS_REPORT / FAIL_SECTION_* / WARN_DIM_IMBALANCE)</td></tr>
+      <tr><td>5/19 D-Day 게이트</td><td>12개 모두 ✅ (별도 문서)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2단계 접근 — 50건 시범 → 381건 전체</h3>
+  <div class="grid-2">
+    <div class="card good">
+      <h4>Phase 2A (5/18) — 50건 시범 batch</h4>
+      <ul>
+        <li>업종·연도 균형 표본 50건 선택</li>
+        <li><code>src/collection.py</code> 모듈화 동시 적용</li>
+        <li>회사·연도별 SECTION-1 매칭 분포 검증</li>
+        <li>SUCCESS ≥ 45건 통과 시 Phase 2B 진입</li>
+      </ul>
+    </div>
+    <div class="card good">
+      <h4>Phase 2B (5/19 오전) — 전체 381건</h4>
+      <ul>
+        <li>Phase 2A에서 발견한 변종 케이스 보강 후 실행</li>
+        <li>실패 행은 reason 명시하고 보고서에 기록 (가이드 line 172)</li>
+        <li>SUCCESS ≥ 340건 (~89%) 목표</li>
+        <li>5/19 오후 D-Day 게이트 12개 확인</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 2. 50건 batch 설계 -->
+<section>
+  <h2><span class="num">02</span>Phase 2A — 50건 batch 설계</h2>
+
+  <h3>표본 선택 전략 (업종·연도·규모 균형)</h3>
+  <p>company_master.csv 381행 (127 stock × 3 fiscal_year) 중 다음 차원에서 균형 선택:</p>
+  <table>
+    <thead><tr><th>차원</th><th>분할</th><th>건수</th><th>의도</th></tr></thead>
+    <tbody>
+      <tr><td>fiscal_year</td><td>2022 / 2023 / 2024</td><td>17 / 17 / 16</td><td>연도별 XML 스키마 변화 검증</td></tr>
+      <tr><td>업종 (industry)</td><td>top 5 업종 + 기타</td><td>각 8~10</td><td>업종별 사업보고서 구조 다양성 검증</td></tr>
+      <tr><td>esg_grade</td><td>S/A+ / A / B+/B / C/D</td><td>각 분포 비례</td><td>등급 분포 균형 (분석 단계 panel 균형)</td></tr>
+      <tr><td>stock_code 길이</td><td>대형주 / 중형주 / 소형주</td><td>고른 분포</td><td>중소·중견 사업보고서 변종 발견</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size: 12.5px; color: var(--muted);">📌 Samsung 005930 × 2024는 이미 검증됐으므로 50건 표본에서 제외 (재계산 불필요). 50건 중 실패가 ≥ 5건이면 그 회사·연도를 별도 분석.</p>
+
+  <h3>실행 흐름 (의사 코드 — Phase 2A 노트북 self-contained)</h3>
+  <p style="font-size: 13px; color: var(--muted); margin: 4px 0 8px;">⚠️ 가이드 04 §2-1 준수 — Phase 2A 노트북도 모든 함수를 셀로 inline 정의 (`from src.collection import` 사용 ❌). 아래는 흐름 의사 코드.</p>
+  <pre># [Phase 2A 노트북 — self-contained 셀 구조]
+
+# === Cell 1: v5 노트북에서 검증된 함수들을 그대로 복사 ===
+#   - load_api_key(), find_project_root(), mask_key()
+#   - fetch_corp_code_map(), stock_to_corp()
+#   - find_rcept_no_v5(), download_document_xml_v5(), save_aux_sources()
+#   - extract_sections_v5(), extract_passages_v5()
+#   - append_log_v5(), determine_status()
+#   - SECTION_CODE_MAP, ESG_TARGET_LABELS, TITLE_PATTERNS, REPORT_FALLBACK_ORDER 등
+
+# === Cell 2: Phase 2A 신규 함수 ===
+def select_balanced_sample(company_master, n=50, seed=42, exclude_stocks=None):
+    """업종·연도·등급 균형 표본 선택."""
+    ...
+
+def run_one_firm_year(stock, year, *, api_key, corp_map, seed_df, dirs):
+    """1 firm-year 풀 파이프라인."""
+    ...
+
+def run_batch(sample, *, api_key, corp_map, seed_df, dirs, sleep=0.5, max_retry=3):
+    """N firm-year batch — rate limit + 지수 backoff + 격리 실패 처리."""
+    ...
+
+# === Cell 3: orchestration ===
+ROOT = find_project_root()
+dirs = {'raw': ROOT/'data/raw', 'interim': ROOT/'data/interim',
+        'cache': ROOT/'data/cache', 'logs': ROOT/'logs'}
+api_key = load_api_key(ROOT / '.env')
+corp_map = fetch_corp_code_map(api_key, dirs['cache'])
+seed_df = pd.read_csv(ROOT / 'data' / 'seed_dictionary.csv')
+cm = pd.read_csv(ROOT / 'data' / 'company_master.csv', dtype={'stock_code': str})
+
+# Samsung 제외 (이미 검증됨)
+sample = select_balanced_sample(cm, n=50, seed=42, exclude_stocks=['005930'])
+print(f"Phase 2A 표본: {len(sample)}건 (업종·연도·등급 균형)")
+
+# === Cell 4: batch 실행 (위반금지 #1 가이드 line 172 준수) ===
+results_df = run_batch(sample, api_key=api_key, corp_map=corp_map,
+                       seed_df=seed_df, dirs=dirs, sleep=0.5, max_retry=3)
+
+# === Cell 5: 50건 결과 분석 ===
+# SECTION-1 매칭 method 분포 (AASSOCNOTE vs TITLE_text vs no_match)
+# 회사별 table_ratio 분포 (VI 79.7%가 Samsung-특이인지, 일반인지)
+# fallback_used 분포 (PRIMARY_BIZ vs FALLBACK_*)
+# body 기준 passage 차원 분포 (E/S/G 균형)
+# status 분포 + reason 분류 → 실패 행 가이드 line 172 준수 확인
+
+# === Cell 6: 무작위 5건 viewer 검증 (위반금지 #3) ===
+# 사용자가 직접 viewer 열어 정합성 확인
+
+# === Cell 7: self-check 위반금지 8항목 + 가이드 §2-1 재현성 체크 ===</pre>
+
+  <p style="font-size: 13px; color: var(--muted); margin: 6px 0 0;">참고: 위 함수들은 <code>src/collection.py</code>(개발용 single source of truth)와 동일. 노트북 작성 시 모듈에서 복사·붙여넣기 후 ipynb만으로 self-contained 보장. 모듈 변경 시 노트북도 동기화.</p>
+</section>
+
+<!-- 2.5. 재현성 결정 (가이드 04 §1·§2-1·§3 반영) -->
+<section style="border-color: var(--warn);">
+  <h2><span class="num">02.5</span>🚨 재현성 결정 — 가이드 04 §1·§2-1·§3 준수</h2>
+
+  <p>이동원 님 지적: <i>"교수님 가이드 보면 최종 제출에서는 ipynb 파일이랑 보고서 md 파일을 제출하는 것으로 되어 있는데 py 파일을 만들게 될 경우 재현성에서 문제가 발생하지 않는지 파악"</i> — 정당한 우려이며 재검토 결과 다음과 같이 결정.</p>
+
+  <h3>가이드 04 명시 사항</h3>
+  <table>
+    <thead><tr><th>가이드 항목</th><th>요구</th></tr></thead>
+    <tbody>
+      <tr><td>§1 (line 22-25)</td><td><b>제출물 = `.ipynb` + `.md` 두 파일만</b>. `.py` 모듈 명시 없음</td></tr>
+      <tr><td>§2-1 (line 61)</td><td>"노트북을 위에서 아래로 순서대로 실행하면 결과가 재현된다"</td></tr>
+      <tr><td>§3 (line 91)</td><td>"노트북 실행 순서, 출력 표, API key 제거 상태가 확인되어야 합니다"</td></tr>
+      <tr><td>§3 (line 75)</td><td>DART lineage — "회사명만으로 merge하거나 접수번호가 다른 보고서를 섞는다" 흔한 문제로 명시 (위반금지 #7과 정합)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>세 옵션 비교</h3>
+  <table>
+    <thead><tr><th>옵션</th><th>채점 재현성</th><th>개발 편의</th><th>코드 중복</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td>A. 모듈 폐기, 노트북 inline만</td><td>✅ 완벽</td><td>⚠️ 노트북마다 함수 복붙</td><td>높음</td><td>△</td></tr>
+      <tr><td><b>B. 모듈 유지 + 노트북도 self-contained inline (이중 보존)</b></td><td>✅ 완벽</td><td>✅ 노트북 그대로 실행</td><td>높음 (이중)</td><td><b>✅ 채택</b></td></tr>
+      <tr><td>C. 모듈 유지 + try/except fallback import</td><td>⚠️ fallback 실패 가능성</td><td>✅</td><td>낮음</td><td>△</td></tr>
+    </tbody>
+  </table>
+
+  <h3>채택안 — 옵션 B (이중 보존)</h3>
+  <div class="grid-2">
+    <div class="card good">
+      <h4>📦 src/collection.py 역할 재정의</h4>
+      <ul>
+        <li><b>제출물 아님</b> — 채점 대상 외</li>
+        <li>개발용 single source of truth</li>
+        <li>GitHub 코드 리뷰·재사용 편의 (이동원·팀 멤버)</li>
+        <li>단위 테스트 가능 (Phase 2 batch 전 sanity check)</li>
+        <li>유지·관리 책임은 이동원에게만 (다른 멤버는 노트북만 보면 됨)</li>
+      </ul>
+    </div>
+    <div class="card good">
+      <h4>📓 Phase 2A·B 노트북 — self-contained 원칙</h4>
+      <ul>
+        <li><b>제출물</b> — 채점 대상 (가이드 §1 준수)</li>
+        <li>모든 함수를 노트북 안에 inline 정의 (v5 노트북과 동일 패턴)</li>
+        <li>`from src.collection import ...` 사용 ❌ — 채점자가 ipynb만 받아도 실행 가능</li>
+        <li>가이드 §2-1 "위에서 아래로 실행 → 재현" 보장</li>
+        <li>두 곳 동기화 책임: v5 노트북 함수 변경 시 src/collection.py도 동시 수정</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>v3·v4·v5 노트북 — 이미 self-contained 확인</h3>
+  <p>v3·v4·v5 노트북은 처음부터 모든 함수를 셀로 정의했으므로 <b>채점 재현성 문제 없음</b>. 가이드 §2-1 준수 완료. 채점자가 v5 ipynb 하나만 받아도:</p>
+  <ol>
+    <li>`.env`만 본인 환경에 준비</li>
+    <li>위에서 아래로 Run All</li>
+    <li>모든 결과 재현 가능</li>
+  </ol>
+  <p style="font-size: 13px; color: var(--muted); margin: 4px 0 0;">→ 본 결정으로 src/collection.py를 작성한 것이 가이드 위반은 아니나, <b>채점 평가 대상은 v5 노트북</b>이며 src/collection.py는 보조 자료. Phase 2A·B 노트북도 같은 원칙 따름.</p>
+
+  <h3>운영 보강 — 노트북 ↔ 모듈 동기화 부담 최소화</h3>
+  <ul>
+    <li>v5 노트북 = source of truth (변경은 노트북에서 시작)</li>
+    <li>src/collection.py = 노트북 셀의 복사 (수동 동기화)</li>
+    <li>Phase 2A·B 노트북 첫 셀에 <b>"본 노트북은 self-contained (가이드 04 §2-1)"</b> 주석 명시</li>
+    <li>버전 표시(<code>__parser_version__ = 'v5'</code>) 노트북·모듈 양쪽에 두어 동기화 추적</li>
+  </ul>
+</section>
+
+<!-- 3. src/collection.py 모듈화 -->
+<section>
+  <h2><span class="num">03</span>src/collection.py 모듈화 설계 (개발용 참고, 제출 대상 ❌)</h2>
+
+  <p><b>역할:</b> 채점 제출물 ❌ / 개발 편의용 single source of truth. Phase 2A·B 노트북은 self-contained로 따로 작성 (§02.5 참고).</p>
+
+  <h3>모듈 구조 (v5 함수 기준)</h3>
+  <pre>members/이동원/src/collection.py
+
+# === Step 1: 환경 ===
+def find_project_root() -&gt; Path: ...
+def mask_key(key: str) -&gt; str: ...
+def load_api_key() -&gt; str:
+    """KEY_CANDIDATES 후보 리스트로 견고하게 (이동원 .env=API_KEY 기억)."""
+
+# === Step 1+: 사전 (모듈 상수) ===
+SECTION_CODE_MAP, ESG_TARGET_LABELS, TITLE_PATTERNS, REPORT_FALLBACK_ORDER
+
+def parse_aassocnote(aassoc: str) -&gt; tuple: ...
+def match_title_to_label(text: str) -&gt; str: ...
+
+# === Step 3: corp_code ===
+def fetch_corp_code_map(api_key, cache_dir) -&gt; pd.DataFrame: ...
+
+# === Step 4: rcept + 정정공시 fallback (v5 Fix #13) ===
+def find_rcept_no_v5(api_key, corp_code, fiscal_year) -&gt; dict:
+    """차순위 fallback: 사업보고서 → 반기 → 분기 → 정정신고서."""
+
+# === Step 5: zip + type 판별 (Fix #0) ===
+DOC_TYPE_PATTERN
+def download_document_xml_v5(api_key, rcept_no, stock, year, raw_dir, fallback_label='PRIMARY_BIZ') -&gt; dict: ...
+def save_aux_sources(sources, stock, year, interim_dir) -&gt; dict: ...
+
+# === Step 6: SECTION-1 + 표/본문 분리 (v5 Fix #12 핵심) ===
+def extract_sections_v5(xml_text: str) -&gt; tuple[dict, list]:
+    """각 SECTION-1 노드별로 section_text + section_body + section_tables 3가지 저장."""
+
+# === Step 7: ESG passage (body/tables/text 옵션) ===
+def extract_passages_v5(target_sections, seed_df, source='body', min_len=20) -&gt; pd.DataFrame:
+    """source: 'text' (전체) / 'body' (본문) / 'tables' (표) 중 선택."""
+
+# === Step 9: log v5 (~30컬럼) ===
+EXPECTED_LOG_COLUMNS_V5
+def append_log_v5(log_path, row) -&gt; pd.DataFrame: ...
+
+# === Phase 2 orchestration (신규) ===
+def run_one_firm_year(stock: str, year: int, *, api_key, corp_map, seed_df, dirs) -&gt; dict:
+    """1 firm-year 풀 파이프라인. status·reason·section breakdown 모두 반환."""
+
+def run_batch(sample, *, api_key, corp_map, seed_df, dirs, sleep=0.5, max_retry=3) -&gt; pd.DataFrame:
+    """N firm-year batch — rate limit + 지수 backoff + 격리 실패 처리."""
+
+def select_balanced_sample(company_master, n=50, seed=42) -&gt; list[tuple]:
+    """업종·연도·등급 균형 표본 (Phase 2A)."""
+</pre>
+
+  <h3>모듈화의 가치</h3>
+  <ul>
+    <li>Phase 2A·B에서 같은 함수 재사용 → 코드 중복 0</li>
+    <li>02_preprocessing에서 <code>from collection import SECTION_CODE_MAP</code> 같이 사전 재사용</li>
+    <li>단위 테스트 가능 (Phase 2 batch 전 sanity check)</li>
+    <li>김지우·김혜성·신지영 멤버도 같은 모듈 import 가능 (5/19 통합 시)</li>
+  </ul>
+</section>
+
+<!-- 4. 위반금지 8항목 + 가이드 필수사항 Phase 2 검토 -->
+<section>
+  <h2><span class="num">04</span>위반금지 8항목 + 가이드 필수사항 — Phase 2 사전 검토</h2>
+
+  <h3>위반금지 8항목 — Phase 2 batch에서 어떻게 준수할 것인가</h3>
+  <table>
+    <thead><tr><th>#</th><th>위반금지</th><th>가이드 라인</th><th>Phase 2 대응</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>실패 행 가짜 0 채우기 ❌</td><td>line 172, 286</td><td>50건 중 실패 행은 status 세분화 (`FAIL_HTTP`, `FAIL_LIST`, `FAIL_NO_BUSINESS_REPORT`, `FAIL_SECTION_*`, `WARN_DIM_IMBALANCE`) + reason 명시. <b>0 채워서 corpus 오염 금지</b>.</td></tr>
+      <tr><td>2</td><td>viewer 우회 ❌</td><td>line 67, 94</td><td>document.xml API만 사용. 50건 모두 viewer URL을 log에 기록 (가이드 line 137-146).</td></tr>
+      <tr><td>3</td><td>MCP/추출 결과 그대로 신뢰 ❌</td><td>line 94</td><td>50건 모두 viewer 검증은 불가능 → <b>SECTION-1 매칭 method 분포 + passage 차원 분포 통계 검증</b>. 무작위 5건은 직접 viewer 검증.</td></tr>
+      <tr><td>4</td><td>API key 출력 노출 ❌</td><td>line 216-222</td><td><code>mask_key()</code> + KEY_CANDIDATES 후보 리스트 그대로. 모듈화 시에도 동일.</td></tr>
+      <tr><td>5</td><td>raw 미보존 ❌</td><td>line 155</td><td>50개 zip 모두 <code>data/raw/&lt;stock&gt;_&lt;year&gt;_disclosure.zip</code>에 보존. idempotent.</td></tr>
+      <tr><td>6</td><td>진단 부재 ❌</td><td>line 143-146, 170-172</td><td>각 firm-year마다 SECTION-1 14 노드 매칭 method 기록 (section_match_v4.csv). 실패 시 reason 명시.</td></tr>
+      <tr><td>7</td><td>silent 오매칭 ❌</td><td>line 35</td><td>stock_code 기준 — Phase 2 batch에서도 동일.</td></tr>
+      <tr><td>8</td><td>평가 기준 부재 ❌</td><td>line 145</td><td>Phase 2A 게이트 = SUCCESS ≥ 45/50 + 차원 분포 균형 + 무작위 5건 viewer 정합성 ≥ 4/5.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>가이드 line별 필수사항 — Phase 2 매핑</h3>
+  <table>
+    <thead><tr><th>가이드 line</th><th>요구</th><th>Phase 2 적용</th></tr></thead>
+    <tbody>
+      <tr><td>line 18</td><td>"사업보고서의 II, IV, VI 섹션에 담긴 ESG 관련 표현"</td><td>v4 Fix #0·#6·#7 (사업보고서 본문 + SECTION-1 직접 추출 + section_code) 그대로 적용</td></tr>
+      <tr><td>line 21-35</td><td>식별자 = stock_code × fiscal_year (회사명 join 금지)</td><td>batch 입력도 stock_code 기준 sample. company_name은 표시만</td></tr>
+      <tr><td>line 37-38</td><td>esg_year = report_fiscal_year + 1</td><td>각 행에 esg_year 컬럼 자동 계산</td></tr>
+      <tr><td>line 67, 94</td><td>viewer URL로 원문 확인</td><td>모든 행에 viewer_url 기록 + 무작위 5건 수동 검증</td></tr>
+      <tr><td>line 69</td><td>정정공시 rcept_no 기록</td><td>correction_log.csv에 누적 — 50건 중 정정 있는 회사 발견 시 별도 기록</td></tr>
+      <tr><td>line 117</td><td>최대 127 stock × 3 fiscal_year = 381</td><td>Phase 2B에서 381 모두 시도</td></tr>
+      <tr><td>line 137-146</td><td>각 행 rcept_no/rcept_dt/viewer_url/ESG passage 기록</td><td>collection_log.csv 컬럼에 모두 포함</td></tr>
+      <tr><td>line 153-158</td><td>1~6단계 (stock→corp→rcept→xml→text→섹션→passage)</td><td>v4 함수들이 정확히 1~6단계 매핑. Phase 2 batch에서 그대로 호출</td></tr>
+      <tr><td>line 170-172</td><td>실패 행 가짜 0 ❌, 보고서에 이유 기록</td><td>status 세분화 + reason 컬럼. Phase 2 종합 보고서에서 실패 행 분포 표 작성</td></tr>
+      <tr><td>line 216-222</td><td>.env + os.getenv (API key 안전)</td><td>KEY_CANDIDATES 후보 리스트 (이동원 환경 = API_KEY)</td></tr>
+      <tr><td>line 248-261</td><td>direct API 예시 코드 (`zf.namelist()[0]`)</td><td>가이드 의도(line 18)를 충실 구현하기 위해 type 판별로 보강 (위반 ❌, 의도 충실 ✅)</td></tr>
+      <tr><td>line 286</td><td>필요 항목 못 찾으면 임의 값 채우지 말 것</td><td>Phase 2 batch에서도 동일. 실패 행은 reason 기록.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 5. 4-track 벤치마킹 -->
+<section>
+  <h2><span class="num">05</span>4-track 벤치마킹 — Phase 2 적용 출처 (v0.4 ROADMAP 기준)</h2>
+  <table>
+    <thead><tr><th>Track</th><th>출처</th><th>Phase 2 적용</th></tr></thead>
+    <tbody>
+      <tr><td>강의 BASE</td><td>Week 4 (requests·BS4·MCP) / Week 10 (DART MCP·CLI)</td><td>API 호출 + viewer 검증 패턴 + MCP는 검증용</td></tr>
+      <tr><td>공개 코드</td><td><b><a href="https://github.com/jaepil-choi/dart-fss-text">dart-fss-text</a></b></td><td>v4 Fix #6 (SECTION-1 추출) · Fix #7 (section_code) 핵심 패턴 채택 + Phase 2에서 fuzzy matching (rapidfuzz) 활성화 옵션</td></tr>
+      <tr><td>공개 코드</td><td><a href="https://github.com/josw123/dart-fss">dart-fss</a> `parsers/disclosure.py`</td><td>Fix #0 DOCUMENT-NAME 기반 type 판별 (v3·v4 유지)</td></tr>
+      <tr><td>공개 코드</td><td>opendart-py</td><td>corpCode 캐시 + 정정공시 이력 (세분화 축 B)</td></tr>
+      <tr><td>실무 ETL</td><td>스키마 evolution + idempotent + lineage + rate limit 대응</td><td>Fix #4 (log mismatch 자동 백업) + Phase 2에서 <code>time.sleep(0.5)</code> rate limit 회피 + 캐시 hit 시 재호출 0</td></tr>
+      <tr><td>학술</td><td>Li 2021 RFS §4 (NER ESG passage)</td><td>seed 매칭 (Step 7) + 02_preprocessing에서 fastText 확장</td></tr>
+      <tr><td>학술</td><td>Bingler 2022 (climate-bert)</td><td>02_preprocessing에서 적용 — corpus 설계가 호환되도록 section_code 보존</td></tr>
+      <tr><td>가이드 본문</td><td>02_dart_data_collection.md line 153~166, 216~274</td><td>1~6단계 함수 매핑 + direct API 예시 코드 (`zf.namelist()[0]`은 type 판별로 보강)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 6. Rate limit + 안전성 -->
+<section>
+  <h2><span class="num">06</span>Rate limit · 안전성 · idempotent</h2>
+
+  <h3>OpenDART 이용약관 (제10조 4항)</h3>
+  <div class="quote">
+    "오픈API 서비스는 이용횟수에 허용량 제한이 있으며, 이를 홈페이지에 게시합니다."
+  </div>
+  <p>구체적 RPS는 공지로 변경. 일반적으로 일일 호출 ≤ 20,000회 범위. Phase 2 50건은 <b>50 × 2 (list.json + document.xml) = 100회</b>로 충분히 여유. 다만 <b>초당 호출은 4~5회 미만 권장</b>.</p>
+
+  <h3>견고성 패턴 (실무 ETL 적용)</h3>
+  <table>
+    <tbody>
+      <tr><td><b>rate limit 회피</b></td><td><code>time.sleep(0.5)</code> 각 호출 후</td></tr>
+      <tr><td><b>HTTP 429 재시도</b></td><td>지수 backoff (1초 → 5초 → 30초 → 60초) 최대 3회</td></tr>
+      <tr><td><b>idempotent 캐시</b></td><td>data/cache/, data/raw/ 모두 size&gt;1KB 검증 후 hit 판단</td></tr>
+      <tr><td><b>실패 격리</b></td><td>한 firm-year 실패가 batch 전체를 막지 않음 — try/except로 격리</td></tr>
+      <tr><td><b>중간 저장</b></td><td>각 firm-year 처리 직후 즉시 log + json 저장 (전체 중단 시 재시작 가능)</td></tr>
+      <tr><td><b>재시작 안전성</b></td><td>이미 sections.json이 존재하면 skip (v4에서 `skip_existing=True` 추가)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 7. 02_preprocessing 이관 사항 (v5 기준) -->
+<section>
+  <h2><span class="num">07</span>02_preprocessing 이관 사항 (v5 수집 완성도 ↑ → 02는 정상 책임)</h2>
+
+  <p style="font-size: 13px; color: var(--muted); margin: 0 0 12px;">
+    사용자 지적 ("수집 미완을 전처리로 미루지 말 것") 반영 후, 수집 단계에서 처리되어야 할 것은 모두 v5에 통합됨. 02_preprocessing은 가이드 line 159-166 (7-14단계)의 정상 책임만 수행.
+  </p>
+
+  <div class="grid-2">
+    <div class="card good">
+      <h4>✅ v5에서 수집 단계로 처리 완료 (사용자 지적 반영)</h4>
+      <ul>
+        <li>itertext 누락 의혹 → 4가지 방법 동등 검증, 누락 없음 확인</li>
+        <li>표/본문 분리 → Fix #12로 `section_body` / `section_tables` 분리 저장</li>
+        <li>정정공시 fallback → Fix #13로 차순위 처리</li>
+        <li>SECTION-1 14 노드 식별 + section_code 부여</li>
+      </ul>
+    </div>
+    <div class="card info">
+      <h4>📦 02_preprocessing 정상 책임 (가이드 line 159-166)</h4>
+      <ul>
+        <li><b>가이드 7</b>: 한국어 형태소 분석 (KoNLPy, Mecab 등)</li>
+        <li><b>가이드 8</b>: 불용어 제거 (`data/stopwords_ko_esg.txt`)</li>
+        <li><b>가이드 9</b>: seed_dictionary + TF-IDF feature</li>
+        <li><b>가이드 10-11</b>: fastText로 seed 주변 후보 단어 + 검토</li>
+        <li>한국어 문장 분리 (KSS) — v5는 단순 정규식만</li>
+        <li>body / tables / text 중 분석 단위 선택</li>
+        <li>표 corpus 시계열 분석 (수치 변동)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 8. 마일스톤 -->
+<section>
+  <h2><span class="num">08</span>마일스톤 (v5 기준 갱신) — 5/16 (오늘) ~ 5/19 (D-Day)</h2>
+  <table>
+    <thead><tr><th>날짜</th><th>작업</th><th>완료 기준</th></tr></thead>
+    <tbody>
+      <tr><td>5/16 (오늘 완료)</td><td>v3 진단 → v4 → v5 작성 + viewer 5/5 통과</td><td>✅ 모두 완료 (v5 게이트 통과, self-contained 확인)</td></tr>
+      <tr><td>5/16 (오늘 야간)</td><td><code>src/collection.py</code> 작성 (✅ 완료, 개발용 참고)</td><td>✅ 모듈 import + unit test 통과. <b>가이드 §1 준수 — 제출 대상 외</b></td></tr>
+      <tr><td>5/17 오전</td><td>Phase 2A 노트북 작성 (<b>self-contained</b>, v5 함수 inline 복사) + 50건 batch 실행</td><td>노트북 단독 Run All 재현 가능 + 50건 결과 + 무작위 5건 viewer ≥ 4/5</td></tr>
+      <tr><td>5/17 오후</td><td>50건 결과 분석 — SECTION-1 매칭 method 분포 + table_ratio 분포 + fallback 통계</td><td>SUCCESS ≥ 45/50, 차원 분포 균형, VI 표 비중 일반화 가능성</td></tr>
+      <tr><td>5/18 오전</td><td>변종 발견 시 v6 (fuzzy matching, 보고서 type별 분기 등)</td><td>변종 대응 완료 또는 v6 결정</td></tr>
+      <tr><td>5/18 오후 ~ 5/19 오전</td><td>Phase 2B 전체 381건 batch 실행</td><td>SUCCESS ≥ 340/381 (~89%) — 실패 행은 reason 명시 (가이드 line 172)</td></tr>
+      <tr><td>5/19 오후 (D-Day)</td><td>D-Day 게이트 12개 확인 + 02_preprocessing 입력 확정</td><td>모든 게이트 ✅ · body/tables 양쪽 corpus 02에 인계</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 9. 위험 시나리오 -->
+<section>
+  <h2><span class="num">09</span>위험 시나리오 + 대응</h2>
+  <table>
+    <thead><tr><th>위험</th><th>발생 시 증상</th><th>대응</th></tr></thead>
+    <tbody>
+      <tr><td>OpenDART rate limit (HTTP 429)</td><td>일부 호출 실패</td><td>지수 backoff 재시도, time.sleep(0.5) 기본값, 1분 대기 후 재시도</td></tr>
+      <tr><td>일일 한도 초과</td><td>다음 날 호출 정상화</td><td>50건 batch는 100회 호출이라 한도 내 — Phase 2B에서 분산 실행 (전체 381건 = 762회)</td></tr>
+      <tr><td>SECTION-1 미존재 회사</td><td>FAIL_NO_SECTION_1 status</td><td>fallback (텍스트 헤딩 매칭) 활성화 또는 v5 결정</td></tr>
+      <tr><td>일부 회사 VI 매칭 실패 (AASSOCNOTE + TITLE 모두 변형)</td><td>FAIL_SECTION_VI</td><td>Fix #9 rapidfuzz fuzzy matching 활성화 (Phase 2A 직후)</td></tr>
+      <tr><td>중소·중견 사업보고서 구조 변종</td><td>SECTION-1 노드 수 ≠ 14</td><td>구조 분포 시각화 + 패턴 보강 (Phase 2A 결과 분석에서 결정)</td></tr>
+      <tr><td>passage 차원 편향 다수</td><td>다수 행이 WARN_DIM_IMBALANCE</td><td>seed_dictionary 확장 (02_preprocessing에서)</td></tr>
+      <tr><td>5/19 마감 임박 + 실패 행 다수</td><td>SUCCESS &lt; 340/381</td><td>02_preprocessing은 SUCCESS 행만으로 진행, 실패 행은 보고서에 명시 (가이드 line 172)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 10. 확인 사항 -->
+<section>
+  <h2><span class="num">10</span>이동원 님께 확인할 점</h2>
+
+  <div class="quote">
+    <b>Q1.</b> Phase 2A 50건 표본 선택 — <b>업종·연도·등급 균형 분포 (위 §02 표)</b>로 가도 될까요? 다른 선택 기준이 필요하면 알려주세요.
+  </div>
+  <div class="quote">
+    <b>Q2.</b> <code>src/collection.py</code> 모듈화는 <b>5/17 오전 Phase 2A 진입 직전</b>에 진행할까요? 모듈화 동시 진행이 안전 vs 노트북 그대로 batch 실행 후 모듈화는 5/18 분리.
+  </div>
+  <div class="quote">
+    <b>Q3.</b> v4 itertext 공백 보강 (`재학 중인` 누락) — <b>02_preprocessing에서 처리</b>가 맞을까요? 아니면 v5에서 v4 텍스트 추출을 개선?
+  </div>
+  <div class="quote">
+    <b>Q4.</b> Phase 2A 50건 실행 시 사용자 viewer 검증은 몇 건 진행할까요? <b>무작위 5건 권장</b> (가이드 line 94 위반금지 #3) — 50건 모두는 비현실적.
+  </div>
+</section>
+
+<div class="footer">
+  Phase 2 진입 계획 · 작성 2026-05-16 · v4 게이트 통과 후 사용자 검토용
+</div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>v3 발전 로드맵 — DART Phase 1 collection</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161a22;
+    --panel-2: #1d222d;
+    --border: #2a3140;
+    --text: #e6e9ef;
+    --muted: #9aa3b2;
+    --accent: #7aa2ff;
+    --good: #5ed27a;
+    --warn: #f7b955;
+    --bad: #ef6f6c;
+    --info: #6cc7e6;
+    --chip: #283044;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; line-height: 1.5; }
+  header { padding: 28px 32px 20px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #1a2030, #11141b); }
+  header h1 { margin: 0 0 8px; font-size: 22px; letter-spacing: -0.2px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  main { padding: 24px 32px 60px; max-width: 1280px; margin: 0 auto; display: grid; gap: 20px; }
+  section { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+  section h2 { margin: 0 0 14px; font-size: 16px; letter-spacing: -0.1px; display: flex; align-items: center; gap: 10px; }
+  section h2 .num { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 700; }
+  h3 { margin: 14px 0 8px; font-size: 14px; color: var(--accent); font-weight: 600; }
+  .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 920px) { .row { grid-template-columns: 1fr; } }
+  .card { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 14px 12px; position: relative; }
+  .card .badge { position: absolute; top: 10px; right: 10px; font-size: 11px; padding: 2px 8px; border-radius: 999px; }
+  .card.v1 .badge { background: rgba(239,111,108,0.18); color: var(--bad); }
+  .card.v2 .badge { background: rgba(247,185,85,0.18); color: var(--warn); }
+  .card.v3 .badge { background: rgba(94,210,122,0.18); color: var(--good); }
+  .card h4 { margin: 0 0 6px; font-size: 13px; }
+  .card .small { color: var(--muted); font-size: 12px; }
+  .metric { display: flex; align-items: baseline; gap: 6px; margin-top: 6px; }
+  .metric .v { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .metric .u { color: var(--muted); font-size: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; background: var(--panel-2); }
+  tr:hover td { background: rgba(122,162,255,0.04); }
+  .pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--text); }
+  .pill.good { background: rgba(94,210,122,0.16); color: var(--good); }
+  .pill.warn { background: rgba(247,185,85,0.16); color: var(--warn); }
+  .pill.bad { background: rgba(239,111,108,0.16); color: var(--bad); }
+  .pill.info { background: rgba(108,199,230,0.16); color: var(--info); }
+  ul { margin: 6px 0 6px 18px; padding: 0; }
+  li { margin: 4px 0; }
+  .timeline { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; align-items: stretch; }
+  .timeline .step { position: relative; padding: 14px 14px 14px 38px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; }
+  .timeline .step::before { content: ""; position: absolute; left: 14px; top: 18px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(122,162,255,0.18); }
+  .timeline .step.v1::before { background: var(--bad); box-shadow: 0 0 0 4px rgba(239,111,108,0.18); }
+  .timeline .step.v2::before { background: var(--warn); box-shadow: 0 0 0 4px rgba(247,185,85,0.18); }
+  .timeline .step.v3::before { background: var(--good); box-shadow: 0 0 0 4px rgba(94,210,122,0.18); }
+  .timeline .step h4 { margin: 0 0 4px; font-size: 13px; }
+  .timeline .step .small { color: var(--muted); font-size: 12px; }
+  .grid-fix { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 920px) { .grid-fix { grid-template-columns: 1fr; } .timeline { grid-template-columns: 1fr; } }
+  .fix-card { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .fix-card .head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .fix-card .num { width: 28px; height: 28px; border-radius: 8px; background: var(--accent); color: #0a0d14; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .fix-card .title { font-size: 14px; font-weight: 600; }
+  .fix-card .prio { margin-left: auto; }
+  .fix-card .body { font-size: 13px; color: var(--text); }
+  .fix-card .body .label { color: var(--muted); margin-right: 4px; font-size: 12px; }
+  code { background: rgba(122,162,255,0.10); padding: 1px 6px; border-radius: 4px; font-size: 12px; color: #cbd6ff; font-family: ui-monospace, "JetBrains Mono", Consolas, monospace; }
+  .folder-tree { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; background: #0b0e14; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; white-space: pre; overflow-x: auto; line-height: 1.55; color: #cbd6ff; }
+  .folder-tree .dir { color: var(--accent); }
+  .folder-tree .new { color: var(--good); }
+  .folder-tree .keep { color: var(--muted); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin: 6px 0 10px; }
+  .legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+  .question { background: rgba(122,162,255,0.06); border-left: 3px solid var(--accent); padding: 12px 14px; border-radius: 6px; font-size: 13px; }
+  .question b { color: var(--accent); }
+  .arrow { color: var(--muted); margin: 0 4px; }
+  .footer { color: var(--muted); font-size: 12px; padding: 14px 0 0; }
+  details { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-top: 8px; font-size: 13px; }
+  details summary { cursor: pointer; color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>v3 발전 로드맵 — 01_collection_phase1</h1>
+  <div class="sub">DART 사업보고서 Samsung 005930 × 2024 · v1 → v2 학습 → v3 진입 전 사용자 검토용 · 2026-05-16 · 이동원</div>
+</header>
+
+<main>
+
+<!-- 1. v1 → v2 → v3 한 줄 요약 -->
+<section>
+  <h2><span class="num">01</span>v1 → v2 → v3 흐름 요약</h2>
+  <div class="timeline">
+    <div class="step v1">
+      <h4>v1 — 0건의 충격</h4>
+      <div class="small">zip의 첫 XML 1개만 파싱 → 그게 하필 <b>연결감사보고서</b>(ACODE=00761)였음. 섹션 0건 / passage 0건 / log ParserError / 시각화 NameError. 게이트 통과 ❌</div>
+    </div>
+    <div class="step v2">
+      <h4>v2 — 표면 회복, 본질 실패 🚨</h4>
+      <div class="small">zip 3개 concat → 매칭은 됐지만 <b>viewer 0/5 일치</b>. 추출된 V/VI는 사업보고서가 아니라 <b>연결감사보고서·감사보고서 안의 헤딩</b>이 잘못 잡힌 것. passage 23건은 사실상 감사보고서 노이즈. Phase 2 진입 ❌.</div>
+    </div>
+    <div class="step v3">
+      <h4>v3 — 본질 fix (사업보고서 본문만)</h4>
+      <div class="small"><b>P0-신규</b>: zip 안 <code>DOCUMENT-NAME=사업보고서</code> 파일만 선택 → 감사보고서 노이즈 차단. + 한국어 헤딩 보강 + strip_tags 무손실 + VII 절단 + 모듈화 → viewer ≥ 4/5 통과 후 Phase 2 진입.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. 지표 비교 -->
+<section>
+  <h2><span class="num">02</span>핵심 지표 비교 (실측)</h2>
+  <table>
+    <thead>
+      <tr><th>지표</th><th>v1</th><th>v2</th><th>v3 목표</th><th>판정</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>zip 안 XML 처리</td><td>1/3</td><td>3/3</td><td>3/3</td><td><span class="pill good">v2 ✅</span></td></tr>
+      <tr><td>concat XML 길이</td><td>623,804자</td><td>6,935,754자</td><td>동일</td><td><span class="pill good">v2 ✅</span></td></tr>
+      <tr><td>strip_tags 후 텍스트</td><td>—</td><td>95,233자 (1.4%)</td><td>≥ 1.5M자 (≥20%)</td><td><span class="pill warn">v3 과제</span></td></tr>
+      <tr><td>II 섹션 길이</td><td>0자</td><td>0자</td><td>≥ 30,000자</td><td><span class="pill bad">v3 핵심</span></td></tr>
+      <tr><td>IV 섹션 길이</td><td>0자</td><td>0자</td><td>≥ 5,000자</td><td><span class="pill bad">v3 핵심</span></td></tr>
+      <tr><td>V 섹션 길이</td><td>0자</td><td>794자</td><td>≥ 1,000자</td><td><span class="pill warn">미세 보강</span></td></tr>
+      <tr><td>VI 섹션 길이</td><td>0자</td><td>94,187자 (과추출)</td><td>10,000~30,000자 (정합)</td><td><span class="pill warn">VII 매칭으로 절단</span></td></tr>
+      <tr><td>passage 후보 수</td><td>0건</td><td>23건</td><td>≥ 150건</td><td><span class="pill warn">II/IV 풀리면 자동 ↑</span></td></tr>
+      <tr><td>차원 분포 (E/S/G)</td><td>0/0/0</td><td>2/0(+1mix)/20</td><td>E·S·G 각 ≥ 20</td><td><span class="pill warn">II/IV 의존</span></td></tr>
+      <tr><td>collection_log</td><td>ParserError</td><td>1행 SUCCESS</td><td>status 세분화 (FAIL_SECTION_II 등)</td><td><span class="pill good">v2 ✅ / v3 강화</span></td></tr>
+      <tr><td>viewer 5/5 정합성</td><td>검증 불가</td><td><b>0 / 5 (전부 불일치)</b> 🚨</td><td>≥ 4/5 일치</td><td><span class="pill bad">v3 P0-신규</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 3. v3에서 풀어야 할 4가지 Fix -->
+<section>
+  <h2><span class="num">03</span>v3에서 풀어야 할 항목 — viewer 0/5 발견 반영 후 재정렬</h2>
+  <div class="legend">
+    <span><span class="dot" style="background: var(--bad)"></span>P0 (Phase 2 진입 차단 요소 · 본질 fix)</span>
+    <span><span class="dot" style="background: var(--warn)"></span>P1 (게이트 통과 위해 필요)</span>
+    <span><span class="dot" style="background: var(--info)"></span>P2 (품질 향상, Phase 2와 병행 가능)</span>
+  </div>
+  <div class="grid-fix">
+
+    <div class="fix-card" style="border-color: var(--bad); border-width: 2px;">
+      <div class="head">
+        <div class="num" style="background: var(--bad); color: #fff;">0</div>
+        <div class="title">🚨 [신규] 사업보고서 본문 XML만 선택 (감사보고서 분리)</div>
+        <span class="pill bad prio">P0-신규</span>
+      </div>
+      <div class="body">
+        <p><span class="label">증상:</span> v2 viewer 정합성 <b>0/5</b>. 추출된 V/VI는 연결감사보고서·감사보고서 안 "감사인"·"이사회 귀중"이 잘못 라벨링된 것. 사업보고서 본문은 검색조차 안 됐음.</p>
+        <p><span class="label">근본 원인:</span> Fix #2가 zip 3개 XML을 그냥 concat → 정규식이 가장 먼저 나오는 매칭(=감사보고서)을 잡아버림. 사업보고서 본문은 zip 안 세 번째 파일(<code>20250311001085.xml</code>, 5.78M자, <code>DOCUMENT-NAME=사업보고서</code>).</p>
+        <p><span class="label">v3 접근:</span></p>
+        <ul>
+          <li><code>zf.namelist()</code>마다 <code>&lt;DOCUMENT-NAME ACODE="..."&gt;...&lt;/DOCUMENT-NAME&gt;</code>을 먼저 읽어 <b>type 판별</b></li>
+          <li>type ∈ {"사업보고서"} 인 파일만 본문 corpus로 사용</li>
+          <li>type ∈ {"연결감사보고서", "감사보고서"} 는 별도로 보관 (참고용 — 다음 단계에서 노이즈 비교 데이터로 활용)</li>
+          <li>여러 사업보고서 파일이 있으면 가장 큰 파일 선택 + 경고 로그</li>
+          <li>사업보고서가 0개면 <code>status='FAIL_NO_BUSINESS_REPORT'</code>로 실패 처리 (위반금지 #1 준수)</li>
+        </ul>
+        <p><span class="label">검증 기준:</span> Samsung 사업보고서 본문 텍스트 ≥ 1.5M자 + viewer 5개 sample ≥ 4/5 일치</p>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num">1</div>
+        <div class="title">II / IV / VII 한국어 헤딩 변형 보강</div>
+        <span class="pill bad prio">P0</span>
+      </div>
+      <div class="body">
+        <p><span class="label">증상:</span> v2에서 II·IV·VII 매칭 실패. 단 P0-신규 적용 시 사업보고서 본문에서 다시 매칭 시도하므로 결과가 달라질 가능성 있음.</p>
+        <p><span class="label">원인 가설:</span> 한국어 표기 다양성 — <code>II.</code> · <code>Ⅱ</code> · <code>2.</code> 외에 <code>제2장</code>, <code>Part II</code>, <code>2)</code>, 띄어쓰기/줄바꿈 변형. 또한 사업보고서 표지·목차에 키워드가 먼저 나와 잘못된 위치를 잡는 경우.</p>
+        <p><span class="label">v3 접근:</span></p>
+        <ul>
+          <li>패턴 리스트 6~8개로 확대 (한·로마·아라비아 + 장/Part)</li>
+          <li>각 매칭 후보를 <b>모두 수집해 위치(pos) 정렬</b> → 본문 후보(목차 제외)는 pos &gt; 임계값(예: 10,000자) 사용</li>
+          <li>다음 헤딩이 없으면 <b>"섹션 길이 cap"</b> (예: 200,000자)으로 절단</li>
+          <li>매칭 결과를 <code>logs/section_match_v3.csv</code>에 기록</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num">2</div>
+        <div class="title">strip_tags 무손실 보강 (lxml iter)</div>
+        <span class="pill bad prio">P0</span>
+      </div>
+      <div class="body">
+        <p><span class="label">증상:</span> XML 6.93M → 텍스트 95.2K (압축률 1.4%). 사업보고서 본문 XML(5.78M)만 추출해도 압축률이 비정상이면 lxml 보강 필요.</p>
+        <p><span class="label">v3 접근:</span></p>
+        <ul>
+          <li><code>lxml.etree.fromstring(xml, recover=True)</code> 후 <code>root.itertext()</code> 사용 — 태그 안 모든 텍스트 안전 수집</li>
+          <li>실패 시 정규식 fallback (이중 안전망)</li>
+          <li><b>각 단계 텍스트 길이 출력</b> (XML, strip, normalize) → 손실률 가시화</li>
+        </ul>
+        <p><span class="label">검증 기준:</span> 사업보고서 XML 길이의 <b>≥ 20%</b>가 텍스트로 남아야 함 (예: 5.78M → ≥ 1.15M)</p>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num">3</div>
+        <div class="title">VI 절단 + 섹션별 길이 sanity check</div>
+        <span class="pill warn prio">P1</span>
+      </div>
+      <div class="body">
+        <p><span class="label">증상:</span> v2 VI=94,187자 — VII 헤딩 매칭 실패로 본문 끝까지 빨려들어감. passage 라벨링이 부정확해질 위험.</p>
+        <p><span class="label">v3 접근:</span></p>
+        <ul>
+          <li>섹션별 길이 정상범위 설정 (예: II 30K~300K / IV 1K~50K / VI 5K~150K)</li>
+          <li>범위 벗어나면 <code>status='WARN_OVERSIZE_VI'</code> 등 log에 명시</li>
+          <li>passage 추출 전 섹션 길이 시각화 (barh) — 노트북 6 규칙 #5 충족</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num">4</div>
+        <div class="title">함수 모듈화 → <code>src/collection.py</code></div>
+        <span class="pill warn prio">P1</span>
+      </div>
+      <div class="body">
+        <p><span class="label">증상:</span> 현재 모든 함수가 노트북 안. Phase 2 50건 batch에서 재사용·테스트 어려움.</p>
+        <p><span class="label">v3 접근:</span></p>
+        <ul>
+          <li><code>fetch_corp_code_map</code>, <code>find_rcept_no</code>, <code>download_document_xml</code>, <code>strip_tags</code>, <code>extract_sections</code>, <code>extract_passages</code>, <code>append_log</code> → 모두 <code>members/이동원/src/collection.py</code> 로 이동</li>
+          <li>노트북은 import 후 thin orchestration만</li>
+          <li>각 함수 docstring + 입력/출력 타입 명시 (Phase 2 batch에서 그대로 호출)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num">5</div>
+        <div class="title">log status 세분화 + 실패 시각화</div>
+        <span class="pill info prio">P2</span>
+      </div>
+      <div class="body">
+        <p><span class="label">증상:</span> 현재 SUCCESS / FAIL만. 50건 batch에서 어느 회사가 어디서 막혔는지 파악 어려움.</p>
+        <p><span class="label">v3 접근:</span></p>
+        <ul>
+          <li>status 도입: <code>SUCCESS</code> · <code>FAIL_HTTP</code> · <code>FAIL_LIST</code> · <code>FAIL_DOC</code> · <code>FAIL_SECTION_II</code> · <code>FAIL_SECTION_IV</code> · <code>FAIL_PASSAGE</code> · <code>WARN_OVERSIZE_VI</code></li>
+          <li>Step 9 시각화: status 분포 + 회사별 섹션 길이 heatmap (Phase 2부터 본격 활용)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num">6</div>
+        <div class="title">passage min_len ablation (선택)</div>
+        <span class="pill info prio">P2</span>
+      </div>
+      <div class="body">
+        <p><span class="label">증상:</span> 현재 min_len=20 hardcoded. Phase 2에서 회사별 차이 클 듯.</p>
+        <p><span class="label">v3 접근:</span></p>
+        <ul>
+          <li>alt 셀로 min_len ∈ {20, 30, 50} 결과 개수 비교 시각화</li>
+          <li>02_preprocessing에서 본격 결정 (지금은 메모만)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 3-add. 데이터 수집 범위 — 좁히기가 아니라 세분화 -->
+<section style="border-color: var(--accent);">
+  <h2><span class="num">03+</span>데이터 수집 범위 재정의 — "좁히기"가 아니라 "정밀 세분화" (이동원 님 지적 반영)</h2>
+
+  <p style="font-size: 13.5px; margin: 0 0 12px;">v3 P0-신규(사업보고서 본문 XML만 ESG primary로 사용)에 대한 우려: <i>"데이터 수집 범위가 좁아지는 느낌 — 그럴 경우 더 세분화해서 작업해야 한다"</i>. 가이드·교안·공개코드·학술 4-track 다시 점검한 결과 v3는 좁히는 게 아니라 정확도를 위해 세분화하는 방향이 맞습니다. 5가지 세분화 축을 추가합니다.</p>
+
+  <h3>1️⃣ 가이드(line 18, 153~166)가 정한 target — 사업보고서 본문</h3>
+  <p style="font-size: 13px; margin: 4px 0 8px;">교수님 가이드 line 18 — <b>"우리가 찾는 내용은 사업보고서의 II, IV, VI 섹션에 담긴 ESG 관련 표현"</b>. 즉 감사보고서·연결감사보고서는 처음부터 ESG target이 아님. v2는 가이드 의도와 다른 영역에서 노이즈를 추출한 셈.</p>
+
+  <h3>2️⃣ "좁히기"가 아닌 이유 — 사업보고서 본문 텍스트량 비교</h3>
+  <table>
+    <thead><tr><th>구분</th><th>v2 (concat 후)</th><th>v3 (사업보고서 본문만)</th><th>변화</th></tr></thead>
+    <tbody>
+      <tr><td>원본 XML 길이</td><td>6,935,754자 (3 파일 섞임)</td><td>5,780,877자 (사업보고서만)</td><td>총량 -17%이나 <b>유효 corpus는 ↑</b></td></tr>
+      <tr><td>strip_tags 후 텍스트</td><td>95,233자 (1.4% — 손실 의심)</td><td>≥ 1,150,000자 (목표 ≥ 20%)</td><td><b>×12 이상 증가 예상</b></td></tr>
+      <tr><td>passage 후보</td><td>23건 (감사보고서 노이즈)</td><td>≥ 150건 (사업보고서 본문)</td><td><b>×6.5 이상 증가 예상</b></td></tr>
+      <tr><td>차원 분포</td><td>G:20, E:2, S:0 (편향)</td><td>E·S·G 각 ≥ 20 (균형)</td><td>가설 검증 가능 수준</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3️⃣ v3에서 추가할 "세분화 축" 5가지</h3>
+  <div class="grid-fix">
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num" style="background: var(--info); color: #fff;">A</div>
+        <div class="title">multi-source 라벨링 보존</div>
+        <span class="pill info prio">P1</span>
+      </div>
+      <div class="body">
+        <p>zip 안 3개 XML을 <b>버리지 않고 type별로 라벨링해서 모두 보존</b>:</p>
+        <ul>
+          <li><code>data/interim/&lt;stock&gt;_&lt;year&gt;_sections.json</code> — primary (사업보고서 II/IV/VI)</li>
+          <li><code>data/interim/&lt;stock&gt;_&lt;year&gt;_aux_audit.json</code> — secondary (연결감사보고서)</li>
+          <li><code>data/interim/&lt;stock&gt;_&lt;year&gt;_aux_audit_separate.json</code> — secondary (감사보고서)</li>
+        </ul>
+        <p>02 전처리에서 primary vs secondary 비교 분석도 가능 (감사보고서가 ESG 시그널 보강에 쓰일 수 있는지 검증).</p>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num" style="background: var(--info); color: #fff;">B</div>
+        <div class="title">정정공시 이력 추적 강화</div>
+        <span class="pill info prio">P1</span>
+      </div>
+      <div class="body">
+        <p>가이드 line 67-69 "정정공시가 있으면 어떤 rcept_no를 사용했는지 기록". v3에서:</p>
+        <ul>
+          <li><code>last_reprt_at=Y</code>로 최신만 가져오되 (현재 적용 중)</li>
+          <li>같은 fiscal_year에 다른 rcept_no가 있었다면 <code>logs/correction_log.csv</code>에 기록 (rcept_no, rcept_dt, 정정 이력 수)</li>
+          <li>정정이 잦은 회사 = 거버넌스 신호 가능성 → 04 modeling에서 control 변수로 활용 가능</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num" style="background: var(--info); color: #fff;">C</div>
+        <div class="title">III·V·VII 헤딩 정밀 매칭 (II/IV/VI 경계용)</div>
+        <span class="pill warn prio">P1</span>
+      </div>
+      <div class="body">
+        <p>II/IV/VI 자체뿐 아니라 <b>다음 섹션 시작점(III·V·VII)</b>도 정확히 매칭해야 섹션 길이가 정합. v2의 VI=94,187자 과추출은 VII 미매칭 때문.</p>
+        <ul>
+          <li>패턴 변형 6~8개 (한·로마·아라비아 + 띄어쓰기 변형 + 장/Part)</li>
+          <li>매칭 후보를 pos 정렬해 본문 위치만 사용 (목차 위치 제외)</li>
+          <li>회사별 매칭 결과를 <code>logs/section_match_v3.csv</code>에 기록 → Phase 2에서 분포 모니터링</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num" style="background: var(--info); color: #fff;">D</div>
+        <div class="title">표·그래프 텍스트 vs 본문 텍스트 분리</div>
+        <span class="pill info prio">P2</span>
+      </div>
+      <div class="body">
+        <p>사업보고서 XML 안 <code>&lt;TABLE&gt;</code>·숫자 행이 ESG 키워드를 noise로 끌어들일 수 있음 (예: "온실가스 배출량 표"가 본문이 아닌 수치).</p>
+        <ul>
+          <li>lxml iter 시 <code>tag == 'TABLE'</code>인 노드는 <code>section_tables</code>에 별도 보관</li>
+          <li>본문 텍스트 corpus와 표 텍스트 corpus를 분리해 passage 추출은 본문 중심 (선택적으로 표 포함 옵션)</li>
+          <li>02 전처리에서 두 corpus의 ESG 표현 패턴 비교</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="head">
+        <div class="num" style="background: var(--info); color: #fff;">E</div>
+        <div class="title">회사·연도별 사업보고서 구조 다양성 대응</div>
+        <span class="pill info prio">P2</span>
+      </div>
+      <div class="body">
+        <p>Samsung 1건만으로는 일반화 불가 (v1·v2 보고서 §5.1에서 명시). Phase 2에서 발견되면 v4 가능성:</p>
+        <ul>
+          <li>중소·중견기업은 XML 헤딩 표기가 다를 수 있음 (<code>제2장</code>, 한자 변형 등)</li>
+          <li>업종별 II 섹션 길이 분포가 다름 (제조/금융/유통)</li>
+          <li>Phase 2 50건 결과를 회사별·업종별 heatmap으로 시각화 후 패턴 추출 → v4 필요 여부 판정</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <h3>4️⃣ 4-track 벤치마킹 (v0.4 ROADMAP 기준) — v3 fix별 출처</h3>
+  <table>
+    <thead><tr><th>Track</th><th>출처</th><th>v3 적용 fix</th></tr></thead>
+    <tbody>
+      <tr><td>강의 BASE</td><td>Week 4 requests·BS4·MCP / Week 10 DART MCP·CLI</td><td>전체 API 호출 + viewer 검증 패턴</td></tr>
+      <tr><td>공개 코드</td><td>dart-fss <code>parsers/disclosure.py</code></td><td>Fix #0 (DOCUMENT-NAME 기반 type 판별), Fix #2 (lxml itertext), 세분화 축 A·C</td></tr>
+      <tr><td>공개 코드</td><td>opendart-py</td><td>corpCode 캐시 패턴 + 정정공시 이력 (세분화 축 B)</td></tr>
+      <tr><td>실무 ETL</td><td>스키마 evolution + idempotent + lineage</td><td>Fix #4 (log mismatch 자동 처리), Fix #5 (status 세분화)</td></tr>
+      <tr><td>학술</td><td>Li 2021 RFS §4 (NER 기반 ESG passage)</td><td>Fix #1 (헤딩 fallback), 세분화 축 C·D</td></tr>
+      <tr><td>학술</td><td>Bingler 2022 (climate-bert) — 02 전처리부터</td><td>v3 범위 외이나 corpus 설계 시 호환 고려</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5️⃣ 결론 — v3는 "좁히기"가 아닌 "정확한 세분화"</h3>
+  <p style="font-size: 13px; margin: 4px 0 0;">
+    <b>가이드 명시 target (사업보고서 II/IV/VI)</b>을 <b>정확히 추출</b>하면서, 감사보고서·정정공시·표·구조 다양성을 <b>버리지 않고 별도 라벨로 보존</b>해 02_preprocessing 이후에서 비교·결합 가능하게 합니다. 데이터 자체 양은 v2 대비 증가, 정확도는 viewer 0/5 → 4/5 이상으로 회복.
+  </p>
+</section>
+
+<!-- 4. 폴더 구조 제안 -->
+<section>
+  <h2><span class="num">04</span>버전 관리용 단계별 폴더 구조 제안</h2>
+  <p style="font-size: 13px; color: var(--muted); margin: 0 0 10px;">이동원 워크스페이스(<code>members/이동원/</code>) 내부에 단계별 하위 폴더를 두고, 각 폴더 안에 v1·v2·v3 노트북·보고서를 함께 보관. 다른 멤버 폴더는 건드리지 않음.</p>
+
+  <h3>옵션 A — 5단계 (강의 가이드 매핑 기반)</h3>
+  <div class="folder-tree"><span class="keep">members/이동원/</span>
+├─ <span class="dir">notebooks/</span>
+│  ├─ <span class="new">01_collection/</span>              <span class="keep"># DART API → raw zip → sections.json</span>
+│  │  ├─ 01_collection_phase1_v1.ipynb     <span class="keep"># 이미 존재</span>
+│  │  ├─ 01_collection_phase1_v2.ipynb     <span class="keep"># 이미 존재</span>
+│  │  ├─ <span class="new">01_collection_phase1_v3.ipynb</span>     <span class="keep"># NEW (이번 작업)</span>
+│  │  └─ <span class="new">01_collection_phase2_v1.ipynb</span>     <span class="keep"># Phase 2 50건 batch</span>
+│  ├─ <span class="new">02_preprocessing/</span>           <span class="keep"># 정제·정규화·문장분리·형태소·불용어</span>
+│  │  └─ 02_preprocessing_v1.ipynb
+│  ├─ <span class="new">03_mining/</span>                  <span class="keep"># TF-IDF · ESG 사전 확장 · 임베딩</span>
+│  │  └─ 03_mining_v1.ipynb
+│  ├─ <span class="new">04_modeling/</span>                <span class="keep"># 회귀 · ESG등급 ↔ 언어 관계</span>
+│  │  └─ 04_modeling_v1.ipynb
+│  └─ <span class="new">05_reporting/</span>               <span class="keep"># 최종 시각화 · 발표 자료</span>
+│     └─ 05_reporting_v1.ipynb
+├─ <span class="dir">reports/</span>
+│  ├─ <span class="new">01_collection/</span>
+│  │  ├─ 01_collection_phase1_v1_보고서.md
+│  │  ├─ 01_collection_phase1_v2_보고서.md
+│  │  ├─ <span class="new">01_collection_phase1_v3_roadmap.html</span>     <span class="keep"># 본 파일</span>
+│  │  └─ <span class="new">01_collection_phase1_v3_보고서.md</span>
+│  ├─ <span class="new">02_preprocessing/</span>
+│  ├─ <span class="new">03_mining/</span>
+│  ├─ <span class="new">04_modeling/</span>
+│  └─ <span class="new">05_reporting/</span>
+└─ <span class="dir">src/</span>
+   ├─ <span class="new">collection.py</span>      <span class="keep"># Fix #4 (모듈화) 결과물</span>
+   ├─ <span class="new">preprocessing.py</span>
+   ├─ <span class="new">mining.py</span>
+   └─ <span class="new">modeling.py</span>
+</div>
+
+  <h3>옵션 B — 3단계 (수집·전처리·분석, 단순)</h3>
+  <div class="folder-tree"><span class="keep">members/이동원/notebooks/</span>
+├─ <span class="new">01_collection/</span>      <span class="keep"># API 호출 → raw → 섹션 분리 → passage 후보</span>
+├─ <span class="new">02_preprocessing/</span>   <span class="keep"># 정제 + 마이닝 합침 (KSS·형태소·TF-IDF·임베딩)</span>
+└─ <span class="new">03_analysis/</span>        <span class="keep"># 회귀 + 시각화 + 최종 보고</span>
+</div>
+
+  <p style="font-size: 13px; color: var(--muted); margin-top: 12px;">📌 어느 옵션이든 <b>각 단계 폴더 안에 v1·v2·v3 ipynb·보고서를 함께</b> 두면 한 단계에서 발전 학습 로그가 한곳에 모입니다. (Feedback 규칙 #1 "버전 보존"과도 정합)</p>
+</section>
+
+<!-- 5. v3 마일스톤 (5/16 ~ 5/19) -->
+<section>
+  <h2><span class="num">05</span>v3 작업 마일스톤 (5/16 ~ 5/19 데드라인) — viewer 0/5 반영 갱신</h2>
+  <table>
+    <thead><tr><th>날짜</th><th>작업</th><th>완료 기준</th></tr></thead>
+    <tbody>
+      <tr><td>5/16 (오늘)</td><td>옵션 A 5단계 폴더 마이그레이션 (이동원 워크스페이스만)</td><td>v1·v2·로드맵을 <code>members/이동원/reports/01_collection/</code>로, 노트북은 <code>notebooks/01_collection/</code>으로 이동 (git mv)</td></tr>
+      <tr><td>5/16 (오늘)</td><td><b>v3 노트북 작성 — Fix #0(사업보고서 XML만 선택) + Fix #2(strip_tags) 먼저</b></td><td>본문 텍스트 ≥ 1.15M자 확보, "이사회 등 회사의 기관" 키워드가 텍스트에 실제 존재</td></tr>
+      <tr><td>5/17 오전</td><td>Fix #1 (II/IV/VII 헤딩 보강) + Fix #3 (VII 절단) + viewer 5개 sample 재검증</td><td>II ≥ 30K, IV ≥ 5K, VI 정합 길이 + <b>viewer ≥ 4/5 일치</b> (게이트)</td></tr>
+      <tr><td>5/17 오후</td><td>viewer 통과 시 → Fix #4 모듈화 + Fix #5 log status 세분화</td><td><code>src/collection.py</code> 완성, log status 8종 적용</td></tr>
+      <tr><td>5/18</td><td>Phase 2 v1 (50건 batch) — <code>src/collection.py</code> 그대로 사용</td><td>50건 중 SUCCESS ≥ 45건, 회사별 섹션 길이 heatmap</td></tr>
+      <tr><td>5/19 (데드라인)</td><td>전체 381 firm-year 시도 + 5/19 D-Day 게이트 12개 확인</td><td>모든 게이트 ✅ · 02_preprocessing 입력 확보</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size: 12.5px; color: var(--muted); margin: 10px 0 0;">📌 viewer 4/5 통과가 안 되면 5/17 오후 일정을 모두 헤딩 보강·재설계에 추가 투입하고 Phase 2 진입을 5/18 → 5/19로 연기. 모듈화는 viewer 통과 직후 동시 진행 (사용자 결정).</p>
+</section>
+
+<!-- 6. 사용자 확인 사항 -->
+<section>
+  <h2><span class="num">06</span>이동원 님 결정사항 기록 (2026-05-16)</h2>
+
+  <table>
+    <thead><tr><th>질문</th><th>답변</th><th>적용</th></tr></thead>
+    <tbody>
+      <tr><td>Q1. 폴더 구조</td><td><b>옵션 A: 5단계</b></td><td>collection/preprocessing/mining/modeling/reporting — 본 문서 §04에 반영</td></tr>
+      <tr><td>Q2. v3 진행 순서</td><td><b>P0 → P1 순차</b></td><td>P0-신규(사업보고서 XML 분리) + Fix #2(strip_tags) 먼저, P1은 그 뒤</td></tr>
+      <tr><td>Q3. viewer 5개 sample 정합성</td><td><b>0 / 5 (전부 불일치)</b> 🚨<br>"확인하는 섹션은 이사회 등 회사 기관에 관한 사항인데 온실가스 등 엉뚱한 게 추출됐고 원문에 존재하는 것은 하나도 없음"</td><td>v3 P0를 <b>신규 항목(사업보고서 본문 XML 분리)으로 재정의</b>. 기존 매칭은 감사보고서 노이즈로 판정.</td></tr>
+      <tr><td>Q4. <code>src/collection.py</code> 모듈화</td><td>"실무적으로 답변을 기반으로 판단" — 즉 <b>viewer 통과 후 결정</b></td><td>v3 노트북에서 Fix #0·#2·#1·#3 먼저 통과 → viewer ≥ 4/5 확인 → 그 시점에 모듈화 동시 진행 여부 재논의</td></tr>
+    </tbody>
+  </table>
+
+  <details>
+    <summary>참고 — v2 작동/잔존 이슈 한눈에 보기 (viewer 검증 후 갱신)</summary>
+    <ul>
+      <li>✅ Fix #1 find_project_root — ROOT 정상 인식</li>
+      <li>⚠️ Fix #2 zip 다중 파일 concat — 3/3 디코드됐지만 <b>그냥 concat이 문제의 원인</b> (감사보고서 노이즈 혼입). v3 P0-신규에서 사업보고서 본문만 선택하도록 변경</li>
+      <li>⚠️ Fix #3 진단 출력 — 출력은 정상이나 잘못된 텍스트(감사보고서)에서 매칭 진단을 한 셈</li>
+      <li>✅ Fix #4 log mismatch 자동 백업 — .bak_20260516_173421 보존</li>
+      <li>🚨 결정적 이슈: viewer 0/5 → passage 23건은 사실상 폐기, v3에서 처음부터 다시 검증</li>
+    </ul>
+  </details>
+</section>
+
+<div class="footer">
+  v3 발전 로드맵 · 본 HTML은 5/19 데드라인까지 검토 기준 문서로 사용 · 작성 2026-05-16
+</div>
+
+</main>
+</body>
+</html>

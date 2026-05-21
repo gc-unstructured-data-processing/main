@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><title>00 ingest v1 — 10단계 진단 + 발전 제안</title>
+<style>
+:root{--bg:#fafaf7;--bg-card:#fff;--bg-soft:#f3f1ea;--bg-danger:#fef2f2;--bg-warn:#fff7ed;--bg-success:#f0fdf4;--bg-info:#eff6ff;--bg-purple:#f5f3ff;--text:#1c1c1a;--mute:#5a5a55;--border:rgba(0,0,0,.1);--accent:#4338ca}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Noto Sans KR","Malgun Gothic",sans-serif}.wrap{max-width:1100px;margin:0 auto;padding:32px 24px 60px}
+h1{font-size:24px;font-weight:500;margin:0 0 8px}h2{font-size:18px;margin:24px 0 8px}h3{font-size:15px;margin:18px 0 6px;font-weight:600}.sub{color:var(--mute);margin:0 0 16px}.chip{display:inline-block;font-size:12px;padding:3px 8px;border-radius:999px;background:var(--bg-soft);color:var(--mute);margin-right:6px;border:.5px solid var(--border)}
+.card{background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:10px}.card.must{background:var(--bg-danger);border-color:rgba(239,68,68,.25)}.card.warn{background:var(--bg-warn);border-color:rgba(245,158,11,.25)}.card.ok{background:var(--bg-success);border-color:rgba(34,197,94,.25)}.card.info{background:var(--bg-info);border-color:rgba(37,99,235,.25)}.card.alpha{background:var(--bg-purple);border-color:rgba(124,58,237,.25)}.tag{font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;margin-bottom:6px}.tag.must{color:#b91c1c}.tag.warn{color:#b45309}.tag.ok{color:#15803d}.tag.info{color:#1d4ed8}.tag.alpha{color:#6d28d9}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}th,td{text-align:left;padding:6px 8px;border-bottom:.5px solid var(--border);vertical-align:top}th{font-weight:500;color:var(--mute);font-size:11px;text-transform:uppercase;background:var(--bg-soft)}
+code{font-family:ui-monospace,monospace;font-size:12.5px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:3px}
+.step{display:grid;grid-template-columns:55px 1fr;gap:12px;margin-bottom:14px}.snum{background:var(--accent);color:#fff;width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:18px}
+</style></head><body><div class="wrap">
+
+<h1>00 ingest v1 — 10단계 진단 + 발전 제안</h1>
+<p class="sub">KCGS 등급 lineage 단계의 현재 상태·문제·발전 영역. 가이드 02·04·벤치마킹 5축 참고.</p>
+<div>
+  <span class="chip">단계 <strong>00 ingest</strong></span>
+  <span class="chip">버전 <strong>v1</strong></span>
+  <span class="chip">작성 <strong>2026-05-18</strong></span>
+  <span class="chip">사이클 <strong>1·2</strong></span>
+</div>
+
+<h2>A. 사이클 1·2 종료 시점 — 무엇이 됐고 무엇이 남았는가</h2>
+<table>
+<tr><th>영역</th><th>상태</th><th>증거</th></tr>
+<tr><td>kcgs_lineage.csv 생성</td><td>✅</td><td>381행 × 14 컬럼 (sample row: stock_code=005930·esg_grade=A·source_url=https://esg.cgs.or.kr/)</td></tr>
+<tr><td>등급 분포 시각화</td><td>✅</td><td>fig_v1_kcgs_grade_distribution.png (Fix A 한글 폰트 적용)</td></tr>
+<tr><td>stratified sampling 평가</td><td>✅</td><td>등급별 5건 × 7등급 가능 여부 표 출력 (S 등급 부족 주의)</td></tr>
+<tr><td>KRX 교차검증</td><td>⏳ 사용자 수동</td><td>Fix C dynamic 출력 — Samsung 2024 등급 A·B+·A+·B+ 명시</td></tr>
+<tr><td>출처 메타 (kcgs_lineage_meta.json)</td><td>✅</td><td>URL 3개 + as_of_date + evaluation_method</td></tr>
+<tr><td>as_of_date 정확성</td><td>⚠️ 추정</td><td>2026-05-15 (company_master 작성일 추정. 실제 KCGS 평가 발표일 미확정)</td></tr>
+<tr><td>정정공시 이력</td><td>❌ 미반영</td><td>본 v1 범위 외</td></tr>
+<tr><td>stock_code dtype=str</td><td>✅</td><td>Fix B 적용 — zfill(6) 강제</td></tr>
+</table>
+
+<h2>B. 10단계 진단</h2>
+
+<div class="step"><div class="snum">1</div><div>
+<div class="card ok"><div class="tag ok">정상</div>
+<h3>company_master 로드 + 등급 충족</h3>
+<p>381행·127 unique stock_code 모두 통과. 4 등급 컬럼(esg_grade·e/s/g_grade) 100% 충족. <strong>발전 영역 없음</strong>.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">2</div><div>
+<div class="card warn"><div class="tag warn">주의</div>
+<h3>등급 분포 imbalance (S·D 부족)</h3>
+<p>S·D 등급 firm-year 수 적음 (예상 0~3건). stratified 5건 × 7등급 시 S·D 미달 → 사이클 3 batch에서 가용 전체 사용. <strong>발전</strong>: A 이상/미만 binary 그룹화 fallback 코드 추가.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">3</div><div>
+<div class="card warn"><div class="tag warn">주의</div>
+<h3>as_of_date 추정값 ('2026-05-15')</h3>
+<p>company_master 시드 작성 일자 추정. 실제 KCGS 평가 발표일 (보통 7~9월) 미확정. 보고서 §한계 명시 필요. <strong>발전</strong>: KCGS 공식 사이트에서 평가년도별 발표일 수동 채집 + 메타 업데이트.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">4</div><div>
+<div class="card must"><div class="tag must">치명</div>
+<h3>KRX 교차검증 수동 — 자동화 부재</h3>
+<p>본 v1은 KRX URL 안내까지. Samsung 2024 4 등급 일치 여부는 사용자가 브라우저에서 직접 확인. <strong>발전</strong>: v2에서 KRX ESG 포털 자동 파싱 (selenium 또는 playwright) → 결과 비교.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">5</div><div>
+<div class="card warn"><div class="tag warn">주의</div>
+<h3>정정공시 이력 미반영</h3>
+<p>KCGS는 평가 후 정정 가능. 본 v1은 단일 시점 snapshot. <strong>발전</strong>: KCGS·KRX 공지사항 수동 모니터링 → 정정 발견 시 logs/kcgs_corrections.csv 별도 기록.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">6</div><div>
+<div class="card ok"><div class="tag ok">충족</div>
+<h3>출처 메타 4개 컬럼</h3>
+<p>source_url·method_url·as_of_date·evaluation_method 모두 명시. 가이드 04 §3 데이터 lineage 충족. <strong>발전 영역 없음</strong>.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">7</div><div>
+<div class="card info"><div class="tag info">발전</div>
+<h3>등급 분포 시각화 — 차원별 추가</h3>
+<p>현재 통합 등급 분포만. <strong>발전</strong>: E·S·G 차원별 분포 추가 시각화 (3 subplot). KCGS 차원 격차 사전 파악 → 03_mining 회귀 입력 설계 참고.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">8</div><div>
+<div class="card alpha"><div class="tag alpha">알파</div>
+<h3>외부 ESG 등급 비교 (서스틴베스트·MSCI)</h3>
+<p>KCGS 외 한국 ESG 평가기관 (서스틴베스트·한경 ESG·MSCI). <strong>알파 영역</strong>: 등급 일치도·격차 분석 → 본 분석 robustness check. 가이드 04 §3-1 알파 예시 수준.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">9</div><div>
+<div class="card info"><div class="tag info">발전</div>
+<h3>industry 컬럼 활용</h3>
+<p>company_master.industry 가용 — 업종별 등급 분포 미시각화. <strong>발전</strong>: 업종 × 등급 cross tab + heatmap. 03_mining 업종별 분해 알파에 직접 입력.</p>
+</div></div></div>
+
+<div class="step"><div class="snum">10</div><div>
+<div class="card ok"><div class="tag ok">정상</div>
+<h3>위반금지 8항목 + 가이드 04 §2-1</h3>
+<p>4항목(1·3·5·7) 충족. 항목 4·6·8은 본 단계 범위에 해당. 가이드 04 §2-1 데이터 lineage 충족 패턴. <strong>발전 영역 없음</strong>.</p>
+</div></div></div>
+
+<h2>C. 외부 벤치마킹 (5축)</h2>
+<table>
+<tr><th>축</th><th>본 v1 위치</th><th>발전 제안</th></tr>
+<tr><td>1. dart-fss-text</td><td>본 단계 무관 (DART 수집 단계)</td><td>—</td></tr>
+<tr><td>2. KLUE-RoBERTa</td><td>본 단계 무관 (NLP 단계)</td><td>—</td></tr>
+<tr><td>3. KCGS 신뢰성</td><td>⭐ 본 단계 핵심</td><td>현재 평가방법 URL만. <strong>발전</strong>: 평가지표 weight 추출 → ESG 차원 weight 일치도 검증</td></tr>
+<tr><td>4. cheap-talk</td><td>본 단계 무관 (text feature 단계)</td><td>—</td></tr>
+<tr><td>5. 재현성</td><td>⭐ 본 단계 적용 가능</td><td>현재 lineage csv 1회 생성. <strong>발전</strong>: run_id + git_sha 컬럼 추가 → 사이클별 lineage 변화 추적</td></tr>
+</table>
+
+<h2>D. 교수님 가이드 매핑</h2>
+<table>
+<tr><th>가이드</th><th>line</th><th>본 v1 충족 여부</th></tr>
+<tr><td>01 line 23</td><td>127 기업 × 3 평가연도 = 381</td><td>✅ 정확히 검증</td></tr>
+<tr><td>01 line 76-78</td><td>등급 변환 S=6 ~ D=0</td><td>✅ GRADE_TO_NUM dict 정의</td></tr>
+<tr><td>01 line 130-138</td><td>seed 30 단어</td><td>본 단계 외 (01 collection에서)</td></tr>
+<tr><td>02 line 21-35</td><td>식별자 3종 구분</td><td>본 단계 외 (stock_code만 사용)</td></tr>
+<tr><td>02 line 37-38</td><td>esg_year = fiscal_year + 1</td><td>✅ lineage csv 컬럼 검증</td></tr>
+<tr><td>04 §2-1 데이터 lineage</td><td>—</td><td>✅ kcgs_lineage.csv + meta.json</td></tr>
+</table>
+
+<h2>E. 다음 사이클 발전 우선순위</h2>
+<table>
+<tr><th>#</th><th>발전 영역</th><th>우선순위</th><th>예상 소요</th></tr>
+<tr><td>1</td><td>차원별 등급 분포 시각화 추가</td><td>🟢 즉시 (10분)</td><td>10분</td></tr>
+<tr><td>2</td><td>업종 × 등급 cross tab + heatmap</td><td>🟢 즉시 (15분)</td><td>15분</td></tr>
+<tr><td>3</td><td>A 이상/미만 binary 그룹화 fallback</td><td>🟡 중기</td><td>20분</td></tr>
+<tr><td>4</td><td>KRX 자동 교차검증 (selenium)</td><td>🟡 중기</td><td>2시간</td></tr>
+<tr><td>5</td><td>정정공시 이력 별도 csv</td><td>🟡 중기</td><td>30분</td></tr>
+<tr><td>6</td><td>외부 ESG 등급 비교 (알파)</td><td>🟣 알파</td><td>2시간+</td></tr>
+<tr><td>7</td><td>KCGS 평가지표 weight 추출</td><td>🟣 알파</td><td>1시간+</td></tr>
+</table>
+
+<p style="color:var(--mute);font-size:12px;margin-top:30px;border-top:.5px solid var(--border);padding-top:14px">
+00 ingest v1 — 10단계 진단 + 발전 제안 · 2026-05-18 · 이동원<br>
+근거: 00_ingest_kcgs.ipynb 산출 + 가이드 01·02·04 + 벤치마킹 5축 + 사이클 1·2 학습
+</p>
+</div></body></html>

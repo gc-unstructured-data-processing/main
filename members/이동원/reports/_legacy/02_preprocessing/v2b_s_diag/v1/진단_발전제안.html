@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><title>02b s_score_diagnosis v1 — 10단계 진단 + 발전 제안</title>
+<style>:root{--bg:#fafaf7;--bg-card:#fff;--bg-soft:#f3f1ea;--bg-danger:#fef2f2;--bg-warn:#fff7ed;--bg-success:#f0fdf4;--bg-info:#eff6ff;--bg-purple:#f5f3ff;--text:#1c1c1a;--mute:#5a5a55;--border:rgba(0,0,0,.1);--accent:#4338ca}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Noto Sans KR","Malgun Gothic",sans-serif}.wrap{max-width:1100px;margin:0 auto;padding:32px 24px 60px}h1{font-size:24px;font-weight:500;margin:0 0 8px}h2{font-size:18px;margin:24px 0 8px}h3{font-size:15px;margin:18px 0 6px;font-weight:600}.sub{color:var(--mute);margin:0 0 16px}.chip{display:inline-block;font-size:12px;padding:3px 8px;border-radius:999px;background:var(--bg-soft);color:var(--mute);margin-right:6px;border:.5px solid var(--border)}.card{background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:10px}.card.must{background:var(--bg-danger);border-color:rgba(239,68,68,.25)}.card.warn{background:var(--bg-warn);border-color:rgba(245,158,11,.25)}.card.ok{background:var(--bg-success);border-color:rgba(34,197,94,.25)}.card.info{background:var(--bg-info);border-color:rgba(37,99,235,.25)}.card.alpha{background:var(--bg-purple);border-color:rgba(124,58,237,.25)}.tag{font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;margin-bottom:6px}.tag.must{color:#b91c1c}.tag.warn{color:#b45309}.tag.ok{color:#15803d}.tag.info{color:#1d4ed8}.tag.alpha{color:#6d28d9}table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}th,td{text-align:left;padding:6px 8px;border-bottom:.5px solid var(--border);vertical-align:top}th{font-weight:500;color:var(--mute);font-size:11px;text-transform:uppercase;background:var(--bg-soft)}code{font-family:ui-monospace,monospace;font-size:12.5px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:3px}</style></head><body><div class="wrap">
+
+<h1>02b s_score_diagnosis v1 — 10단계 진단 + 발전 제안</h1>
+<p class="sub">S 점수 0.010 vs s_grade=A+ 격차 정량 검증 보조 노트북. 사이클 2 신설.</p>
+<div><span class="chip">단계 <strong>02b 보조</strong></span><span class="chip">버전 <strong>v1</strong></span><span class="chip">사이클 <strong>2 신설</strong></span></div>
+
+<h2>A. 현재 상태</h2>
+<table>
+<tr><th>영역</th><th>상태</th></tr>
+<tr><td>3가설 코드 build (H1·H2·H3)</td><td>✅ 노트북 15 cells</td></tr>
+<tr><td>seed_S 10단어 빈도 검증 (Step 2)</td><td>✅ 코드 — 사용자 Run All 대기</td></tr>
+<tr><td>30개 후보 빈도 측정 (Step 3)</td><td>✅ 코드</td></tr>
+<tr><td>section × dim share (Step 4)</td><td>✅ 코드</td></tr>
+<tr><td>seed_v2_proposed.csv 생성 (Step 5)</td><td>✅ 코드 — 5회 이상 자동 추가</td></tr>
+<tr><td>사용자 kept_or_removed 입력</td><td>⏳ Run All 후</td></tr>
+</table>
+
+<h2>B. 10단계 진단</h2>
+
+<table>
+<tr><th>#</th><th>관찰·발전 영역</th><th>우선순위</th></tr>
+<tr><td>1</td><td>정규식 패턴 — "복리후생" 단순 매칭만. 단어 조합 (예: "복지·후생") 누락. <strong>발전</strong>: pattern 확장 (`복리후생|복지|후생`)</td><td>🟢 v2</td></tr>
+<tr><td>2</td><td>30개 후보 셀렉션 — 직관 기반. <strong>발전</strong>: ESG-Kor 라벨 top-k 키워드 정량 추출 → 후보 50개로 확장</td><td>🟢 v2 (알파)</td></tr>
+<tr><td>3</td><td>단일 firm-year 진단 — 일반화 어려움. <strong>해결</strong>: 사이클 3 batch 30건 후 등급별 S seed 등장 패턴 분석</td><td>🔴 즉시 (사이클 3)</td></tr>
+<tr><td>4</td><td>section_weighted score alt — 본 v1은 단순 합산. <strong>발전</strong>: II=0.5·IV=0.2·VI=0.3 weight + 3개 weight 비교</td><td>🟢 v2</td></tr>
+<tr><td>5</td><td>"산업재해·중대재해" 0회 등장 — Samsung 실제 발생 사례 없음. 일반 firm-year 검증 필요. <strong>해결</strong>: 사이클 3 batch 후 등급 vs 재해 표현 분포 분석</td><td>🟡 사이클 3 후</td></tr>
+<tr><td>6</td><td>VI section 거버넌스 독점 — S 표현 거의 없음. <strong>발전</strong>: 별도 ESG·지속가능성 보고서 흡수 검토 (alpha 영역)</td><td>🟣 알파</td></tr>
+<tr><td>7</td><td>seed_v2 채택 디시플린 — 자동 추가 + 사용자 검토 2단계. <strong>발전</strong>: 의미 검토 가이드 1페이지 추가 (어떤 단어가 잡음? 어떤 게 의미?)</td><td>🟢 v2</td></tr>
+<tr><td>8</td><td>cosine baseline — S 진단 안 함. <strong>발전</strong>: cosine_S도 동일 H1·H2·H3 검증</td><td>🟢 v2</td></tr>
+<tr><td>9</td><td>회사명·연도·법률용어 stopword 추가 후보 — body에 흔히 등장하나 ESG 무관. <strong>발전</strong>: 토큰 빈도 top 30 사용자 검토 + stopword v2 채택</td><td>🟢 v2</td></tr>
+<tr><td>10</td><td>위반금지 #3·#6·#8 모두 충족. 가이드 03 line 90-122 expanded 검토 디시플린 본 진단으로 충족.</td><td>✅ 충족</td></tr>
+</table>
+
+<h2>C. 벤치마킹 + 가이드</h2>
+<table>
+<tr><th>벤치마킹·가이드</th><th>본 진단 매핑</th></tr>
+<tr><td>ESG-Kor (EMNLP 2024)</td><td>30 후보 일부 ESG-Kor S 라벨 차용</td></tr>
+<tr><td>KCGS S 평가항목</td><td>30 후보의 5개 분류 (인적자원·고객·협력사·지역사회·안전)</td></tr>
+<tr><td>가이드 02 line 158</td><td>passage 추출의 핵심 — seed 재설계는 본 단계의 정당화</td></tr>
+<tr><td>가이드 03 line 90-122</td><td>expanded 검토 디시플린 — 본 진단이 정량 근거 제공</td></tr>
+<tr><td>위반금지 #3</td><td>MCP/추출 그대로 신뢰 ❌ — 사용자 직접 검토 강제</td></tr>
+</table>
+
+<h2>D. 발전 우선순위</h2>
+<table>
+<tr><th>#</th><th>발전</th><th>우선순위</th></tr>
+<tr><td>1</td><td>사용자 Run All — H1·H2·H3 정량 결과</td><td>🔴 즉시</td></tr>
+<tr><td>2</td><td>seed_v2_proposed.csv kept/removed 채움</td><td>🔴 즉시</td></tr>
+<tr><td>3</td><td>v2: pattern 확장 (단어 조합 정규식)</td><td>🟢 v2</td></tr>
+<tr><td>4</td><td>v2: 30 후보 → ESG-Kor 50으로 확장</td><td>🟢 v2 (알파 base)</td></tr>
+<tr><td>5</td><td>v2: section_weighted score 비교</td><td>🟢 v2</td></tr>
+<tr><td>6</td><td>v2: cosine_S H1·H2·H3 검증</td><td>🟢 v2</td></tr>
+<tr><td>7</td><td>v2: stopword v2 채택 (회사명·법률용어 추가)</td><td>🟢 v2</td></tr>
+<tr><td>8</td><td>알파: 별도 ESG 보고서 흡수</td><td>🟣 알파</td></tr>
+</table>
+
+<p style="color:var(--mute);font-size:12px;margin-top:30px;border-top:.5px solid var(--border);padding-top:14px">
+02b s_score_diagnosis v1 — 10단계 진단 + 발전 제안 · 2026-05-18 · 이동원<br>
+근거: 02b_s_score_diagnosis.ipynb (v1) + 가이드 02·03 + ESG-Kor·KCGS S 평가항목 + 위반금지 #3
+</p></div></body></html>

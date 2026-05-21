@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESG DART 기말 프로젝트 — 프로젝트 분석 v0.1</title>
+<style>
+:root {
+  --bg: #fafaf7; --bg-card: #ffffff; --bg-soft: #f3f1ea;
+  --bg-warn: #fff7ed; --bg-danger: #fef2f2; --bg-info: #eff6ff;
+  --bg-success: #f0fdf4; --bg-purple: #f5f3ff;
+  --text-primary: #1c1c1a; --text-secondary: #5a5a55; --text-muted: #8a8a85;
+  --text-warn: #b45309; --text-danger: #b91c1c; --text-info: #1d4ed8;
+  --text-success: #15803d; --text-purple: #6d28d9;
+  --border: rgba(0,0,0,0.10); --border-strong: rgba(0,0,0,0.18); --accent: #4338ca;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text-primary); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; font-size: 15px; line-height: 1.65; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 80px; }
+header.hero { border-bottom: 0.5px solid var(--border); padding-bottom: 24px; margin-bottom: 24px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+h1 { font-size: 26px; font-weight: 500; margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { font-size: 15px; color: var(--text-secondary); margin: 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.chip strong { font-weight: 500; color: var(--text-primary); }
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--bg-soft); border-radius: 12px; margin-bottom: 28px; position: sticky; top: 12px; z-index: 10; border: 0.5px solid var(--border); }
+nav.tabs button { flex: 1 1 auto; min-width: 110px; padding: 9px 12px; border: none; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; font-family: inherit; }
+nav.tabs button:hover { background: rgba(255,255,255,0.6); color: var(--text-primary); }
+nav.tabs button.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.section { display: none; animation: fade 0.25s ease; }
+.section.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+h2 { font-size: 20px; font-weight: 500; margin: 0 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 17px; font-weight: 500; margin: 28px 0 10px; color: var(--text-primary); }
+h4 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; color: var(--text-primary); }
+.section-intro { color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; max-width: 760px; }
+.card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 14px; }
+.card.must   { background: var(--bg-danger); border-color: rgba(239,68,68,0.25); }
+.card.should { background: var(--bg-warn);   border-color: rgba(245,158,11,0.25); }
+.card.could  { background: var(--bg-success);border-color: rgba(34,197,94,0.25); }
+.card.info   { background: var(--bg-info);   border-color: rgba(37,99,235,0.25); }
+.card.purple { background: var(--bg-purple); border-color: rgba(124,58,237,0.25); }
+.card.soft   { background: var(--bg-soft); border: none; }
+.card .track-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.card.must   .track-label { color: var(--text-danger); }
+.card.should .track-label { color: var(--text-warn); }
+.card.could  .track-label { color: var(--text-success); }
+.card.info   .track-label { color: var(--text-info); }
+.card.purple .track-label { color: var(--text-purple); }
+.card h4 { margin-top: 0; }
+.card ul { margin: 6px 0 8px; padding-left: 22px; color: var(--text-secondary); font-size: 14px; }
+.card li { margin-bottom: 6px; }
+.card li strong { color: var(--text-primary); font-weight: 500; }
+.card code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; background: rgba(0,0,0,0.05); padding: 1px 6px; border-radius: 4px; color: var(--text-primary); }
+.card pre { background: rgba(0,0,0,0.04); padding: 12px 14px; border-radius: 6px; font-size: 12.5px; color: var(--text-primary); overflow-x: auto; margin: 6px 0; line-height: 1.5; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+table.clean { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 10px 0; }
+table.clean th, table.clean td { text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+table.clean th { font-weight: 500; color: var(--text-muted); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--bg-soft); }
+table.clean tr:last-child td { border-bottom: none; }
+.callout { border-left: 3px solid var(--accent); background: var(--bg-card); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 14px; color: var(--text-secondary); }
+.callout strong { color: var(--text-primary); font-weight: 500; }
+.callout.warn   { border-left-color: #d97706; background: var(--bg-warn); }
+.callout.danger { border-left-color: #dc2626; background: var(--bg-danger); }
+.callout.info   { border-left-color: #2563eb; background: var(--bg-info); }
+.callout.success{ border-left-color: #16a34a; background: var(--bg-success); }
+.callout.purple { border-left-color: #7c3aed; background: var(--bg-purple); }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); font-weight: 500; margin-right: 4px; }
+.badge.must { background: #fef2f2; color: #b91c1c; }
+.badge.should { background: #fff7ed; color: #b45309; }
+.badge.could { background: #f0fdf4; color: #15803d; }
+.badge.E { background: #ecfdf5; color: #047857; }
+.badge.S { background: #eff6ff; color: #1d4ed8; }
+.badge.G { background: #f5f3ff; color: #6d28d9; }
+.badge.lecture { background: #f0f9ff; color: #0369a1; }
+.beginner-note { background: var(--bg-purple); border: 1px dashed rgba(124,58,237,0.35); border-radius: 8px; padding: 12px 14px; margin: 12px 0; font-size: 13.5px; }
+.beginner-note strong { color: var(--text-purple); }
+.flow { display: flex; flex-direction: column; gap: 6px; margin: 14px 0 18px; }
+.flow-row { display: grid; grid-template-columns: 70px 1fr; gap: 14px; align-items: stretch; }
+.flow-step-num { background: var(--accent); color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; margin: 8px auto; }
+.flow-body { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px 16px; }
+.flow-body h5 { margin: 0 0 4px; font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.flow-body p { margin: 0; font-size: 13px; color: var(--text-secondary); }
+.flow-body .source { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.analogy { background: linear-gradient(180deg, rgba(67,56,202,0.04), transparent); border: 0.5px dashed rgba(67,56,202,0.3); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 13.5px; color: var(--text-secondary); }
+.analogy strong { color: var(--accent); }
+.analogy::before { content: "💡 비유로 이해하기 — "; font-weight: 600; color: var(--accent); font-size: 12px; letter-spacing: 0.04em; }
+footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">비정형데이터분석 · 기말 팀 프로젝트 · 프로젝트 분석 v0.1</div>
+  <h1>ESG DART 기말 프로젝트 — 프로젝트 분석</h1>
+  <p class="sub">교수님 가이드 4개 md를 한 줄에 꿰어 <strong>"무엇을·왜·어떻게"</strong>를 보여줍니다. 비정형데이터 처리와 데이터 마이닝 관점에서 수업과 어떻게 연결되는지를 비전공자 시점으로 풀었습니다.</p>
+  <div class="meta-row">
+    <span class="chip"><strong>대상 표본</strong> 127기업 × 3년 = 381 firm-years</span>
+    <span class="chip"><strong>핵심 방법</strong> TF-IDF · fastText · cosine · 회귀</span>
+    <span class="chip"><strong>가이드 출처</strong> 01~04 md</span>
+    <span class="chip"><strong>버전</strong> v0.1</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="overview" class="active">한 눈에 보기</button>
+  <button data-tab="question">핵심 질문</button>
+  <button data-tab="data">데이터 (381 firm-years)</button>
+  <button data-tab="textmining">텍스트→숫자 (마이닝)</button>
+  <button data-tab="validation">검증→회귀</button>
+  <button data-tab="lecture-map">수업 연결</button>
+  <button data-tab="rules">위반 금지 · 평가</button>
+  <button data-tab="next">다음 단계</button>
+</nav>
+
+<section class="section active" data-section="overview">
+  <h2>한 페이지 요약 — 입력에서 결과까지</h2>
+  <p class="section-intro">DART 사업보고서의 <strong>"말"</strong>을 숫자로 바꿔서, 그 숫자가 KCGS가 매긴 ESG 등급과 어떤 관계가 있는지 보는 프로젝트입니다. 정답을 맞히는 과제가 아니라 <strong>선택을 정당화하는 과제</strong>입니다.</p>
+  <div class="analogy">학원에서 학생이 시험을 보면, <strong>그 학생의 답안지(공시 사업보고서)</strong>에 적은 글에서 ESG와 관련된 단어가 얼마나 자주, 얼마나 의미있게 등장하는지를 점수로 만든 뒤, 그 점수가 외부 평가기관(KCGS)이 매긴 등급과 같이 움직이는지를 보는 것입니다. 같이 움직인다고 해서 "글이 등급을 결정했다"는 게 아니라 <strong>"글과 등급 사이에 패턴이 있다"</strong>는 것을 데이터로 확인합니다.</div>
+  <h3>전체 흐름 8단계</h3>
+  <div class="flow">
+    <div class="flow-row"><div class="flow-step-num">1</div><div class="flow-body"><h5>회사·연도 정하기 (Master 표본)</h5><p><code>company_master.csv</code> — 127개 기업 × 3 fiscal_year(2022·2023·2024) = 최대 381행. <code>stock_code</code>가 분석 단위.</p><div class="source">출처: 01_assignment_overview.md / data/README.md</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">2</div><div class="flow-body"><h5>식별자 연결 (stock_code → corp_code → rcept_no)</h5><p>OpenDART API/MCP로 종목코드 → DART 내부 회사코드 → 사업보고서 접수번호를 찾습니다. <code>esg_year = fiscal_year + 1</code> (예: 2025 등급 ↔ 2024.12 보고서).</p><div class="source">출처: 02_dart_data_collection.md</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">3</div><div class="flow-body"><h5>원문 다운로드 & 섹션 추출</h5><p><code>document.xml</code>로 사업보고서 받아서 <strong>II. 사업의 내용</strong>, <strong>IV. 이사의 경영진단 및 분석의견</strong>, <strong>VI. 이사회 등 회사의 기관에 관한 사항</strong>에서 ESG 관련 문단을 뽑습니다.</p><div class="source">출처: 01·02 md</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">4</div><div class="flow-body"><h5>전처리 (한국어 토큰화·불용어 제거)</h5><p>형태소 분석기(Okt, Pecab 등)로 단어 단위로 쪼개고, "및·관련·통해" 같은 불용어를 제거합니다. 회사명·도메인 불용어는 팀이 추가.</p><div class="source">출처: data/stopwords_ko_esg.txt · 03 md · Week 2-3 강의</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">5</div><div class="flow-body"><h5>TF-IDF로 단어 점수 만들기</h5><p>각 firm-year 문서에서 어떤 단어가 <strong>"여기서만 특히 자주 나오는가"</strong>를 숫자로. seed 30개(E·S·G × 10) 기준 점수를 합산.</p><div class="source">출처: 03 md · Week 5 강의</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">6</div><div class="flow-body"><h5>fastText로 사전 확장 (θ sweep)</h5><p>seed 단어 주변의 유사한 단어를 word embedding으로 찾아냅니다. cosine threshold θ를 여러 값으로 바꿔보며 잡음 단어를 직접 검토·제거 후 expanded dictionary 확정.</p><div class="source">출처: 01·03 md · Week 9-10 강의 · Bao 2024</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">7</div><div class="flow-body"><h5>feature 검증 (Spearman + 평균 차이)</h5><p>회귀 전에 먼저 <strong>"이 점수가 ESG 등급 순위와 같이 움직이나"</strong>를 Spearman 순위상관과 t-test/Mann-Whitney로 확인.</p><div class="source">출처: 03·04 md</div></div></div>
+    <div class="flow-row"><div class="flow-step-num">8</div><div class="flow-body"><h5>회귀분석 + 알파 + 한계 해석</h5><p>OLS / ordered logit / binary logit 중 하나를 골라 텍스트 feature와 등급의 관계 확인. cheap-talk(공시 장황함) 통제, 알파 분석 1개 이상, 인과 단정 금지.</p><div class="source">출처: 03·04 md</div></div></div>
+  </div>
+  <div class="callout info"><strong>이 페이지의 사용법</strong> — 위 8단계는 외워야 하는 절차가 아니라 보고서에 "왜 이 선택을 했는가"를 단계별로 남기기 위한 발자국입니다. 각 단계 카드 아래 출처를 표시해두었으니, 막힐 때마다 해당 md로 돌아가서 확인하세요.</div>
+</section>
+
+<section class="section" data-section="question">
+  <h2>이 프로젝트가 진짜로 묻는 것</h2>
+  <p class="section-intro">교수님 가이드는 "정답 결과값을 재현하는 과제가 아니다"라고 명시했습니다. 그럼 무엇을 묻는 걸까요?</p>
+  <div class="card info"><div class="track-label">🎯 한 문장</div><h4>"공시 언어로 만든 측정값이 KCGS ESG 등급과 어떤 패턴으로 연결되는가?"</h4><p style="margin: 6px 0 0; color: var(--text-secondary); font-size: 14px;">등급을 <strong>맞히려는 분류 문제</strong>가 아닙니다. 텍스트에서 뽑은 숫자가 <strong>무엇을 포착하는지</strong>를 확인하고, 외부 평가와 <strong>어떻게 연결되는지</strong>를 해석하는 과제입니다.</p></div>
+  <div class="analogy"><strong>학생의 자기소개서 vs. 학교생활기록부 평점</strong>의 관계를 보는 것과 비슷합니다. 자기소개서에 "리더십" 단어를 많이 쓴 학생이 실제로 평점이 높을까? 같이 움직인다면 그건 자소서가 평점을 결정한 게 아니라, 자소서 표현과 평가 사이에 일종의 <strong>"기호적 일치"</strong>가 있다는 뜻입니다. 우리는 이 일치를 데이터로 보는 것.</div>
+  <h3>이 질문을 묻는 이유 — 비정형 데이터 분석의 핵심 가치</h3>
+  <div class="grid-2">
+    <div class="card"><div class="track-label" style="color: var(--accent);">📜 비정형 데이터 = 정형 데이터로 못 보는 것</div><p style="margin: 0; font-size: 14px; color: var(--text-secondary);">KCGS 등급(S/A+/A/B+/B/C/D)은 이미 깔끔한 정형 데이터. 하지만 그 뒤에는 <strong>분석가들이 본 사업보고서의 표현, 문장의 톤, 강조점</strong>이 있습니다. 이걸 텍스트에서 직접 끌어오면 등급으로 환원되지 않은 차원이 보입니다.</p></div>
+    <div class="card"><div class="track-label" style="color: var(--accent);">🔍 데이터 마이닝 = 패턴을 찾는 것</div><p style="margin: 0; font-size: 14px; color: var(--text-secondary);">381 firm-years × 수십만 단어에서 "어떤 단어가 등급과 같이 움직이나" 같은 <strong>약한 신호 패턴</strong>을 찾는 것이 데이터 마이닝의 본질. 강한 결정론적 규칙이 아니라 통계적 연관성입니다.</p></div>
+  </div>
+  <h3>세 가지 조심할 것 (해석 가드레일)</h3>
+  <div class="card must"><div class="track-label">🔴 단정하지 말 것 #1</div><p style="margin: 0;">"이 표본에서는 ESG 단어가 강한 기업일수록 등급도 높았다"까지만. <strong>"공시가 등급을 결정했다"</strong>는 인과 단정 금지.</p></div>
+  <div class="card must"><div class="track-label">🔴 단정하지 말 것 #2</div><p style="margin: 0;">사업보고서 표현 ≠ 실제 ESG 성과. 어떤 기업은 잘해서 많이 쓰고, 어떤 기업은 <strong>설명이 필요한 이슈가 있어서</strong> 많이 씁니다 (cheap-talk).</p></div>
+  <div class="card must"><div class="track-label">🔴 단정하지 말 것 #3</div><p style="margin: 0;">381행은 수업용 <strong>pilot 표본</strong>. KCGS 전체 기업의 무작위 대표표본이 아닙니다.</p></div>
+</section>
+
+<section class="section" data-section="data">
+  <h2>데이터 — 381 firm-years와 식별자 3종</h2>
+  <p class="section-intro">분석의 출발점은 <code>company_master.csv</code>입니다. 이 표를 정확히 이해해야 이후 모든 단계가 일관됩니다.</p>
+  <h3>company_master.csv 구조</h3>
+  <table class="clean"><thead><tr><th>컬럼</th><th>예시</th><th>역할</th><th>채워져 있나?</th></tr></thead><tbody>
+  <tr><td><code>company_name</code></td><td>삼성전자</td><td>참고용 (사명변경·분할로 흔들림)</td><td>✅</td></tr>
+  <tr><td><code>stock_code</code></td><td><strong>005930</strong></td><td>🔑 <strong>분석 단위의 키</strong></td><td>✅</td></tr>
+  <tr><td><code>corp_code</code></td><td>00126380</td><td>OpenDART API 조회용</td><td>❌ 팀이 채움</td></tr>
+  <tr><td><code>fiscal_year</code></td><td>2024</td><td>사업보고서 회계연도</td><td>✅</td></tr>
+  <tr><td><code>rcept_no</code></td><td>20250311001085</td><td>사업보고서 접수번호</td><td>❌ 팀이 채움</td></tr>
+  <tr><td><code>esg_grade</code> 등</td><td>A · A+ · B · …</td><td>KCGS 등급 (E·S·G 각각 + 종합)</td><td>✅</td></tr>
+  <tr><td><code>esg_year</code></td><td>2025</td><td><code>= fiscal_year + 1</code></td><td>✅</td></tr>
+  </tbody></table>
+  <h3>왜 stock_code 기준인가? (회사명 금지 이유)</h3>
+  <div class="card must"><div class="track-label">🔴 위반 금지 — 회사명으로 join하지 말 것</div><ul><li><code>company_name</code> 133개 ≠ <code>stock_code</code> 127개 — <strong>같은 종목코드가 사명변경·분할로 여러 이름</strong>으로 나타납니다.</li><li>회사명으로 merge하면 silent하게 잘못 연결됨 (오류는 안 나는데 데이터는 망가짐).</li><li><strong>해결</strong>: 항상 <code>stock_code × fiscal_year</code>를 키로.</li></ul></div>
+  <h3>식별자 3종의 관계 — "깔때기" 비유</h3>
+  <div class="analogy">OpenDART는 깔때기 모양입니다. 위에서 <strong>stock_code(종목코드)</strong>가 들어가면 → 중간에서 <strong>corp_code(회사 내부 코드)</strong>로 변환되고 → 마지막에 그 회사의 <strong>rcept_no(접수번호)</strong> 목록이 나옵니다. 우리는 그중 "<code>사업보고서 (2024.12)</code>" 행을 골라야 합니다.</div>
+  <div class="card info"><div class="track-label">📌 timing 규칙 (절대값)</div><pre>esg_year = fiscal_year + 1
+
+예시:
+  2025년 KCGS 등급  ←→  2024.12 사업보고서
+  2024년 KCGS 등급  ←→  2023.12 사업보고서</pre><p style="margin: 8px 0 0; font-size: 13px; color: var(--text-secondary);">이유: KCGS는 직전 사업연도 정보를 보고 등급을 매기기 때문. 이 규칙이 흔들리면 회귀 결과가 모두 흔들립니다.</p></div>
+  <h3>수집 단위·범위 — 381이지만 N은 더 작을 수 있다</h3>
+  <div class="grid-2">
+    <div class="card"><h4>수집 시도 단위</h4><p style="margin: 0; font-size: 14px; color: var(--text-secondary);">전체 381 firm-years에 대해 <strong>시도</strong>합니다. 모든 팀이 동일.</p></div>
+    <div class="card"><h4>분석 corpus 단위</h4><p style="margin: 0; font-size: 14px; color: var(--text-secondary);"><strong>성공한 firm-years</strong>만 분석에 사용. 실패행을 <strong>가짜 0</strong>으로 채우면 ❌ — <code>collection_log.csv</code>에 이유 기록.</p></div>
+  </div>
+  <div class="callout danger"><strong>🔴 위반 금지 — 가짜 0</strong> 사업보고서를 못 찾았는데 텍스트 점수를 0으로 채워서 분석에 넣는 행위 금지. "텍스트 없음 = 점수 낮음"으로 잘못 학습되어 결과가 오염됩니다. (04 md, data/README.md)</div>
+</section>
+
+<section class="section" data-section="textmining">
+  <h2>텍스트를 숫자로 — 이번 학기 핵심 마이닝 기법</h2>
+  <p class="section-intro">"당사는 온실가스 배출량을 8.3% 감축…" 같은 문장을 어떻게 점수로 바꿀까요? 4가지 방법을 단계적으로 쌓습니다.</p>
+  <h3>방법 ① — TF-IDF (seed score)</h3>
+  <div class="card"><h4>TF-IDF가 뭔가?</h4><p style="margin: 0; font-size: 14px; color: var(--text-secondary);"><strong>TF</strong>(Term Frequency, 단어 빈도) × <strong>IDF</strong>(Inverse Document Frequency, 역문서 빈도). 한 단어가 <strong>이 문서에서는 자주 나오는데 다른 문서에서는 잘 안 나올수록</strong> 점수가 큽니다.</p></div>
+  <div class="analogy">학원에서 "수학"이라는 단어는 모든 학생 자소서에 나옵니다 (IDF 낮음 → 점수 낮음). 하지만 "올림피아드"는 <strong>특정 학생 자소서에만</strong> 자주 나오면 그 학생의 차별점이 됩니다 (IDF 높음 → 점수 높음).</div>
+  <div class="card info"><div class="track-label">🧮 seed score 계산법</div><pre>seed 30개 = E 10개 + S 10개 + G 10개
+
+E seed = [탄소, 온실가스, 탄소중립, 넷제로, 재생에너지,
+         에너지, 전력, 폐기물, 재활용, 폐수]
+
+E seed score (한 firm-year) = TF-IDF(탄소) + TF-IDF(온실가스) + ...
+
+같은 방식으로 S score, G score 계산.</pre></div>
+  <h3>방법 ② — fastText 확장 사전 (expanded score)</h3>
+  <div class="card"><h4>왜 확장하나?</h4><p style="margin: 0; font-size: 14px; color: var(--text-secondary);">seed 30개는 <strong>출발점</strong>일 뿐. 실제 보고서에는 <code>저탄소</code>, <code>탄소포집</code>, <code>RE100</code> 같은 단어도 ESG와 관련됩니다. 이런 <strong>의미적으로 비슷한 단어</strong>를 word embedding으로 찾아냅니다.</p></div>
+  <div class="analogy">seed가 "온실가스, 재생에너지"라면, fastText는 corpus 안에서 <strong>이 두 단어와 비슷한 자리에 등장하는 다른 단어들</strong>을 찾아 점수(cosine similarity)를 매깁니다. "탄소중립"(0.92), "배출권"(0.88), "저탄소"(0.85)처럼. 우리는 일정 점수 이상(threshold θ)인 단어를 후보로 삼습니다.</div>
+  <h3>θ sweep — "감"이 아니라 "데이터로" 정하기</h3>
+  <div class="card should"><div class="track-label">🟡 권고 — θ를 여러 값으로 시도</div><table class="clean" style="margin: 8px 0;"><thead><tr><th>θ</th><th>후보 수</th><th>잡음 비율</th><th>특징</th></tr></thead><tbody><tr><td>0.70</td><td>~500개</td><td>높음 (회사명·일반명사 多)</td><td>너무 넓게 잡아 잡음 증가</td></tr><tr><td>0.80</td><td>~150개</td><td>중간</td><td>균형점 후보</td></tr><tr><td>0.85</td><td>~50개</td><td>낮음</td><td>안전하지만 진짜 ESG 단어도 놓침</td></tr><tr><td>0.90</td><td>~10개</td><td>매우 낮음</td><td>seed에 거의 추가 없음</td></tr></tbody></table><p style="margin: 0; font-size: 13px; color: var(--text-secondary);">각 θ별로 <strong>상위 100단어</strong>를 직접 눈으로 검토해서 잡음 비율을 표로 정리. 최종 θ를 정할 때 회사명·일반명사를 직접 걸러냅니다.</p></div>
+  <div class="card must"><div class="track-label">🔴 위반 금지 — fastText 결과를 검토 없이 그대로 쓰기</div><p style="margin: 0;">fastText는 "비슷한 자리"를 보는 거라 <strong>의미가 비슷하지 않은 단어</strong>도 후보에 들어옵니다. 예: "대림에너지"(회사명) cosine 0.78 — 사람이 보고 제외해야 합니다. (Bao et al. 2024 표준 절차)</p></div>
+  <h3>방법 ③ — 기준 문장 cosine similarity (보조)</h3>
+  <div class="card"><h4>아이디어</h4><p style="margin: 0 0 8px; font-size: 14px; color: var(--text-secondary);">교수님이 제시한 E·S·G 기준 문장과 우리 corpus의 firm-year 문서를 둘 다 TF-IDF 벡터로 만들어, <strong>벡터의 방향이 얼마나 비슷한지</strong>를 cosine으로 측정.</p><table class="clean"><thead><tr><th>차원</th><th>기준 문장</th></tr></thead><tbody><tr><td><span class="badge E">E</span></td><td>온실가스 배출 감축, 재생에너지 사용, 탄소중립 목표와 실행 계획</td></tr><tr><td><span class="badge S">S</span></td><td>산업안전, 근로자 보호, 공급망 책임, 고객과 지역사회에 대한 사회적 책임</td></tr><tr><td><span class="badge G">G</span></td><td>이사회 독립성, 감사위원회, 내부통제, 주주권리와 윤리경영</td></tr></tbody></table></div>
+  <div class="callout warn"><strong>한계 — cosine은 "단어 겹침"만 본다</strong> TF-IDF cosine은 의미 임베딩이 아니라 <strong>표면 단어 겹침</strong>에 가까운 측정. dense embedding으로 확장하면 [심화] 알파 분석 후보. (03 md)</div>
+  <h3>방법 ④ — 양으로 통제 (cheap-talk control)</h3>
+  <div class="card info"><div class="track-label">📊 total_word_count 통제 변수</div><p style="margin: 0; font-size: 14px; color: var(--text-secondary);">어떤 기업은 그냥 보고서가 <strong>길어서</strong> ESG 단어도 많이 등장할 수 있습니다 (= 장황함, cheap-talk). 회귀에 <code>total_word_count</code>를 같이 넣으면, "양을 통제한 후에도 점수가 등급과 연결되는가"를 볼 수 있습니다.</p></div>
+  <h3>최종 출력 — firm-year × feature 표</h3>
+  <table class="clean"><thead><tr><th>stock_code</th><th>fiscal_year</th><th>esg_year</th><th>esg_grade_num</th><th>seed_tfidf</th><th>expanded_tfidf</th><th>E_cos</th></tr></thead><tbody><tr><td>005930</td><td>2024</td><td>2025</td><td>5 (A+)</td><td>0.82</td><td>1.10</td><td>0.86</td></tr><tr><td>035720</td><td>2024</td><td>2025</td><td>4 (A)</td><td>0.65</td><td>0.91</td><td>0.79</td></tr><tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr></tbody></table>
+  <div class="callout info"><strong>등급 → 숫자 변환</strong> <code>S=6, A+=5, A=4, B+=3, B=2, C=1, D=0</code></div>
+</section>
+
+<section class="section" data-section="validation">
+  <h2>검증과 회귀 — 점수가 등급과 정말 연결되나?</h2>
+  <p class="section-intro">feature를 만들었다고 끝이 아닙니다. <strong>회귀로 바로 가지 말고</strong>, 먼저 통계 검증으로 점수와 등급의 관계를 확인하는 것이 04 md의 평가표 항목입니다.</p>
+  <h3>1단계 검증 — Spearman 순위상관</h3>
+  <div class="card should"><div class="track-label">🟡 권고 — Spearman ρ를 먼저</div><ul><li><strong>왜 Spearman?</strong> ESG 등급은 D~A+의 <strong>서열변수</strong>. 등간성(A+→A 차이 = B→C 차이)이 아닙니다. <strong>순위가 같이 움직이는지</strong>를 보는 게 자연스러움.</li><li><strong>판단 기준</strong>: <code>|ρ|</code>가 0.10~0.20이면 통계적으로 유의해도 <strong>약한 연관</strong>. p-value만 보지 말 것.</li></ul><pre>| feature              | Spearman ρ | p-value | 해석                  |
+| expanded_tfidf_score | 0.15       | 0.004   | 약한 양의 관계        |
+| seed_tfidf_score     | 0.03       | 0.55    | 뚜렷한 관계 없음      |</pre></div>
+  <h3>2단계 검증 — 등급 그룹 간 평균 차이</h3>
+  <div class="card should"><div class="track-label">🟡 권고 — t-test 또는 Mann-Whitney</div><p style="margin: 0; font-size: 14px; color: var(--text-secondary);">"상위 등급(A 이상) 그룹"과 "하위 등급(B+ 이하) 그룹"의 평균 점수가 다른가? <strong>분포가 정규성에 가까우면 t-test</strong>, 그렇지 않거나 표본이 작으면 <strong>Mann-Whitney U</strong>. Spearman이 못 잡는 그룹별 차이를 보완합니다.</p></div>
+  <h3>3단계 — 회귀모형 선택 (옵션 A·B·C)</h3>
+  <div class="grid-3">
+    <div class="card info"><div class="track-label">옵션 A — OLS</div><h4>직관적 baseline</h4><pre>esg_grade_num = β0 + β1·score
+              + β2·word_count + ε</pre><p style="margin: 0; font-size: 13px; color: var(--text-secondary);"><strong>장점</strong> 해석 쉬움. <strong>한계</strong> 등급의 등간성을 가정 (엄밀히는 깨짐).</p></div>
+    <div class="card purple"><div class="track-label">옵션 B — Ordered logit</div><h4>등급 순서 보존</h4><pre>ordered_logit(grade)
+  = β1·score + β2·word_count</pre><p style="margin: 0; font-size: 13px; color: var(--text-secondary);"><strong>장점</strong> 서열변수에 가장 잘 맞음. <strong>한계</strong> 계수 해석이 어려움, 표본 작으면 불안정.</p></div>
+    <div class="card could"><div class="track-label">옵션 C — Binary logit</div><h4>"A 이상 여부"로 단순화</h4><pre>P(grade ≥ A)
+  = logistic(β0 + β1·score + ...)</pre><p style="margin: 0; font-size: 13px; color: var(--text-secondary);"><strong>장점</strong> odds ratio로 해석 쉬움. <strong>한계</strong> 등급 정보 축소.</p></div>
+  </div>
+  <div class="callout info"><strong>💡 선택 가이드</strong> 정답은 없습니다. <strong>팀의 질문에 맞는 모형</strong>을 고르고 <strong>버린 대안의 한계</strong>를 보고서에 함께 적습니다. (예: "우리는 ordered logit을 선택했다 — 등급이 서열변수라서. OLS는 등간성 가정이 깨지고, binary logit은 등급 정보를 잃기 때문에 보조로만 보고했다.")</div>
+  <h3>해석 가드레일 (cheap-talk 가설)</h3>
+  <table class="clean"><thead><tr><th>결과 패턴</th><th>조심스러운 해석</th></tr></thead><tbody>
+  <tr><td>β1 양수 + 유의 + word_count 통제 후에도 유지</td><td>텍스트 신호가 단순 장황함 이상</td></tr>
+  <tr><td>β1 양수 + 유의 + word_count 통제 후 0에 가까워짐</td><td>신호의 상당 부분이 disclosure verbosity (cheap-talk 가설 강해짐)</td></tr>
+  <tr><td>부호 불안정, 표본 작음</td><td>다중공선성 또는 표본 한계</td></tr>
+  </tbody></table>
+  <div class="callout danger"><strong>🔴 다중공선성 위험</strong> <code>seed_tfidf</code>와 <code>expanded_tfidf</code>를 <strong>동시에</strong> 회귀에 넣지 마세요. 두 변수가 강하게 상관되어 계수가 불안정해집니다. <strong>별도 모델로 비교</strong>합니다.</div>
+</section>
+
+<section class="section" data-section="lecture-map">
+  <h2>이번 학기 수업과 이 프로젝트의 매핑</h2>
+  <p class="section-intro">교수님 가이드 01 md의 표를 확장해, Week별로 어디서 어떤 기법이 사용되는지를 정리했습니다.</p>
+  <table class="clean"><thead><tr><th>수업에서 배운 것</th><th>Week</th><th>이번 프로젝트에서</th><th>참고 파일</th></tr></thead><tbody>
+  <tr><td><span class="badge lecture">한국어 문자열 처리</span></td><td>Week 2-3</td><td>DART 사업보고서 텍스트 추출, 정규식으로 섹션 분리</td><td>UD-02-200, UD-03-200</td></tr>
+  <tr><td><span class="badge lecture">형태소 분석기 (Okt/Pecab)</span></td><td>Week 3</td><td>ESG 문단 토큰화, 명사 추출, 불용어 제거</td><td>UD-03-300, UD-03-301</td></tr>
+  <tr><td><span class="badge lecture">웹·API 수집 (requests)</span></td><td>Week 4</td><td>OpenDART API로 corp_code, rcept_no 조회, document.xml 다운로드</td><td>UD-04-200, UD-04-500</td></tr>
+  <tr><td><span class="badge lecture">TF-IDF / Vectorization</span></td><td>Week 5</td><td>seed_tfidf_score, expanded_tfidf_score 생성</td><td>UD-05-320</td></tr>
+  <tr><td><span class="badge lecture">Cosine similarity</span></td><td>Week 5</td><td>E·S·G 기준 문장과 firm-year 문서의 cosine</td><td>UD-05-310, UD-05-410</td></tr>
+  <tr><td><span class="badge lecture">Pipeline (sklearn)</span></td><td>Week 6</td><td>전처리→Vectorizer→점수 계산을 한 파이프라인으로</td><td>UD-06-500</td></tr>
+  <tr><td><span class="badge lecture">Word2Vec / 임베딩</span></td><td>Week 9</td><td>fastText 사전 확장의 기반 개념</td><td>UD-09-700, UD-09-710</td></tr>
+  <tr><td><span class="badge lecture">fastText seed expansion</span></td><td>Week 10</td><td>seed 단어 주변 후보 검색, θ sweep, manual curation</td><td>UD-10-910</td></tr>
+  <tr><td><span class="badge lecture">DART MCP/CLI 가이드</span></td><td>Week 10</td><td>실제 데이터 수집 파이프라인</td><td>UD-10-900</td></tr>
+  <tr><td><span class="badge lecture">토큰화·tensor 변환</span></td><td>Week 11</td><td>(심화) dense embedding 알파 분석 후보</td><td>UD-11-400, UD-11-500</td></tr>
+  </tbody></table>
+  <div class="callout purple"><strong>비정형 데이터 처리 + 데이터 마이닝 = 이 프로젝트의 양 축</strong><ul style="margin: 8px 0 0; padding-left: 20px; color: var(--text-secondary);"><li><strong>비정형 처리</strong>: 한국어 문장 → 토큰 → TF-IDF 행렬 (Week 2-6)</li><li><strong>마이닝</strong>: TF-IDF 행렬 + 외부 등급 → Spearman/회귀로 패턴 추출 (Week 5, 9-10, + 회귀)</li></ul>교수님께서 "비정형 데이터 처리와 데이터 마이닝이 중요할 수 있다"고 하신 부분은, <strong>이 두 축이 끊김 없이 연결되는 것</strong>이 평가 핵심이라는 뜻입니다.</div>
+  <h3>강의에는 없지만 이 프로젝트에 추가되는 것</h3>
+  <div class="grid-2">
+    <div class="card info"><h4>📌 회귀분석 (OLS/ordered/binary logit)</h4><p style="margin: 0; font-size: 13px; color: var(--text-secondary);">통계학 기초에서 다뤄지지만, 이번 학기 NLP 수업의 정식 토픽은 아님. <strong>statsmodels</strong> 라이브러리로 처리합니다.</p></div>
+    <div class="card info"><h4>📌 검증 통계 (Spearman, Mann-Whitney)</h4><p style="margin: 0; font-size: 13px; color: var(--text-secondary);">비모수 통계 검증. <strong>scipy.stats</strong>로 한 줄 호출 가능. p-value보다 효과 크기(ρ)에 집중.</p></div>
+  </div>
+</section>
+
+<section class="section" data-section="rules">
+  <h2>위반 금지 + 평가 기준</h2>
+  <p class="section-intro">04 md 평가표를 비전공자가 봐도 알 수 있게 풀었습니다. 보고서 작성 시 옆에 두세요.</p>
+  <h3>🔴 절대 어기면 안 되는 것 (위반 시 감점)</h3>
+  <div class="grid-2">
+    <div class="card must"><div class="track-label">위반 #1 — 회사명 join</div><p style="margin: 0; font-size: 13.5px;"><code>company_name</code>으로 merge하면 사명변경·분할로 silent 오매칭. <strong>stock_code 기준</strong>.</p></div>
+    <div class="card must"><div class="track-label">위반 #2 — timing 어김</div><p style="margin: 0; font-size: 13.5px;"><code>esg_year = fiscal_year + 1</code> 어기면 등급-보고서 시점이 어긋나서 회귀 결과가 무의미.</p></div>
+    <div class="card must"><div class="track-label">위반 #3 — 가짜 0</div><p style="margin: 0; font-size: 13.5px;">수집 실패 행을 텍스트 점수 0으로 채우면 ❌. <code>collection_log</code>에 이유 기록 후 분석에서 drop.</p></div>
+    <div class="card must"><div class="track-label">위반 #4 — API key 노출</div><p style="margin: 0; font-size: 13.5px;">노트북 출력·코드에 <code>crtfc_key</code> 직접 보이면 ❌. <code>.env</code>만 사용.</p></div>
+    <div class="card must"><div class="track-label">위반 #5 — fastText 검토 없이</div><p style="margin: 0; font-size: 13.5px;">θ만 정하고 후보 단어를 사람이 안 본 채 expanded dict 확정 ❌. 회사명·일반명사 직접 제거.</p></div>
+    <div class="card must"><div class="track-label">위반 #6 — 다중공선성</div><p style="margin: 0; font-size: 13.5px;"><code>seed_tfidf</code>와 <code>expanded_tfidf</code>를 한 모델에 동시 투입 ❌. 별도 모델로 비교.</p></div>
+    <div class="card must"><div class="track-label">위반 #7 — 인과 단정</div><p style="margin: 0; font-size: 13.5px;">"공시가 등급을 결정한다"식 표현 ❌. "이 표본에서는 ~ 경향이 있었다"로 조심스럽게.</p></div>
+    <div class="card must"><div class="track-label">위반 #8 — MCP 결과 무검증</div><p style="margin: 0; font-size: 13.5px;">MCP가 만든 passage 표를 그대로 분석에 넣으면 ❌. Python 코드로 재현·검증 필요.</p></div>
+  </div>
+  <h3>평가표 — 좋은 결과물 vs 흔한 문제</h3>
+  <table class="clean"><thead><tr><th>영역</th><th>✅ 좋은 결과물</th><th>❌ 흔한 문제</th></tr></thead><tbody>
+  <tr><td><strong>데이터 이해</strong></td><td>381 표본·결측·timing 설명</td><td>일부만 분석하고 전체처럼 말함</td></tr>
+  <tr><td><strong>DART lineage</strong></td><td>식별자 3종 추출 로그 남김</td><td>회사명 join, 정정공시 혼용</td></tr>
+  <tr><td><strong>텍스트 처리</strong></td><td>II/IV/VI 섹션·불용어·sieve 기준 설명</td><td>보고서 전체 통째로 투입</td></tr>
+  <tr><td><strong>측정 validity</strong></td><td>Spearman + t-test/MW 보고 후 회귀</td><td>분포만 보고 회귀로 직행</td></tr>
+  <tr><td><strong>모형 선택</strong></td><td>OLS/ordered/binary 중 선택 이유 명시</td><td>OLS 한 줄 결과로 등급 단정</td></tr>
+  <tr><td><strong>해석·한계</strong></td><td>cheap-talk·표본 한계까지 같이 읽음</td><td>p-value만 보고 ESG 성과로 환원</td></tr>
+  <tr><td><strong>알파 분석</strong></td><td>왜·무엇·한계 설명</td><td>기법 이름만 붙임</td></tr>
+  </tbody></table>
+  <h3>최종 제출물 (04 md 명시)</h3>
+  <div class="grid-2">
+    <div class="card info"><h4>📓 분석 노트북 <code>.ipynb</code></h4><ul style="margin: 0;"><li>위에서 아래로 순서대로 실행하면 결과 재현</li><li>API key 노출 없음 (<code>.env</code>만)</li><li>데이터 수집·전처리·feature 생성·회귀 코드와 출력 포함</li></ul></div>
+    <div class="card info"><h4>📝 보고서 <code>.md</code></h4><ul style="margin: 0;"><li><strong>데이터 → 방법 → 결과 → 한계</strong> 순서</li><li>각 선택의 <strong>이유</strong>를 명시 (왜 그 섹션? 왜 그 θ? 왜 그 모형?)</li><li>3문장 이상은 첫 문장 핵심 + bullet</li></ul></div>
+  </div>
+</section>
+
+<section class="section" data-section="next">
+  <h2>다음 단계 — 계획 단계 진입 준비</h2>
+  <p class="section-intro">이 분석이 끝나면 다음은 <strong>"누가, 언제, 무엇을"</strong>인 계획 단계입니다.</p>
+  <h3>분석 단계의 산출물 (지금 우리가 갖고 있는 것)</h3>
+  <div class="card could"><div class="track-label">✅ 완료된 이해</div><ul><li>이 프로젝트가 <strong>"등급 예측"이 아니라 "텍스트-등급 패턴 해석"</strong>이라는 것</li><li>381 firm-years × 식별자 3종(stock_code → corp_code → rcept_no)의 깔때기 구조</li><li>TF-IDF (seed/expanded) + fastText (θ sweep) + cosine (기준 문장)의 4가지 측정</li><li>Spearman → t-test/MW → 회귀(OLS/ordered/binary) 순서</li><li>위반 금지 8개, 평가표 7영역, 제출물 2종(.ipynb + .md)</li></ul></div>
+  <h3>계획 단계에서 결정해야 할 것</h3>
+  <table class="clean"><thead><tr><th>결정</th><th>선택지</th><th>참고 가이드</th></tr></thead><tbody>
+  <tr><td><strong>역할 분담 모델</strong></td><td>전원 참여 / lead·co-lead / 개인 중첩</td><td>ROLES_역할분담재설계.html (v0.1)</td></tr>
+  <tr><td><strong>마일스톤 (M1~M4)</strong></td><td>수집·feature·회귀·발표 일자 확정</td><td>README.md</td></tr>
+  <tr><td><strong>섹션 추출 기준</strong></td><td>II·IV·VI 셋 다 / II만 / E·S·G 분리</td><td>03 md decision box #1</td></tr>
+  <tr><td><strong>fastText θ 범위</strong></td><td>0.70~0.90, sweep step 0.05</td><td>01·03 md, Bao 2024</td></tr>
+  <tr><td><strong>회귀모형</strong></td><td>OLS / Ordered / Binary</td><td>03 md decision box #3</td></tr>
+  <tr><td><strong>알파 분석 주제</strong></td><td>섹션별 점수, 업종별 분할, dense embedding 등</td><td>04 md §3-1</td></tr>
+  </tbody></table>
+  <h3>버전 관리 다음 단계</h3>
+  <div class="callout info"><strong>v0.2 후보 변경</strong> — 이 HTML을 보면서 팀이 토론한 결과 (예: 섹션 추출 기준 변경, fastText θ 범위 합의, 마일스톤 확정 등)가 생기면, <code>docs/supplements/versions/v0.2/</code>에 수정본을 보관하고 <code>_VERSION.md</code>에 변경 이력을 남깁니다.</div>
+  <h3>지금 바로 할 수 있는 것 (Quick Start)</h3>
+  <div class="grid-2">
+    <div class="card"><h4>1️⃣ pilot 수집 (1-2 firm-years)</h4><p style="margin: 0; font-size: 13px; color: var(--text-secondary);">삼성전자 2024처럼 1-2개로 전체 파이프라인을 끝까지 통과시켜 보기. 막히는 곳을 발견.</p></div>
+    <div class="card"><h4>2️⃣ 환경 셋업</h4><p style="margin: 0; font-size: 13px; color: var(--text-secondary);"><code>.env</code>에 <code>OPENDART_API_KEY</code>, <code>pip install -r requirements.txt</code>, <code>nbstripout --install</code>.</p></div>
+    <div class="card"><h4>3️⃣ 기존 supplements 정독</h4><p style="margin: 0; font-size: 13px; color: var(--text-secondary);"><code>GLOSSARY_비전공자용어사전.html</code>, <code>SUPPLEMENT_8단계보강가이드.html</code>, <code>QNA_발표대비.html</code>를 차례로.</p></div>
+    <div class="card"><h4>4️⃣ 역할 분담 합의</h4><p style="margin: 0; font-size: 13px; color: var(--text-secondary);"><code>ROLES_역할분담재설계.html</code> 보면서 팀 4명이 어떤 협업 모델로 갈지 결정.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>출처 가이드</strong> — 교수님 4개 md (<code>docs/professor_md/01-04</code>) + 팀 supplements (<code>GLOSSARY</code>, <code>SUPPLEMENT</code>, <code>QNA</code>) + 강의 자료 (<code>workspace/unstructured-data-processing/lecture/Week2-11</code>). 이 문서는 교수님 가이드를 비전공자가 한 흐름으로 이해하도록 정리한 보강 자료이며, 가이드 원본을 대체하지 않습니다.</p>
+  <p>v0.1 · 2026-05-15 작성 · 위반 금지 체크리스트 통과 (회사명 join X, timing 명시, 가짜 0 X, API key 보호, fastText curation 강조, 다중공선성 경고, 인과 단정 회피, MCP 검증)</p>
+</footer>
+
+</div>
+
+<script>
+const tabs = document.querySelectorAll('nav.tabs button');
+const sections = document.querySelectorAll('section.section');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    tabs.forEach(b => b.classList.toggle('active', b === btn));
+    sections.forEach(s => s.classList.toggle('active', s.dataset.section === target));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>

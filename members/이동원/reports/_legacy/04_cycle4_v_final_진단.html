@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><title>사이클 4 v_final 종합 진단</title>
+<style>:root{--bg:#fafaf7;--bg-card:#fff;--bg-soft:#f3f1ea;--bg-danger:#fef2f2;--bg-warn:#fff7ed;--bg-success:#f0fdf4;--bg-info:#eff6ff;--bg-purple:#f5f3ff;--text:#1c1c1a;--mute:#5a5a55;--border:rgba(0,0,0,.1);--accent:#4338ca}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Noto Sans KR","Malgun Gothic",sans-serif}.wrap{max-width:1180px;margin:0 auto;padding:32px 24px 60px}h1{font-size:26px;font-weight:500;margin:0 0 8px}h2{font-size:20px;margin:24px 0 8px}h3{font-size:16px;margin:18px 0 6px;font-weight:600}.sub{color:var(--mute);margin:0 0 16px}.chip{display:inline-block;font-size:12px;padding:4px 10px;border-radius:999px;background:var(--bg-soft);color:var(--mute);margin-right:6px;border:.5px solid var(--border)}.chip strong{color:var(--text);font-weight:600}.chip.gate{background:#f0fdf4;color:#15803d}.chip.deadline{background:#fef2f2;color:#b91c1c}nav.tabs{display:flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--bg-soft);border-radius:12px;margin-bottom:24px;position:sticky;top:12px;z-index:10;border:.5px solid var(--border)}nav.tabs button{flex:1 1 auto;min-width:110px;padding:9px 12px;border:none;background:transparent;color:var(--mute);font-size:13px;font-weight:500;border-radius:8px;cursor:pointer;font-family:inherit}nav.tabs button:hover{background:rgba(255,255,255,.6);color:var(--text)}nav.tabs button.active{background:var(--bg-card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.06)}.section{display:none}.section.active{display:block}.card{background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:12px}.card.must{background:var(--bg-danger);border-color:rgba(239,68,68,.25)}.card.warn{background:var(--bg-warn);border-color:rgba(245,158,11,.25)}.card.ok{background:var(--bg-success);border-color:rgba(34,197,94,.25)}.card.info{background:var(--bg-info);border-color:rgba(37,99,235,.25)}.card.purple{background:var(--bg-purple);border-color:rgba(124,58,237,.25)}.tag{font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;margin-bottom:6px}.tag.must{color:#b91c1c}.tag.warn{color:#b45309}.tag.ok{color:#15803d}.tag.info{color:#1d4ed8}.tag.purple{color:#6d28d9}table.clean{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}table.clean th,table.clean td{text-align:left;padding:8px 10px;border-bottom:.5px solid var(--border);vertical-align:top}table.clean th{font-weight:500;color:var(--mute);font-size:11px;text-transform:uppercase;background:var(--bg-soft)}table.clean tr.ok td{background:rgba(34,197,94,.04)}table.clean tr.warn td{background:rgba(245,158,11,.05)}table.clean tr.new td{background:rgba(67,56,202,.05)}code{font-family:ui-monospace,monospace;font-size:12.5px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:3px}.cycle-row{display:grid;grid-template-columns:60px 1fr;gap:14px;margin-bottom:12px}.cnum{background:var(--accent);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:20px}.pills{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}.pill{background:var(--bg-card);border:.5px solid var(--border);border-radius:10px;padding:10px 14px;min-width:140px}.pill .label{font-size:11px;color:var(--mute);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}.pill .value{font-size:18px;font-weight:600}.pill.ok .value{color:#15803d}.pill.warn .value{color:#b45309}.pill.cycle .value{color:#6d28d9}</style></head><body><div class="wrap">
+
+<h1>사이클 4 v_final 종합 진단 — 1~4 사이클 흐름 + Phase B 결과 예상</h1>
+<p class="sub">팀 회의용 시각 진단. 사이클 1~4의 진화 + v_final 5 노트북 구성 + 위반금지 8/8 + 가이드 04 §3 평가표 7개 영역 매핑.</p>
+<div>
+<span class="chip"><strong>작성</strong> 이동원</span>
+<span class="chip"><strong>일자</strong> 2026-05-18</span>
+<span class="chip"><strong>사이클</strong> 4 (최종 v_final)</span>
+<span class="chip gate"><strong>v_final 노트북</strong> 5종 ✅</span>
+<span class="chip deadline"><strong>D-Day</strong> 2026-05-19</span>
+</div>
+
+<nav class="tabs">
+<button class="active" data-tab="a">A · 사이클 흐름</button>
+<button data-tab="b">B · v_final 5 노트북</button>
+<button data-tab="c">C · 위반금지 8/8</button>
+<button data-tab="d">D · 가이드 §3 평가표</button>
+<button data-tab="e">E · 회의 안건</button>
+<button data-tab="f">F · D-Day 액션</button>
+</nav>
+
+<!-- TAB A: 사이클 흐름 -->
+<section class="section active" id="a">
+<h2>A. 사이클 1~4 진화 흐름</h2>
+<div class="pills">
+<div class="pill"><div class="label">사이클</div><div class="value">4</div></div>
+<div class="pill ok"><div class="label">v_final 노트북</div><div class="value">5종</div></div>
+<div class="pill ok"><div class="label">Fix 적용</div><div class="value">A·B·C·D·E·F</div></div>
+<div class="pill"><div class="label">seed v1</div><div class="value">30</div></div>
+<div class="pill cycle"><div class="label">expanded_manual</div><div class="value">7 (방향 1)</div></div>
+<div class="pill"><div class="label">batch 30건</div><div class="value">⏳ Run All 대기</div></div>
+</div>
+
+<div class="cycle-row"><div class="cnum">1</div><div><div class="card info"><div class="tag info">사이클 1</div>
+<h3>4 노트북 신설 — 풀 파이프 코드 build</h3>
+<p>00 ingest + 01 phase2A v2 + 02 v2 + 03 v1. Samsung 1건 Run All 가능 코드. 발견: .ipynb truncated, batch NameError, log 중복.</p>
+</div></div></div>
+
+<div class="cycle-row"><div class="cnum">2</div><div><div class="card info"><div class="tag info">사이클 2</div>
+<h3>5대 fix 적용 + S 진단 노트북 신설</h3>
+<p>Fix A (한글 폰트) · B (stock_code dtype) · C (KCGS 메모 dynamic) · D (collection_log dedup) · E (display 제한). 02b s_diag v1 신설 — S 점수 진단.</p>
+</div></div></div>
+
+<div class="cycle-row"><div class="cnum">3</div><div><div class="card warn"><div class="tag warn">사이클 3</div>
+<h3>batch 30건 시도 → 30/30 FAIL_OTHER + seed 검토</h3>
+<p>phase2B v1 batch — 30/30 모두 XMLSyntaxError. 원인: DART 일부 회사 XML well-formed 아님. seed_v2 9 후보 Claude 10단계 검토 → KEPT 7 + REMOVED 2 + 재분류 1.</p>
+</div></div></div>
+
+<div class="cycle-row"><div class="cnum">4</div><div><div class="card ok"><div class="tag ok">사이클 4 (현재)</div>
+<h3>v_final 5 노트북 + Fix F + 방향 1</h3>
+<p><strong>핵심 발전 3개</strong>: ① Fix F (lxml recover + 정규식 pre-처리) → batch 30/30 SUCCESS 목표. ② 방향 1 (seed v1 30 유지 + expanded_manual_v1 7 별도) — 가이드 line 53 정신 충족. ③ 3 모형 (OLS·ordered·binary) + 업종 분해 알파 — 가이드 04 §3 평가표 100% 충족.</p>
+</div></div></div>
+</section>
+
+<!-- TAB B: v_final -->
+<section class="section" id="b">
+<h2>B. v_final 5 노트북 구성</h2>
+<table class="clean">
+<tr><th>#</th><th>노트북</th><th>cells</th><th>핵심 변경 (vs 이전)</th></tr>
+<tr class="ok"><td>1</td><td>00 ingest v_final</td><td>17</td><td>차원별 분포 + 업종 cross tab + binary fallback (v1 신설)</td></tr>
+<tr class="ok"><td>2</td><td>01 phase2A v_final</td><td>23</td><td><strong>Fix F (recover+pre-처리)</strong> + seed/expanded 동시 매칭 + git_sha</td></tr>
+<tr class="new"><td>3</td><td>01 phase2B v_final</td><td>13</td><td>recover + 30/30 목표 + incremental checkpoint 매 10건</td></tr>
+<tr class="ok"><td>4</td><td>02 preprocessing v_final</td><td>15</td><td><strong>seed_tfidf + expanded_tfidf 2 점수</strong> + alt sweep (min_df 자동)</td></tr>
+<tr class="ok"><td>5</td><td>03 mining v_final</td><td>13</td><td><strong>OLS + ordered + binary 3 모형</strong> + 업종 분해 알파</td></tr>
+</table>
+<p style="color:var(--mute)">총 81 cells. 매 마크다운 셀에 What/Why/근거 (가이드 line + 학술 + 비전공자 노트) 3블록.</p>
+
+<h3>v_final → 이전 사이클 차이</h3>
+<table class="clean">
+<tr><th>영역</th><th>이전 (사이클 2·3)</th><th>v_final (사이클 4)</th></tr>
+<tr><td>XML parser</td><td>strict (30/30 FAIL)</td><td><strong>recover=True + pre-처리</strong></td></tr>
+<tr><td>seed</td><td>v1 30 or v_v2 37 (혼란)</td><td><strong>v1 30 + expanded_manual 7 분리</strong> (가이드 부합)</td></tr>
+<tr><td>회귀 모형</td><td>OLS 코드만</td><td><strong>OLS + ordered + binary 3종 동시 비교</strong></td></tr>
+<tr><td>알파 분석</td><td>specificity 1종 (코드만)</td><td><strong>specificity + 업종 분해</strong> (가이드 §3-1 명시)</td></tr>
+<tr><td>checkpoint</td><td>없음 (batch 중간 실패 시 처음부터)</td><td><strong>매 10건 collection_log flush</strong></td></tr>
+</table>
+</section>
+
+<!-- TAB C: 위반금지 -->
+<section class="section" id="c">
+<h2>C. 위반금지 8/8 충족 — v_final 노트북별 매핑</h2>
+<table class="clean">
+<tr><th>#</th><th>위반금지</th><th>00</th><th>01a</th><th>01b</th><th>02</th><th>03</th></tr>
+<tr class="ok"><td>1</td><td>가짜 0 ❌</td><td>NaN 유지</td><td>✅ status+dedup</td><td>✅ try/except</td><td>✅ SUCCESS join</td><td>✅ N&lt;3 NaN</td></tr>
+<tr class="ok"><td>2</td><td>viewer 우회 ❌</td><td>—</td><td>✅ Step 8</td><td>✅ random 3</td><td>—</td><td>—</td></tr>
+<tr class="ok"><td>3</td><td>MCP 그대로 신뢰 ❌</td><td>KRX 수동</td><td>✅ Python re</td><td>✅ viewer 3</td><td>✅ seed/expanded 검토</td><td>—</td></tr>
+<tr class="ok"><td>4</td><td>API key 노출 ❌</td><td>—</td><td>✅ mask_key</td><td>✅ mask_key</td><td>—</td><td>—</td></tr>
+<tr class="ok"><td>5</td><td>raw 미보존 ❌</td><td>_originals/</td><td>✅ data/raw</td><td>✅ data/raw 30</td><td>—</td><td>—</td></tr>
+<tr class="ok"><td>6</td><td>진단 부재 ❌</td><td>✅ 분포 3종</td><td>✅ SECTION 표</td><td>✅ status counter</td><td>✅ 토큰 통계</td><td>✅ 모형 표</td></tr>
+<tr class="ok"><td>7</td><td>silent 오매칭 ❌</td><td>✅ Fix B</td><td>✅ Fix B</td><td>✅ Fix B</td><td>✅ Fix B</td><td>✅ Fix B</td></tr>
+<tr class="ok"><td>8</td><td>평가 기준 부재 ❌</td><td>✅ stratification</td><td>✅ Step 10 표</td><td>✅ SUCCESS≥80%</td><td>✅ self-check</td><td>✅ AIC·BIC</td></tr>
+</table>
+</section>
+
+<!-- TAB D: 가이드 §3 -->
+<section class="section" id="d">
+<h2>D. 가이드 04 §3 평가표 7개 영역 충족</h2>
+<table class="clean">
+<tr><th>영역</th><th>좋은 결과물 (가이드)</th><th>v_final 충족</th></tr>
+<tr class="ok"><td>데이터 이해</td><td>381 표본 의미·timing·결측 처리</td><td>00 v_final: 분포·업종·stratification</td></tr>
+<tr class="ok"><td>DART lineage</td><td>stock·corp·rcept·fiscal 구분 + 로그</td><td>01 v_final: 31 firm-year × collection_log</td></tr>
+<tr class="ok"><td>텍스트 처리</td><td>II/IV/VI + 불용어 + seed/expanded 차이</td><td>01 + 02 v_final: 본문/표 분리 + seed_v1 + expanded_manual</td></tr>
+<tr class="ok"><td>측정 validity</td><td>Spearman + t-test/Mann-Whitney</td><td>03 v_final: 15 쌍 + N≥3 시 정상 통계</td></tr>
+<tr class="ok"><td>모형 선택</td><td>OLS·ordered·binary 중 선택 + 한계</td><td>03 v_final: 3 모형 비교 표 + AIC·BIC</td></tr>
+<tr class="ok"><td>해석과 한계</td><td>방향·크기·cheap-talk·업종 한계</td><td>03 v_final: 업종 분해 + word_count·specificity 통제</td></tr>
+<tr class="ok"><td>알파</td><td>이유·결과·한계 명확</td><td>03 v_final: 알파 #1 업종 분해 (가이드 §3-1 명시)</td></tr>
+</table>
+</section>
+
+<!-- TAB E: 회의 안건 -->
+<section class="section" id="e">
+<h2>E. 팀 회의 안건 (사용자 결정 필요)</h2>
+
+<div class="card info"><div class="tag info">안건 1</div>
+<h3>seed/expanded 방향 채택</h3>
+<ul style="color:var(--mute)">
+<li>✅ <strong>방향 1 (현재 채택, Claude 권장)</strong>: seed v1 30 + expanded_manual_v1 7</li>
+<li>방향 2: seed_v2 37 (사이클 2 결정으로 회귀)</li>
+<li>방향 3: seed v1 30 + fastText 자동만 (manual 7 폐기)</li>
+</ul>
+<p><strong>근거</strong>: 가이드 01 line 53 "seed는 교수 draft 유지, 팀은 expanded 별도 정당화" 정신 부합.</p>
+</div>
+
+<div class="card purple"><div class="tag purple">안건 2</div>
+<h3>알파 분석 채택 (가이드 04 §3-1)</h3>
+<ul style="color:var(--mute)">
+<li>✅ <strong>#1 업종별 분해 (v_final 코드 포함, Claude 권장)</strong> — 가이드 line 97 명시</li>
+<li>#2 cheap-talk 3종 강화 (specificity + commitment + non-material)</li>
+<li>#3 section_weighted score</li>
+<li>#4 KLUE-RoBERTa baseline (D-Day 후)</li>
+</ul>
+</div>
+
+<div class="card warn"><div class="tag warn">안건 3</div>
+<h3>회귀 모형 최종 채택</h3>
+<p>사이클 4 Run All 결과 확인 후 OLS·ordered·binary 중 1개 채택. AIC·BIC + 해석 가독성 종합 판단.</p>
+</div>
+
+<div class="card info"><div class="tag info">안건 4</div>
+<h3>사이클 5 작업 안</h3>
+<ol style="color:var(--mute)">
+<li>사용자 Run All 결과 반영 → 단계별 보고서 v_final 5개 + 진단 HTML 5개</li>
+<li>release notes 5개 (00·01a·01b·02·03)</li>
+<li>GitHub MCP 양쪽 레포 PR 8개 분할</li>
+<li>최종 발표 자료 (Marp 또는 HTML)</li>
+</ol>
+</div>
+</section>
+
+<!-- TAB F: D-Day -->
+<section class="section" id="f">
+<h2>F. 5/19 D-Day 액션</h2>
+
+<div class="card warn"><div class="tag warn">사용자 액션 (5/18 밤 ~ 5/19 D-Day)</div>
+<ol>
+<li>✅ 본 회의용 보고서 검토</li>
+<li>⏳ <strong>5 노트북 v_final Run All 순서대로</strong>:
+<ol type="a"><li>00 ingest v_final (5~10초)</li>
+<li>01 phase2A v_final (30초~1분, 캐시 hit)</li>
+<li><strong>01 phase2B v_final (5~10분, batch 30)</strong></li>
+<li>02 preprocessing v_final (1~2분, N=31)</li>
+<li>03 mining v_final (30초, N=31)</li></ol></li>
+<li>⏳ batch SUCCESS 비율 + 결과 확인 → Claude에게 공유</li>
+<li>⏳ 의견 차이 있으면 알려주기 (seed/알파/모형 선택)</li>
+</ol>
+</div>
+
+<div class="card info"><div class="tag info">Claude 액션 (사용자 Run All 후)</div>
+<ol>
+<li>단계별 보고서.md × 5 (Run All 결과 반영)</li>
+<li>단계별 진단_발전제안.html × 5</li>
+<li>release notes × 5</li>
+<li>GitHub MCP PR 8개 (origin + team 동기화)</li>
+<li>최종 발표 자료 (선택)</li>
+</ol>
+</div>
+
+<div class="card ok"><div class="tag ok">D-Day 제출물 (5/19)</div>
+<ul>
+<li>분석 노트북 (.ipynb 5종)</li>
+<li>보고서 (`03_cycle4_v_final_종합_회의용.md` 또는 사이클 5 최종)</li>
+<li>가이드 04 §1 (.ipynb + .md) 충족</li>
+</ul>
+</div>
+</section>
+
+<p style="color:var(--mute);font-size:12px;margin-top:40px;border-top:.5px solid var(--border);padding-top:14px">
+사이클 4 v_final 종합 진단 · 2026-05-18 · 이동원 (Claude 협업)<br>
+근거: 5 노트북 v_final (81 cells) + 사이클 1~3 학습 + 가이드 01~04 + 벤치마킹 5축 + 위반금지 8항목
+</p>
+</div>
+
+<script>
+const tabs = document.querySelectorAll('nav.tabs button');
+const sections = document.querySelectorAll('.section');
+tabs.forEach(btn => btn.addEventListener('click', () => {
+  tabs.forEach(b => b.classList.remove('active'));
+  sections.forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(btn.dataset.tab).classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}));
+</script>
+</body></html>

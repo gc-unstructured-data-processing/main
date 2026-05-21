@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESG DART 기말 프로젝트 — 비전공자 용어사전 v1</title>
+<style>
+:root {
+  --bg: #fafaf7;
+  --bg-card: #ffffff;
+  --bg-soft: #f3f1ea;
+  --bg-warn: #fff7ed;
+  --bg-danger: #fef2f2;
+  --bg-info: #eff6ff;
+  --bg-success: #f0fdf4;
+  --bg-purple: #f5f3ff;
+  --text-primary: #1c1c1a;
+  --text-secondary: #5a5a55;
+  --text-muted: #8a8a85;
+  --text-warn: #b45309;
+  --text-danger: #b91c1c;
+  --text-info: #1d4ed8;
+  --text-success: #15803d;
+  --text-purple: #6d28d9;
+  --border: rgba(0,0,0,0.10);
+  --border-strong: rgba(0,0,0,0.18);
+  --accent: #4338ca;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 80px; }
+header.hero { border-bottom: 0.5px solid var(--border); padding-bottom: 24px; margin-bottom: 24px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+h1 { font-size: 26px; font-weight: 500; margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { font-size: 15px; color: var(--text-secondary); margin: 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.chip strong { font-weight: 500; color: var(--text-primary); }
+
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--bg-soft); border-radius: 12px; margin-bottom: 28px; position: sticky; top: 12px; z-index: 10; border: 0.5px solid var(--border); }
+nav.tabs button { flex: 1 1 auto; min-width: 110px; padding: 9px 12px; border: none; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; font-family: inherit; }
+nav.tabs button:hover { background: rgba(255,255,255,0.6); color: var(--text-primary); }
+nav.tabs button.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+.section { display: none; animation: fade 0.25s ease; }
+.section.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+h2 { font-size: 20px; font-weight: 500; margin: 0 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 17px; font-weight: 500; margin: 28px 0 10px; color: var(--text-primary); }
+h4 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; color: var(--text-primary); }
+.section-intro { color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; max-width: 760px; }
+
+.term-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 20px 22px; margin-bottom: 18px; }
+.term-card .term-num { font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; margin-bottom: 4px; }
+.term-card .term-name { font-size: 17px; font-weight: 600; color: var(--text-primary); margin: 0 0 14px; }
+.term-card .term-name .en { font-size: 13px; color: var(--text-muted); font-weight: 400; margin-left: 8px; }
+
+.block { display: grid; grid-template-columns: 110px 1fr; gap: 14px; padding: 10px 0; border-top: 0.5px dashed var(--border); }
+.block:first-of-type { border-top: none; padding-top: 4px; }
+.block .block-label { font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; padding-top: 2px; }
+.block .block-body { font-size: 14px; color: var(--text-secondary); }
+.block .block-body strong { color: var(--text-primary); font-weight: 500; }
+.block .block-body code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; background: var(--bg-soft); padding: 1px 6px; border-radius: 4px; color: var(--text-primary); }
+.block .block-body pre { background: var(--bg-soft); padding: 12px 14px; border-radius: 6px; font-size: 12.5px; color: var(--text-primary); overflow-x: auto; margin: 6px 0; line-height: 1.5; }
+
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); font-weight: 500; margin-right: 4px; }
+.badge.must { background: #fef2f2; color: #b91c1c; }
+.badge.should { background: #fff7ed; color: #b45309; }
+.badge.nice { background: #f0f9ff; color: #0369a1; }
+.badge.E { background: #ecfdf5; color: #047857; }
+.badge.S { background: #eff6ff; color: #1d4ed8; }
+.badge.G { background: #f5f3ff; color: #6d28d9; }
+
+.callout { border-left: 3px solid var(--accent); background: var(--bg-card); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 14px; color: var(--text-secondary); }
+.callout strong { color: var(--text-primary); font-weight: 500; }
+.callout.warn   { border-left-color: #d97706; background: var(--bg-warn); }
+.callout.info   { border-left-color: #2563eb; background: var(--bg-info); }
+.callout.success{ border-left-color: #16a34a; background: var(--bg-success); }
+
+table.clean { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 8px 0; }
+table.clean th, table.clean td { text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+table.clean th { font-weight: 500; color: var(--text-muted); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--bg-soft); }
+
+.toc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 12px 0; }
+.toc-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.toc-card h5 { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.toc-card ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-secondary); }
+.toc-card li { margin-bottom: 3px; }
+
+footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">비정형데이터분석 · 기말 팀 프로젝트 · 비전공자 용어사전 v1</div>
+  <h1>ESG DART 기말 프로젝트 — 비전공자 용어사전</h1>
+  <p class="sub">심층분석가이드 v1을 읽다가 막힐 만한 용어 25개를 <strong>한 줄 비유 + 작은 예시 + 그림 + 우리 프로젝트와의 연결</strong> 4블록 구조로 풀었습니다. 외계어가 한국말이 될 때까지 옆에 놓고 보세요.</p>
+  <div class="meta-row">
+    <span class="chip"><strong>분량</strong> 6 카테고리 · 25 용어</span>
+    <span class="chip"><strong>난이도</strong> 강의 Week 2-6 + 가이드 수준</span>
+    <span class="chip"><strong>우선순위</strong> <span class="badge must">필수 12</span><span class="badge should">권장 8</span><span class="badge nice">선택 5</span></span>
+    <span class="chip"><strong>검증</strong> 학술 7건 + 가이드 재분석</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="overview" class="active">한 눈에 보기</button>
+  <button data-tab="cat-a">A. 텍스트 처리 기초</button>
+  <button data-tab="cat-b">B. 텍스트→숫자</button>
+  <button data-tab="cat-c">C. 임베딩+사전</button>
+  <button data-tab="cat-d">D. 데이터 수집</button>
+  <button data-tab="cat-e">E. 통계 검증</button>
+  <button data-tab="cat-f">F. 회귀+해석</button>
+</nav>
+
+<!-- ============ 한 눈에 보기 ============ -->
+<section class="section active" data-section="overview">
+  <h2>이 사전을 읽는 법</h2>
+  <p class="section-intro">
+    25개 용어 모두 동일한 구조입니다 — <strong>한 줄 비유 → 작은 예시 → 그림/표 → 이 프로젝트와의 연결</strong>. 처음 읽을 땐 <span class="badge must">필수 12</span>만, 보고서 쓸 땐 카테고리별로 한 번씩 다시 와보면 됩니다.
+  </p>
+
+  <div class="callout info">
+    <strong>검증 결과 — "전처리에서 갈린다"는 가설은 학술적으로 강하게 뒷받침됩니다.</strong><br>
+    Camacho-Collados &amp; Pilehvar (2017), Wang et al. (2023), Park et al. AACL 2020 등 7건의 자료에서 일관되게 확인:
+    "전처리 전략 선택만 잘하면 단순 모델이 복잡한 모델을 이긴다." <strong>따라서 이 사전은 카테고리 A·C(전처리·사전 정제)에 가장 큰 비중을 둡니다.</strong>
+  </div>
+
+  <h3>카테고리 6개</h3>
+  <div class="toc-grid">
+    <div class="toc-card">
+      <h5>A. 텍스트 처리 기초 (5)</h5>
+      <ul>
+        <li>1. Corpus / Token <span class="badge nice">선택</span></li>
+        <li>2. 형태소 분석기 4종 <span class="badge must">필수</span></li>
+        <li>3. 불용어 <span class="badge should">권장</span></li>
+        <li>4. NER 개체명 인식 <span class="badge should">권장</span></li>
+        <li>5. 도메인 불용어 <span class="badge should">권장</span></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <h5>B. 텍스트→숫자 (5)</h5>
+      <ul>
+        <li>6. TF <span class="badge nice">선택</span></li>
+        <li>7. IDF <span class="badge must">필수</span></li>
+        <li>8. TF-IDF <span class="badge must">필수</span></li>
+        <li>9. n-gram <span class="badge should">권장</span></li>
+        <li>10. Vector <span class="badge nice">선택</span></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <h5>C. 임베딩+사전 확장 (5)</h5>
+      <ul>
+        <li>11. Word Embedding <span class="badge must">필수</span></li>
+        <li>12. fastText vs Word2Vec <span class="badge must">필수</span></li>
+        <li>13. Cosine similarity <span class="badge must">필수</span></li>
+        <li>14. θ threshold sweep <span class="badge must">필수</span></li>
+        <li>15. seed vs expanded <span class="badge must">필수</span></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <h5>D. 데이터 수집 (4)</h5>
+      <ul>
+        <li>16. OpenDART API 깔때기 <span class="badge must">필수</span></li>
+        <li>17. 식별자 3종 <span class="badge must">필수</span></li>
+        <li>18. .env 환경변수 <span class="badge nice">선택</span></li>
+        <li>19. Rate limit + backoff <span class="badge should">권장</span></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <h5>E. 통계 검증 (3)</h5>
+      <ul>
+        <li>20. Spearman 순위상관 <span class="badge must">필수</span></li>
+        <li>21. Mann-Whitney U <span class="badge should">권장</span></li>
+        <li>22. p-value vs 효과 크기 <span class="badge nice">선택</span></li>
+      </ul>
+    </div>
+    <div class="toc-card">
+      <h5>F. 회귀+해석 (3)</h5>
+      <ul>
+        <li>23. OLS / Ordered / Binary logit <span class="badge must">필수</span></li>
+        <li>24. 다중공선성 <span class="badge should">권장</span></li>
+        <li>25. cheap-talk + word_count <span class="badge must">필수</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>4블록 구조란?</h3>
+  <div class="callout">
+    <strong>① 한 줄 비유</strong> — 일상에서 본 적 있는 것에 빗댐. 외계어 금지.<br>
+    <strong>② 작은 예시</strong> — 2-3 단어/문장. ESG 도메인에서 뽑음.<br>
+    <strong>③ 그림 / 표</strong> — ASCII 도식이나 비교 표. 가능할 때만.<br>
+    <strong>④ 이 프로젝트와의 연결</strong> — 가이드 어디서 등장? 어떤 결정과 연관? 발표 때 답할 한 줄.
+  </div>
+</section>
+
+<!-- ============ A. 텍스트 처리 기초 ============ -->
+<section class="section" data-section="cat-a">
+  <h2>A. 텍스트 처리 기초 — 비정형 데이터를 다루기 위한 5가지 기본</h2>
+  <p class="section-intro">
+    수업 Week 2-3에서 본 개념을 ESG DART 도메인에 맞춰 다시 풀었습니다. 형태소 분석기 4종은 발표 때 "왜 Okt(또는 Mecab)를 골랐나" 답할 무기입니다.
+  </p>
+
+  <!-- 1. Corpus / Token -->
+  <div class="term-card">
+    <div class="term-num">A-01 <span class="badge nice">선택</span></div>
+    <h4 class="term-name">Corpus / Token <span class="en">말뭉치 / 토큰</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>Corpus = 도서관에 모은 책 더미</strong>, <strong>Token = 책을 자른 가장 작은 의미 조각</strong>. 도서관(corpus)이 없으면 분석할 게 없고, 자르는 방법(token)에 따라 같은 책이 다르게 읽힘.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>Corpus = [
+  "당사는 온실가스를 감축하였다",
+  "협력사 안전보건 교육을 강화하였다",
+  ... (성공 수집된 firm-year 문서 N개)
+]
+Token("당사는 온실가스를 감축하였다") =
+  공백 분리 → ['당사는','온실가스를','감축하였다']
+  형태소 분리 → ['당사','는','온실가스','를','감축','하','였','다']</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림</div><div class="block-body">
+      <pre>전체 사업보고서 → ESG 문단 추출 → firm-year 문서 1개 = corpus의 1행
+                                      ↓
+                          토큰화: 문장 → 단어 리스트</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      03 분석예시 md "기업-연도 문서" = corpus의 한 행. <strong>최대 381개 firm-year</strong>를 모으되, <strong>수집 실패행은 가짜 0이 아니라 corpus에서 제외</strong>. <code>len(corpus) = N</code>은 수집 성공 수.
+    </div></div>
+  </div>
+
+  <!-- 2. 형태소 분석기 4종 -->
+  <div class="term-card">
+    <div class="term-num">A-02 <span class="badge must">필수</span></div>
+    <h4 class="term-name">형태소 분석기 4종 <span class="en">Okt / Mecab / Komoran / Kkma</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      한국어를 <strong>"의미 단위로 자르는 칼 4종"</strong>. 빵을 칼로 자르는 것과 식빵 슬라이서로 자르는 것이 다르듯, 같은 문장도 분석기마다 다르게 잘립니다.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      입력: <code>"당사는 온실가스 배출량을 감축하고 있다"</code>
+      <table class="clean">
+        <thead><tr><th>분석기</th><th>출력</th><th>특징</th></tr></thead>
+        <tbody>
+          <tr><td>Okt</td><td>당사 / 는 / 온실 / 가스 / 배출량 / 을 / 감축 / 하고 / 있다</td><td>합성어 분해 경향, 신조어 강함</td></tr>
+          <tr><td>Mecab</td><td>당사 / 는 / 온실가스 / 배출량 / 을 / 감축 / 하 / 고 / 있 / 다</td><td>합성어 유지, 가장 빠름, Windows ❌</td></tr>
+          <tr><td>Komoran</td><td>당사 / 는 / 온실가스 / 배출량 / 을 / 감축 / 하 / 고 / 있 / 다</td><td>사용자 사전 추가 쉬움</td></tr>
+          <tr><td>Kkma</td><td>당사 / 는 / 온실 / 가스 / 배출 / 량 / 을 / 감축 / 하 / 고 / 있 / 다</td><td>분해가 가장 세밀, 가장 느림</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+    <div class="block"><div class="block-label">③ 표 — 우리 도메인에서 무엇이 중요한가</div><div class="block-body">
+      <table class="clean">
+        <thead><tr><th>판단 기준</th><th>왜 ESG에서 중요한가</th></tr></thead>
+        <tbody>
+          <tr><td><strong>"온실가스" 유지</strong></td><td>"온실/가스"로 분해되면 seed 사전 매칭 안 됨 → Mecab/Komoran 유리</td></tr>
+          <tr><td><strong>회사명 보존</strong></td><td>NER 단계에서 회사명을 제거해야 하므로 회사명을 한 덩어리로 잡아주는 분석기 유리</td></tr>
+          <tr><td><strong>설치 난이도</strong></td><td>Windows 팀원 있으면 Mecab 설치 어려움 → Okt 권장</td></tr>
+          <tr><td><strong>속도</strong></td><td>381 firm-year × 평균 수천 토큰. Kkma는 너무 느림</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      심층가이드 <strong>결정박스 ③</strong>의 선택지. 강의 자료 UD-03-300, UD-03-301 연결.
+      <strong>발표 답안</strong>: "Windows 팀원이 있어 Okt를 선택. 신조어 강하고 설치 쉬워서. 단 '온실가스'가 분해되는 경향이 있어 사용자 사전 추가로 보완했다." 또는 "맥/리눅스 통일 가능해서 Mecab. 합성어 유지가 ESG 도메인 단어 매칭에 결정적."
+    </div></div>
+  </div>
+
+  <!-- 3. 불용어 -->
+  <div class="term-card">
+    <div class="term-num">A-03 <span class="badge should">권장</span></div>
+    <h4 class="term-name">불용어 <span class="en">Stop words</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      모든 문서에 너무 자주 나와서 <strong>"있어도 그만 없어도 그만"</strong>인 단어. 도서관 책 색인에 "그리고/또한/다음과 같이"가 빠져있는 것과 같음.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <strong>일반 불용어</strong>: 및 / 관련 / 통해 / 한 / 또한 / 같이 / 위해 / 이에 / 더불어<br>
+      <strong>제거 전</strong>: "당사는 ESG 경영을 통해 지속가능 성장을 위해 노력한다" (10 토큰)<br>
+      <strong>제거 후</strong>: "당사 ESG 경영 지속가능 성장 노력" (6 토큰) — 의미 중심 단어만 남음
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림</div><div class="block-body">
+      <pre>전처리 전:  [당사, 는, ESG, 경영, 을, 통해, ...]
+              ↓ 불용어 사전 매칭
+전처리 후:  [당사, ESG, 경영, ...]   ← TF-IDF에서 신호 강해짐</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      <code>data/stopwords_ko_esg.txt</code>가 출발점. <strong>불용어가 부족하면 "통해", "관련" 같은 단어가 상위 TF-IDF를 차지해 ESG 단어 신호가 묻힘</strong>. 자세한 추가 후보는 A-05(도메인 불용어) 참고.
+    </div></div>
+  </div>
+
+  <!-- 4. NER -->
+  <div class="term-card">
+    <div class="term-num">A-04 <span class="badge should">권장</span></div>
+    <h4 class="term-name">NER (개체명 인식) <span class="en">Named Entity Recognition</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"사람·회사·지명 같은 고유명사를 기계가 자동으로 골라내는 작업"</strong>. 신문 기사에서 인명·지명·기업명에 노란 형광펜 치는 것과 같음.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>입력 : "삼성전자는 2024년 재생에너지 사용을 확대했다"
+NER : [삼성전자=ORG, 2024년=DATE]
+제거 후: "재생에너지 사용 확대"</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림 — 왜 우리에게 결정적인가</div><div class="block-body">
+      <pre>NER 안 됐을 때:
+  seed: "재생에너지"
+  fastText 유사어 후보:
+    탄소중립 (0.92) ✓
+    저탄소   (0.85) ✓
+    대림에너지(0.78) ✗ ← 회사명이 confusing 후보로 등장!
+
+NER 됐을 때:
+  "대림에너지"는 ORG 태그 받아 corpus에서 제거됨
+  → 후보 목록에 아예 안 올라옴</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      심층가이드 단계 3·5에서 핵심. <strong>NER이 안 되면 사전 확장 단계에서 회사명이 ESG 단어로 잡혀버림</strong>.
+      Li 2021도 spaCy NER로 organization 제거. 우리는 한국어 NER 라이브러리가 부족하므로 <strong>대안</strong>: <code>company_master.csv</code>의 회사명 127개를 회사명 불용어 사전으로 자동 생성.
+    </div></div>
+  </div>
+
+  <!-- 5. 도메인 불용어 -->
+  <div class="term-card">
+    <div class="term-num">A-05 <span class="badge should">권장</span></div>
+    <h4 class="term-name">도메인 불용어 <span class="en">Domain stop words</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"이 분야 문서에서만 너무 자주 나오는 단어"</strong>. 학교 문서의 "학생", 병원 문서의 "환자"처럼 도메인 안에서 무의미하게 반복되는 단어. 일반 불용어 사전엔 없음.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시 — DART 사업보고서 도메인</div><div class="block-body">
+      <table class="clean">
+        <thead><tr><th>범주</th><th>예시</th><th>왜 제거</th></tr></thead>
+        <tbody>
+          <tr><td>회사명</td><td>삼성전자, 현대자동차, 우리은행</td><td>특정 회사명이 ESG 단어로 잘못 매칭 (A-04 참고)</td></tr>
+          <tr><td>연도/날짜</td><td>2024년, 2024.12, 당기, 전기, 당해 사업연도</td><td>모든 보고서에 나옴 → 정보량 0</td></tr>
+          <tr><td>법률 정형구</td><td>본 보고서, 당사는, 이하 같음, 다음과 같이</td><td>보일러플레이트, ESG와 무관</td></tr>
+          <tr><td>표/각주 잔재</td><td>단위, 주1), (*), 백만원, 천원</td><td>표에서 XML 추출 시 들어옴</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림 — 자동 생성 방법</div><div class="block-body">
+      <pre>company_master.csv → company_name 컬럼 → 127개 회사명
+                            ↓
+                      stopwords_ko_esg.txt + 회사명 + 자회사명·약칭 = 우리 팀 도메인 불용어
+                            ↓
+                      형태소 분석 후 토큰별 매칭 제거</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      심층가이드 <strong>단계 3 "불용어" 카드</strong>에 명시. <strong>전처리 단계에서 가장 학생 차별화 되는 지점</strong>. 회사명 자동 생성을 안 하면 점수가 회사명에 묶여 오염됨.
+      Bao 2024와 Li 2021 모두 domain stop word 비중을 크게 잡음.
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ B. 텍스트 → 숫자 ============ -->
+<section class="section" data-section="cat-b">
+  <h2>B. 텍스트 → 숫자 — TF-IDF가 무엇을 측정하는가</h2>
+  <p class="section-intro">
+    텍스트를 숫자로 바꾸는 가장 표준적인 방법. 비전공자에게 가장 중요한 건 "TF-IDF 점수가 높다 = 그 문서에서만 유독 자주 나오는 단어"라는 직관입니다.
+  </p>
+
+  <!-- 6. TF -->
+  <div class="term-card">
+    <div class="term-num">B-06 <span class="badge nice">선택</span></div>
+    <h4 class="term-name">TF (Term Frequency) <span class="en">단어 빈도</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"이 문서에서 이 단어가 몇 번 나왔는가"</strong>. 가장 단순한 카운트.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      문서 A: "온실가스 감축 온실가스 절감 노력" → TF(온실가스) = 2, TF(감축) = 1
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림</div><div class="block-body">
+      <pre>TF 단점: 길이가 긴 문서가 무조건 점수↑
+  문서 A (100단어): "온실가스" 5번 → TF=5
+  문서 B (1000단어): "온실가스" 10번 → TF=10
+  → B가 더 ESG 강한 것처럼 보이지만, 비율로 보면 5%(A) vs 1%(B)</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      TF만 쓰면 사업보고서 길이에 좌우됨. 그래서 IDF(B-07)와 곱해서 TF-IDF로 보정합니다. cheap-talk 가설(F-25)이 여기서 출발.
+    </div></div>
+  </div>
+
+  <!-- 7. IDF -->
+  <div class="term-card">
+    <div class="term-num">B-07 <span class="badge must">필수</span></div>
+    <h4 class="term-name">IDF (Inverse Document Frequency) <span class="en">역문서 빈도</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"이 단어가 얼마나 특별한가"</strong>를 측정. 모든 문서에 다 나오면 흔한 단어(IDF↓), 소수 문서에만 나오면 특별한 단어(IDF↑).
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>전체 corpus = 100개 firm-year 문서
+  "당사" → 100개 모두에 등장 → 흔함 → IDF ≈ 1.0
+  "이사회" → 90개에 등장      → 흔함 → IDF ≈ 1.1
+  "넷제로" → 20개에만 등장   → 특별 → IDF ≈ 2.6
+  "GHG"   → 5개에만 등장     → 매우특별 → IDF ≈ 4.0
+
+공식 (sklearn 기본): IDF = log((1+N) / (1+df)) + 1
+  N = 전체 문서 수, df = 그 단어가 등장한 문서 수</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림</div><div class="block-body">
+      <pre>모든 문서에 나옴  ─────────────→ 1.0 (있으나마나)
+                       IDF
+소수 문서에만   ─────────────→ 3-4 (특별한 신호)</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      "당사", "보고서" 같은 보일러플레이트는 IDF가 낮아 TF-IDF에서 자동 감점됨 → 불용어로 다 못 잡아도 IDF가 일부 보정. 단 회사명은 IDF로 안 잡힘(특정 회사 문서에만 자주 나옴 = 특별해 보임) → A-04 NER 필요.
+    </div></div>
+  </div>
+
+  <!-- 8. TF-IDF -->
+  <div class="term-card">
+    <div class="term-num">B-08 <span class="badge must">필수</span></div>
+    <h4 class="term-name">TF-IDF <span class="en">Term Frequency × Inverse Document Frequency</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"이 문서에서 자주(TF) 나오면서 다른 문서엔 잘 안 나오는(IDF) 단어"</strong>에 높은 점수. 즉 "이 문서를 특징짓는 단어".
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>삼성전자 2024 firm-year 문서:
+  단어         TF    IDF    TF-IDF
+  "당사"        20    1.0    0.20    ← 흔하니 가중치 낮음
+  "온실가스"    5     2.5    0.50    ← 특별하면서 자주
+  "넷제로"      3     3.5    1.05    ← 매우 특별 + 적당히 나옴 = 강한 신호
+  "재생에너지"  4     2.8    0.56</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림 — 우리 점수 계산 흐름</div><div class="block-body">
+      <pre>firm-year 문서 → 토큰화 → TF-IDF 행렬 (문서 × 단어)
+                                    ↓
+                          seed 단어 열만 선택해 합산
+                                    ↓
+                            seed_tfidf_score
+                          (E·S·G 합 또는 차원별)</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      03 분석예시 md "TF-IDF 점수 만들기" 직접. <strong>E seed score = 0.20 + 0.18 + 0 = 0.38</strong>처럼 단어별 TF-IDF를 단순 합산.
+      <strong>발표 답안</strong>: "TF-IDF는 '이 firm-year만 유독 ESG 단어를 강조했는지'를 측정. 단순 빈도(TF)만 쓰면 사업보고서 길이에 좌우되지만, IDF가 흔한 단어 가중치를 낮춰 신호를 정제."
+    </div></div>
+  </div>
+
+  <!-- 9. n-gram -->
+  <div class="term-card">
+    <div class="term-num">B-09 <span class="badge should">권장</span></div>
+    <h4 class="term-name">n-gram <span class="en">unigram / bigram / trigram</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"단어를 몇 개씩 묶어서 볼 것인가"</strong>. 단어 1개씩 = unigram, 2개 연속 묶음 = bigram, 3개 = trigram.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>입력: "재생에너지 사용 확대"
+  unigram (1)      : [재생에너지, 사용, 확대]
+  bigram  (2)      : [재생에너지 사용, 사용 확대]
+  unigram+bigram  : 둘 다 합쳐서 사용
+
+왜 bigram이 필요한가:
+  "안 좋다" — unigram만 보면 ["안", "좋다"] → "좋다"가 따로 보여서 POSITIVE처럼 보임
+  bigram 추가 → ["안 좋다"] 패턴이 별도 feature → NEGATIVE 캡처</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 표 — ESG에서의 효과</div><div class="block-body">
+      <table class="clean">
+        <thead><tr><th>n-gram</th><th>예시 패턴</th><th>장점</th></tr></thead>
+        <tbody>
+          <tr><td>unigram</td><td>온실가스, 감축, 재생에너지</td><td>기본 신호</td></tr>
+          <tr><td>bigram</td><td>온실가스 감축, 재생에너지 확대</td><td>"X 감축 / X 확대" 같은 행동 표현 캡처</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      가이드는 unigram만 기본으로 가정하지만, <strong>알파 분석 후보</strong>로 bigram 추가 실험 가치 있음. sklearn <code>TfidfVectorizer(ngram_range=(1,2))</code>로 한 줄.
+    </div></div>
+  </div>
+
+  <!-- 10. Vector -->
+  <div class="term-card">
+    <div class="term-num">B-10 <span class="badge nice">선택</span></div>
+    <h4 class="term-name">Vector <span class="en">벡터</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"단어나 문서를 숫자 좌표로 표현한 것"</strong>. 2차원이면 (x, y), 100차원이면 (x1, x2, ..., x100). 좌표가 가까우면 의미도 가깝다고 본다.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>TF-IDF 벡터 (단어 차원이 vocab 크기):
+  문서 A = [0, 0.2, 0, 0.5, ..., 0, 0.1]   ← 대부분 0 (sparse)
+                ↑          ↑
+              "당사"   "온실가스"
+
+Word embedding 벡터 (보통 100-300차원):
+  v(온실가스)   = [0.42, -0.18, 0.55, 0.27, -0.31, ...]
+  v(재생에너지) = [0.39,  0.05, 0.51, 0.30, -0.28, ...]
+  → 좌표가 비슷 → cosine similarity 높음</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림</div><div class="block-body">
+      <pre>2차원 상상도:
+          y
+          |
+       온실가스 *
+          |  * 재생에너지
+          |
+          | * 탄소중립
+          |____________________
+                                  x
+        "회의" ↑ 와 "온실가스" 사이 거리 멀음
+        "재생에너지" ↑ 와 "온실가스" 거리 가까움</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      TF-IDF 벡터는 sparse(대부분 0). word embedding 벡터는 dense(대부분 의미 있는 값). 둘 다 우리 프로젝트에 등장. cosine similarity(C-13)는 이 두 벡터 형식 모두에 적용 가능.
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ C. 임베딩 + 사전 확장 ============ -->
+<section class="section" data-section="cat-c">
+  <h2>C. 단어 임베딩 + 사전 확장 — 우리 프로젝트의 학술적 핵심</h2>
+  <p class="section-intro">
+    이 카테고리가 발표 시 교수 질문의 50%를 차지합니다. 특히 <strong>θ sweep의 정당화</strong>(결정박스 ⑤)는 발표 핵심. 5개 모두 필수.
+  </p>
+
+  <!-- 11. Word Embedding -->
+  <div class="term-card">
+    <div class="term-num">C-11 <span class="badge must">필수</span></div>
+    <h4 class="term-name">Word Embedding <span class="en">단어 임베딩</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"의미가 비슷한 단어를 가까운 좌표에 배치하는 지도 만들기"</strong>. 컴퓨터가 "온실가스"와 "탄소"를 보고 "이 둘은 비슷한 자리에 있구나"를 학습.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>학습 전: 단어들이 컴퓨터에겐 그냥 다른 문자열
+학습 후: 비슷한 맥락에 등장한 단어 → 가까운 좌표
+
+  v(온실가스)   = [0.42, -0.18, 0.55, 0.27, -0.31]   ┐
+  v(탄소)       = [0.41, -0.20, 0.53, 0.28, -0.30]   ├ 비슷 (cosine ≈ 0.99)
+  v(재생에너지) = [0.39,  0.05, 0.51, 0.30, -0.28]   ┘
+  v(회의)       = [0.05,  0.31, 0.12, 0.45, 0.22]   ← 멀음 (cosine ≈ 0.30)</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림 — 어떻게 학습되는가</div><div class="block-body">
+      <pre>핵심 가정: "비슷한 맥락에 자주 같이 나오는 단어는 의미가 비슷하다"
+
+  문장 1: "당사는 [온실가스] 배출을 감축"
+  문장 2: "당사는 [탄소] 배출을 감축"
+  → [온실가스]와 [탄소]는 거의 같은 맥락 → 비슷한 좌표
+
+수업 자료 표현: 단어 → 벡터 변환 (Week 5 BoW 그래도화)</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      seed 30개에서 출발해 임베딩으로 "주변의 ESG 관련 단어"를 찾아 사전 확장(C-15). <strong>발표 답안</strong>: "Embedding은 우리 corpus의 문맥을 학습해 ESG 단어 주변의 후보를 찾아내는 도구. seed가 너무 적어도 corpus 안에서 자연스럽게 확장 가능."
+    </div></div>
+  </div>
+
+  <!-- 12. fastText vs Word2Vec -->
+  <div class="term-card">
+    <div class="term-num">C-12 <span class="badge must">필수</span></div>
+    <h4 class="term-name">fastText vs Word2Vec <span class="en">단어 임베딩 모델 2종</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>Word2Vec = "단어를 통째로 학습"</strong>, <strong>fastText = "단어를 글자 조각(subword)으로 쪼개 학습"</strong>. 한국어처럼 어미 변화·합성어 많은 언어는 fastText가 유리.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>"온실가스배출량" (사업보고서 신조어, 보통 띄어쓰기 안 함)
+
+Word2Vec: "온실가스배출량" 통째 → 학습 못 본 단어면 벡터 없음 (OOV)
+fastText: ["온실", "실가", "가스", "스배", "배출", "출량", ...]
+          → 부분 단어 조합으로 벡터 생성 가능!
+          → "온실가스" + "배출량"의 의미 일부를 상속</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 표</div><div class="block-body">
+      <table class="clean">
+        <thead><tr><th>특성</th><th>Word2Vec (2013)</th><th>fastText (2016)</th></tr></thead>
+        <tbody>
+          <tr><td>학습 단위</td><td>단어 전체</td><td>단어 + subword (3-6 char n-gram)</td></tr>
+          <tr><td>OOV(미학습 단어)</td><td>대처 불가</td><td>부분 단어로 추정 가능</td></tr>
+          <tr><td>한국어 어미 변화</td><td>"감축한다/감축했다/감축하지" 모두 다른 단어</td><td>"감축" 공통 부분으로 유사도 잡힘</td></tr>
+          <tr><td>합성어</td><td>"온실가스배출량" 미학습</td><td>구성 요소로 의미 추정</td></tr>
+          <tr><td>학습 속도</td><td>빠름</td><td>느림 (subword 학습 추가)</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      Li 2021은 word2vec(2018년 표준). 우리 가이드는 fastText 권장 — 한국어 + ESG 신조어/합성어 대응. <strong>발표 답안</strong>: "한국어는 어미 변화가 많고 ESG 도메인엔 '온실가스배출' 같은 합성어가 흔해 fastText 선택. word2vec이면 미학습 합성어가 OOV가 되어 사전 확장 누락 위험."
+    </div></div>
+  </div>
+
+  <!-- 13. Cosine similarity -->
+  <div class="term-card">
+    <div class="term-num">C-13 <span class="badge must">필수</span></div>
+    <h4 class="term-name">Cosine similarity <span class="en">코사인 유사도</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"두 벡터 사이의 각도"</strong>. 같은 방향이면 1(매우 유사), 직각이면 0(무관), 반대면 -1. 크기(길이) 무시, <strong>방향만</strong> 본다.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>v(온실가스)   = [0.42, -0.18, 0.55]
+v(탄소중립)   = [0.41, -0.17, 0.53]   → cosine ≈ 0.99 (같은 방향)
+v(재생에너지) = [0.39,  0.05, 0.51]   → cosine ≈ 0.92 (거의 같은 방향)
+v(회의)       = [0.05,  0.31, 0.12]   → cosine ≈ 0.31 (다른 방향)
+
+공식: cos(A, B) = (A · B) / (|A| × |B|)</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림</div><div class="block-body">
+      <pre>          ▲ 온실가스
+          /
+         /  θ ≈ 8°  → cos ≈ 0.99
+        / /
+   탄소중립
+   ──────────────→  cos = 0 (90°, 무관)
+                      회의</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      두 곳에 등장:
+      <strong>(1) C-14 θ sweep</strong> — seed 주변 후보 찾을 때 cosine ≥ θ인 단어 선택.
+      <strong>(2) 기준문장 cosine</strong> — E/S/G 기준문장 TF-IDF 벡터 vs firm-year 문서 벡터의 cosine을 보조 feature로 (가이드 명시). 단 TF-IDF cosine은 단어 겹침 기반이라 embedding cosine과 다름.
+    </div></div>
+  </div>
+
+  <!-- 14. θ sweep -->
+  <div class="term-card">
+    <div class="term-num">C-14 <span class="badge must">필수</span></div>
+    <h4 class="term-name">θ (threshold) sweep <span class="en">임계값 스윕</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"유사도 컷오프를 여러 값으로 바꿔보면서 사전 크기와 잡음 균형 찾기"</strong>. 그물코를 촘촘하게(θ↑) vs 성기게(θ↓) 짜는 비교.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>seed = "재생에너지"
+
+fastText로 cos 상위 200단어 추출 후 θ 값별 결과:
+
+θ = 0.90 (보수적):
+  후보 = [탄소중립, 태양광]  → 2개. seed와 거의 같음. 확장 의미 없음
+θ = 0.80 (균형):
+  후보 = [탄소중립, 태양광, 저탄소, 풍력, 청정에너지, ...]  → 30개
+  → 잡음 ~5%
+θ = 0.70 (공격적):
+  후보 = [위 + 에너지효율, 신재생, 대림에너지(잡음!), 한전(잡음!), ...]  → 150개
+  → 잡음 ~25%, manual curation 부담↑</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림 — Trade-off 곡선</div><div class="block-body">
+      <pre>      후보 수
+      ▲
+      │
+ 150  ─┤                                  ●
+      │                              θ=0.70 (공격적)
+      │                          노이즈 ↑↑
+  30  ─┤                ●  ← sweet spot
+      │           θ=0.80
+   2  ─┤  ●
+      │  θ=0.90  (확장 무의미)
+      │
+      └──────────────────────────────→
+        0.90    0.85   0.80   0.75   0.70   θ값
+                       ↑
+                  Bao 2024 권장 영역</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      심층가이드 <strong>결정박스 ⑤</strong>의 핵심. {0.70, 0.75, 0.80, 0.85, 0.90} 5개 값 sweep + 각 θ에서 cosine 상위 100단어 직접 검토.
+      <strong>발표 답안</strong>: "θ를 5개 값으로 sweep해 후보 수·잡음 비율 표 작성. 0.80에서 후보 30개·잡음 ~5%로 균형이 가장 좋아 채택. 회사명 N개를 manual 제외."
+      <strong>주의</strong>: 학술적으로는 0.75-0.85 범위가 표준 (Bao 2024).
+    </div></div>
+  </div>
+
+  <!-- 15. seed vs expanded dictionary -->
+  <div class="term-card">
+    <div class="term-num">C-15 <span class="badge must">필수</span></div>
+    <h4 class="term-name">seed dictionary vs expanded dictionary <span class="en">씨앗 사전 vs 확장 사전</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>seed = "교수가 정한 30개 출발점"</strong>, <strong>expanded = "거기서 임베딩 + 검토로 넓힌 사전"</strong>. 씨앗 30개를 심어 나무로 키워낸 것.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>seed E (10개): 탄소, 온실가스, 탄소중립, 넷제로, 재생에너지,
+              에너지, 전력, 폐기물, 재활용, 폐수
+
+→ 각 seed에서 fastText cos 상위 단어 추출 (θ=0.80 적용)
+→ 회사명·잡음 manual 제거
+→ expanded E (예: 40개): seed 10개 +
+       [태양광, 풍력, 청정에너지, 저탄소, 신재생, 배출량,
+        감축, 절감, 친환경, ... ]</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림 — 흐름</div><div class="block-body">
+      <pre>seed 30개 (교수 제공)
+       ↓ fastText cos 계산
+seed 주변 cos 상위 500개 단어
+       ↓ θ 적용
+θ를 통과한 단어 N개
+       ↓ manual curation (회사명·일반명사 제거)
+expanded dictionary 최종
+       ↓ TF-IDF 합산
+expanded_tfidf_score (주 비교 대상)</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      01 overview md: "expanded dictionary는 seed 10개씩에서 출발해 단어 임베딩으로 후보를 넓힌 뒤 팀이 세운 기준으로 걸러낸 확장 사전".
+      <strong>핵심 메시지</strong>: 정답이 있는 사전이 아니라 <strong>팀이 직접 만들어 정당화</strong>해야 함. seed → expanded 점수 차이가 "텍스트 표현의 풍부함"을 보여줌.
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ D. 데이터 수집 ============ -->
+<section class="section" data-section="cat-d">
+  <h2>D. 데이터 수집 lineage — DART API를 어떻게 두드리는가</h2>
+  <p class="section-intro">
+    OpenDART API는 한 번에 보고서를 못 가져오고 <strong>3단계 깔때기</strong>로 좁혀 들어갑니다. 식별자 3종이 헷갈리지 않게 그림으로 잡아두세요.
+  </p>
+
+  <!-- 16. OpenDART API 깔때기 -->
+  <div class="term-card">
+    <div class="term-num">D-16 <span class="badge must">필수</span></div>
+    <h4 class="term-name">OpenDART API 3단계 깔때기 <span class="en">CORPCODE → list → document</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"전체 → 한 회사의 보고서 목록 → 그 회사의 특정 보고서 원문"</strong>으로 단계마다 좁혀 들어가는 깔때기.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>목표: 삼성전자 2024 사업보고서 원문 받기
+
+1단계: CORPCODE.xml (전체 회사 매핑 zip, 1회만 받아 캐시)
+   stock_code=005930 → corp_code=00126380
+
+2단계: list.json (이 회사의 공시 목록)
+   params: corp_code=00126380, bgn_de=20250101, end_de=20251231,
+           pblntf_detail_ty=A001, last_reprt_at=Y
+   반환: [..., {report_nm: '사업보고서 (2024.12)', rcept_no: '20250311001085'}, ...]
+
+3단계: document.xml (그 보고서 원문 zip)
+   params: rcept_no=20250311001085
+   반환: zip 파일 → 풀면 보고서 XML 1개</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림 — 깔때기</div><div class="block-body">
+      <pre>     ╔═══════════════════════════════════════╗
+     ║  CORPCODE.xml (전체 회사 매핑)     ║   ← 1회만, 캐시
+     ╚═══════════════════════════════════════╝
+                       ↓  stock_code → corp_code
+              ╔════════════════════════╗
+              ║  list.json (공시 목록)  ║   ← 각 firm-year별
+              ╚════════════════════════╝
+                       ↓  corp_code + 연도 → rcept_no
+                  ╔════════════════╗
+                  ║  document.xml   ║   ← 보고서 1개 원문
+                  ╚════════════════╝
+                            ↓
+                        ESG 문단 추출</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      심층가이드 단계 2 "OpenDART API 호출 흐름" 카드. <strong>발표 답안</strong>: "한 번에 보고서를 못 받아오는 이유는 회사 식별 → 보고서 식별 → 원문이 분리돼 있기 때문. 우리는 이 3단계를 raw response로 보관해 재현성 확보." 분당 호출 제한 D-19와 연계.
+    </div></div>
+  </div>
+
+  <!-- 17. 식별자 3종 -->
+  <div class="term-card">
+    <div class="term-num">D-17 <span class="badge must">필수</span></div>
+    <h4 class="term-name">식별자 3종 <span class="en">stock_code / corp_code / rcept_no</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      각각 <strong>"증권사 시세판 코드 / 금감원 회사 코드 / 보고서 접수번호"</strong>. 3개가 헷갈리면 회사명으로 join하다가 silent mismatch(조용히 잘못 매칭) 발생.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <table class="clean">
+        <thead><tr><th>코드</th><th>예시</th><th>역할</th></tr></thead>
+        <tbody>
+          <tr><td><code>stock_code</code></td><td>005930</td><td>분석의 기본 키. KCGS 등급과 join</td></tr>
+          <tr><td><code>corp_code</code></td><td>00126380</td><td>OpenDART API의 출발점</td></tr>
+          <tr><td><code>rcept_no</code></td><td>20250311001085</td><td>특정 보고서 식별. 원문 다운로드</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림</div><div class="block-body">
+      <pre>stock_code (005930)
+         ↓ CORPCODE.xml 매핑
+corp_code (00126380)
+         ↓ list.json + 연도
+rcept_no (20250311001085)
+         ↓ document.xml
+보고서 원문 zip</pre>
+      <strong>회사명 join 금지</strong>: 동일 stock_code(127개)인데 company_name은 133개(사명변경/분할로). 회사명으로 KCGS 등급과 merge하면 매칭 누락 발생.
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      02 수집 md "먼저 이해할 세 가지 식별자". 가이드 평가표 "DART lineage" 항목에서 직접 평가. <strong>발표 답안</strong>: "회사명 join을 피하고 stock_code를 기본 키로 사용. 사명변경·분할로 인한 silent mismatch 방지가 목적."
+    </div></div>
+  </div>
+
+  <!-- 18. .env -->
+  <div class="term-card">
+    <div class="term-num">D-18 <span class="badge nice">선택</span></div>
+    <h4 class="term-name">.env 환경변수 <span class="en">API key 분리 보관</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"비밀번호를 코드가 아닌 별도 파일에 보관"</strong>. 코드를 GitHub에 올려도 비밀번호가 안 따라감.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>나쁜 예 (코드에 박힘):
+  API_KEY = "abc123secretkey"   ← GitHub에 올라가면 끝
+
+좋은 예 (.env 사용):
+  # .env 파일 (코드와 별도, .gitignore에 추가)
+  OPENDART_API_KEY=abc123secretkey
+
+  # Python 코드
+  from dotenv import load_dotenv
+  load_dotenv()
+  api_key = os.environ['OPENDART_API_KEY']</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림</div><div class="block-body">
+      <pre>프로젝트 디렉토리/
+├── notebook.ipynb        ← 코드 (GitHub OK)
+├── .env                  ← 비밀번호 (GitHub ❌)
+└── .gitignore            ← ".env"가 들어가야 함</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      가이드 04 제출 체크리스트: "API key가 코드에 직접 포함되어 있지 않다 (환경변수 .env만 사용)". <strong>제출 전 .ipynb 안에 API key가 안 박혔는지 확인 필수</strong>.
+    </div></div>
+  </div>
+
+  <!-- 19. Rate limit + backoff -->
+  <div class="term-card">
+    <div class="term-num">D-19 <span class="badge should">권장</span></div>
+    <h4 class="term-name">Rate limit + 지수 backoff <span class="en">호출 제한 + 재시도</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>Rate limit = "분당 호출 횟수 상한"</strong> (API 서버가 정함).<br>
+      <strong>지수 backoff = "실패하면 점점 더 오래 기다리며 재시도"</strong> (1초 → 2초 → 4초).
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>OpenDART 제한: 분당 1,000회
+우리 호출량: 381개 × ~3회 ≈ 1,143회
+
+페이스 계산:
+  분당 600회 목표 → 매 0.1초마다 1회 → time.sleep(0.1)
+  전체 ~2시간 처리
+
+실패 시 (5xx 또는 timeout):
+  1차 재시도: 1초 후
+  2차 재시도: 2초 후
+  3차 재시도: 4초 후
+  여전히 실패 → collection_log.csv에 사유 기록 후 패스</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림 — 호출 페이스</div><div class="block-body">
+      <pre>0.0초 → 호출 1
+0.1초 → 호출 2
+0.2초 → 호출 3
+  ...
+60초 → 호출 600   ← 분당 600회 페이스 (제한 1000 안전 마진)
+
+실패 흐름:
+  요청 → 5xx → wait 1s → 재시도 → 5xx → wait 2s → 재시도 → 성공 ✓
+  요청 → 5xx → wait 1s → ... → wait 4s → 5xx → collection_log 기록</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      심층가이드 단계 4 "실무에서 챙겨야 할 것" 표 첫째·둘째 행. <strong>발표 답안</strong>: "분당 600회 페이스로 ~2시간 처리. 일시 5xx 오류는 지수 backoff 3회 재시도 후 collection_log.csv에 사유 기록."
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ E. 통계 검증 ============ -->
+<section class="section" data-section="cat-e">
+  <h2>E. 통계 검증 — feature가 등급과 정말 연관되는가</h2>
+  <p class="section-intro">
+    회귀 들어가기 전 사전 검증. 학술적으로는 <strong>"Spearman + Mann-Whitney + 문장 직접 읽기 3종"</strong> 권장. 이 단계가 빠지면 평가표 "측정 validity"에서 감점.
+  </p>
+
+  <!-- 20. Spearman -->
+  <div class="term-card">
+    <div class="term-num">E-20 <span class="badge must">필수</span></div>
+    <h4 class="term-name">Spearman 순위상관 <span class="en">vs Pearson</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>Pearson = "키와 몸무게처럼 숫자값 그대로 상관"</strong>, <strong>Spearman = "순위로만 비교"</strong> (1등이 점수도 1등인가).
+      ESG 등급은 S/A+/A/B+/B/C/D 같은 <strong>서열변수</strong>이므로 Spearman이 자연스럽다.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>기업    expanded_score(점수↓)   ESG_grade(높을수록↑)
+  A         0.82                     S(6)
+  B         0.65                     A(4)
+  C         0.31                     B(2)
+
+Pearson: 점수와 등급 숫자의 직선적 관계 (등급의 등간성 가정)
+Spearman: 점수 순위 [1,2,3]과 등급 순위 [1,2,3]의 일치도
+          → 모두 일치하면 ρ = 1.0</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 표 — ρ 해석 기준</div><div class="block-body">
+      <table class="clean">
+        <thead><tr><th>ρ 범위</th><th>해석</th><th>발표 시 언급</th></tr></thead>
+        <tbody>
+          <tr><td>ρ &lt; 0.10</td><td>거의 없음</td><td>"신호 미약, feature 재검토"</td></tr>
+          <tr><td>0.10 ≤ ρ &lt; 0.20</td><td>약한 신호</td><td>"p가 작아도 효과는 작음, 추가 통제 필요"</td></tr>
+          <tr><td>0.20 ≤ ρ &lt; 0.40</td><td>중간</td><td>"실용적 의미 있음, robustness 확인 필요"</td></tr>
+          <tr><td>ρ ≥ 0.40</td><td>강함</td><td>"드문 강신호, 단 cheap-talk 의심도 함께"</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      심층가이드 단계 7, 04 평가표 "측정 validity". <strong>발표 답안</strong>: "ESG 등급은 서열변수라 Pearson보다 Spearman이 자연스러움. 우리 결과 ρ=X.XX (p=XX)로 약한/중간 신호를 확인. 단 ρ가 작으면 통계 유의해도 효과는 작다고 해석."
+    </div></div>
+  </div>
+
+  <!-- 21. Mann-Whitney U -->
+  <div class="term-card">
+    <div class="term-num">E-21 <span class="badge should">권장</span></div>
+    <h4 class="term-name">Mann-Whitney U test <span class="en">vs t-test</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>t-test = "두 그룹 평균이 다른가, 분포가 정규일 때"</strong>, <strong>Mann-Whitney U = "분포 가정 없이 순위로 비교"</strong>. 데이터 치우치면 후자가 안전.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>질문: "A 이상 등급 그룹 vs B 이하 등급 그룹"의 expanded_score 평균이 다른가?
+
+A 이상 그룹 (n=80):  점수 분포 [0.5, 0.6, 0.7, 0.8, 0.82, ...]
+B 이하 그룹 (n=180): 점수 분포 [0.1, 0.2, 0.3, 0.4, 0.45, ...]
+
+t-test: 평균 0.72 vs 0.35 → t=4.2, p&lt;0.001
+Mann-Whitney U: 두 그룹의 점수 순위 비교 → U=2150, p&lt;0.001
+
+→ 결과가 일치하면 robust. 다르면 분포 치우침이 t-test를 흔든 것.</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림</div><div class="block-body">
+      <pre>정규 분포 (t-test OK):       치우친 분포 (Mann-Whitney 권장):
+       ▲                              ▲
+       │ ▲                            │█
+       │█▲█                           │█▲
+       │██▲██                         │██▲█
+       │███████                       │█████████</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      가이드는 "t-test 또는 Mann-Whitney" 둘 다 허용. <strong>실무 권장</strong>: ESG 점수는 비대칭 분포 가능성이 있으므로 Mann-Whitney를 1차로, t-test를 보조로 보고하면 안전.
+    </div></div>
+  </div>
+
+  <!-- 22. p-value vs 효과 크기 -->
+  <div class="term-card">
+    <div class="term-num">E-22 <span class="badge nice">선택</span></div>
+    <h4 class="term-name">p-value vs 효과 크기 <span class="en">statistical vs practical significance</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>p-value = "우연으로 보일 확률"</strong>, <strong>효과 크기 = "차이가 얼마나 큰가"</strong>. <strong>p가 작아도 효과 크기가 작으면 실용적 의미는 약함</strong>.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>케이스 A: ρ = 0.15, p = 0.003
+  → 통계적으로 유의 (p&lt;0.05) BUT 효과 약함 (ρ&lt;0.20)
+  → 해석: "양의 관계는 있으나 크기는 약함"
+
+케이스 B: ρ = 0.45, p = 0.05
+  → 통계적 경계 BUT 효과 강함 (ρ&gt;0.40)
+  → 해석: "강한 관계, 단 표본이 작아 p가 경계"
+
+→ 둘 다 보고하기: ρ + p + 효과 해석</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림 — 매트릭스</div><div class="block-body">
+      <pre>             p &lt; 0.05      p &gt;= 0.05
+             ───────────  ───────────
+효과 큼  │  강한 신호     │  표본 부족
+효과 작음│  약한 신호     │  무관
+
+→ 학생이 자주 하는 실수: p만 보고 "유의함!" → "강하지 않음" 누락</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      가이드 04 "ρ가 0.10-0.20 수준이면 통계적으로 유의해도 효과는 약하다"에 직접. <strong>발표 답안</strong>: "p와 효과 크기를 둘 다 보고. p&lt;0.05라도 ρ가 0.15 수준이면 효과 약함을 명시."
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ F. 회귀 + 해석 ============ -->
+<section class="section" data-section="cat-f">
+  <h2>F. 회귀 + 해석 — 모형 선택과 cheap-talk</h2>
+  <p class="section-intro">
+    feature가 검증을 통과했으면 회귀로 종합. 모형 3종 중 팀 질문에 맞춰 선택하고, <strong>cheap-talk 통제</strong>가 보고서의 학술 깊이를 결정.
+  </p>
+
+  <!-- 23. 회귀 모형 3종 -->
+  <div class="term-card">
+    <div class="term-num">F-23 <span class="badge must">필수</span></div>
+    <h4 class="term-name">OLS / Ordered logit / Binary logit <span class="en">회귀 모형 3종</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>OLS = "등급을 점수로 바꿔 직선 회귀"</strong> (등간성 가정).<br>
+      <strong>Ordered logit = "등급의 순서만 가정"</strong> (가장 학술적).<br>
+      <strong>Binary logit = "A 이상 vs 미만으로 2분류"</strong> (가장 직관적).
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>가정 차이:
+  OLS:           A+에서 A로 떨어지는 차이 = B에서 C로 떨어지는 차이
+                 (등간성 — 사실 무리)
+  Ordered logit: 순서만 보존. A+→A 차이와 B→C 차이가 다른 크기여도 OK
+  Binary logit:  A 이상 = 1, B 이하 = 0으로 단순화
+
+회귀식 예 (OLS):
+  esg_grade_num = β0 + β1·expanded_tfidf_score + β2·total_word_count + ε</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 표</div><div class="block-body">
+      <table class="clean">
+        <thead><tr><th>모형</th><th>가정</th><th>장점</th><th>단점</th><th>언제</th></tr></thead>
+        <tbody>
+          <tr><td>OLS</td><td>등간성</td><td>해석 직관적</td><td>등간성 무리</td><td>baseline 빠르게</td></tr>
+          <tr><td>Ordered logit</td><td>순서만</td><td>가장 정확</td><td>해석 까다로움</td><td>주 모형 (권장)</td></tr>
+          <tr><td>Binary logit</td><td>2분류</td><td>odds ratio 직관</td><td>등급 차이 손실</td><td>"우수 vs 보통" 질문</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      심층가이드 <strong>결정박스 ⑧</strong>. <strong>발표 답안 권장 조합</strong>: "OLS를 baseline, ordered logit으로 robustness 확인. β1의 방향·유의성이 두 모형에서 일치하면 결과 안정적."
+    </div></div>
+  </div>
+
+  <!-- 24. 다중공선성 -->
+  <div class="term-card">
+    <div class="term-num">F-24 <span class="badge should">권장</span></div>
+    <h4 class="term-name">다중공선성 <span class="en">Multicollinearity</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"비슷한 두 변수를 한 회귀에 동시에 넣으면 계수가 망가지는 현상"</strong>. 두 명에게 같은 일을 시키면 누구 공인지 모르는 것과 같음.
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>나쁜 회귀식:
+  grade ~ seed_tfidf_score + expanded_tfidf_score + word_count
+                ↑                  ↑
+            상관 ≈ 0.95 (거의 같은 정보!)
+  → β1, β2 계수가 둘 다 불안정해짐. 부호 뒤집힐 수도
+
+좋은 분리 (M1a vs M1b):
+  M1a: grade ~ seed_tfidf_score + word_count
+  M1b: grade ~ expanded_tfidf_score + word_count
+  → 각각 별도 모델로 비교</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림</div><div class="block-body">
+      <pre>seed_score와 expanded_score는 큰 부분이 겹친다:
+
+  ┌── seed ──┐
+  │  단어 30  │
+  └──────────┘
+       ↓ 확장
+  ┌── expanded ──────────────────┐
+  │ 단어 30 (seed)  +  확장 단어 N │  → seed의 모든 정보 포함
+  └──────────────────────────────┘
+
+  두 점수를 동시 회귀 = 같은 정보를 두 번 넣은 셈</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      심층가이드 6단계 "다중공선성 주의" 박스. <strong>발표 답안</strong>: "seed_score와 expanded_score 상관이 매우 높아 동시 회귀 금지. M1a/M1b로 분리하고 각 효과 크기를 비교."
+    </div></div>
+  </div>
+
+  <!-- 25. cheap-talk -->
+  <div class="term-card">
+    <div class="term-num">F-25 <span class="badge must">필수</span></div>
+    <h4 class="term-name">cheap-talk 가설 + total_word_count 통제 <span class="en">disclosure verbosity control</span></h4>
+    <div class="block"><div class="block-label">① 한 줄 비유</div><div class="block-body">
+      <strong>"많이 쓰기만 해도 점수 오르는 함정"</strong>. 진짜 ESG 성과가 아니라 그냥 사업보고서가 길고 장황해서 점수가 높은 것일 수 있음. 영어 학술용어로는 disclosure verbosity 또는 "cheap-talk".
+    </div></div>
+    <div class="block"><div class="block-label">② 작은 예시</div><div class="block-body">
+      <pre>회사 A (실제 ESG 우수): 짧고 구체적 보고서, 1,000 단어 중 ESG 단어 50개
+회사 B (말만 많음):      길고 장황한 보고서, 5,000 단어 중 ESG 단어 200개
+
+TF-IDF 합산만 보면:
+  A: 50 × IDF = X
+  B: 200 × IDF = 4X   ← B가 더 우수해 보임!
+
+word_count 통제 회귀:
+  M1: grade ~ expanded_score          → β1 큼
+  M2: grade ~ expanded_score + word_count  → β1 줄어듦?
+  M2에서도 β1 유의·양수 → 진짜 ESG 신호
+  M2에서 β1 ≈ 0       → cheap-talk 가설 강화</pre>
+    </div></div>
+    <div class="block"><div class="block-label">③ 그림 — 검증 회귀식 3종</div><div class="block-body">
+      <pre>M1 (단순):     grade ~ expanded_score
+M2 (통제):     grade ~ expanded_score + word_count
+M3 (강화):     grade ~ expanded_score + word_count + 업종 더미
+
+읽는 법:
+  M1→M2에서 β1이 거의 안 바뀌면 → 진짜 ESG 신호
+  M1→M2에서 β1이 크게 감소하면 → cheap-talk 의심
+  M3에서 β1 여전히 유의 → 업종 차이로도 설명 안 됨</pre>
+    </div></div>
+    <div class="block"><div class="block-label">④ 우리 연결</div><div class="block-body">
+      심층가이드 6단계 "cheap-talk 통제변수" + 8단계 회귀식 해석 + 04 평가표 "cheap-talk 가능성"에 모두 등장. <strong>학술 깊이의 핵심 포인트</strong>.
+      <strong>발표 답안</strong>: "M1에서 expanded_score 계수가 유의했으나 word_count를 통제한 M2에서 β1이 30% 감소. 신호의 일부는 cheap-talk(공시 장황함)에서 오는 것으로 해석. 단 통제 후에도 β1이 양수·유의로 남아 진짜 ESG 신호가 부분적으로 존재."
+    </div></div>
+  </div>
+
+  <div class="callout success">
+    <strong>완독 축하 🎉</strong> — 25개 용어가 머릿속에 들어왔다면 심층분석가이드 v1을 다시 읽었을 때 결정박스 8개의 모든 단어가 풀려 있을 겁니다. 다음 산출물 <strong>SUPPLEMENT_8단계보강가이드.html</strong>에서 이 용어들이 8단계 흐름 안에서 어떻게 연결되는지 다시 봅니다.
+  </div>
+</section>
+
+<footer>
+  ESG DART 기말 프로젝트 · 비전공자 용어사전 v1 · 2026.05.12 작성<br>
+  심층분석가이드 v1과 짝을 이루는 보강 자료. 교수님 가이드(01-04 md) 우선, 본 문서와 충돌 시 가이드를 따릅니다.<br>
+  검증 출처: Camacho-Collados &amp; Pilehvar (2017), Wang et al. (2023 ScienceDirect), Park et al. (AACL 2020), Li et al. (2021 RFS), Bao et al. (2024).
+</footer>
+
+</div>
+
+<script>
+const tabs = document.querySelectorAll('nav.tabs button');
+const sections = document.querySelectorAll('section.section');
+tabs.forEach(btn => btn.addEventListener('click', () => {
+  tabs.forEach(b => b.classList.remove('active'));
+  sections.forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  const target = btn.dataset.tab;
+  document.querySelector(`section[data-section="${target}"]`).classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}));
+</script>
+
+</body>
+</html>

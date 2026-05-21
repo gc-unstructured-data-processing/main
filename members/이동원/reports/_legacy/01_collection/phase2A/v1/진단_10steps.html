@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 2A 10단계 전문가 진단 + 풀 사이클 로드맵 v1</title>
+<style>
+:root {
+  --bg: #fafaf7;
+  --bg-card: #ffffff;
+  --bg-soft: #f3f1ea;
+  --bg-warn: #fff7ed;
+  --bg-danger: #fef2f2;
+  --bg-info: #eff6ff;
+  --bg-success: #f0fdf4;
+  --bg-purple: #f5f3ff;
+  --text-primary: #1c1c1a;
+  --text-secondary: #5a5a55;
+  --text-muted: #8a8a85;
+  --text-warn: #b45309;
+  --text-danger: #b91c1c;
+  --text-info: #1d4ed8;
+  --text-success: #15803d;
+  --text-purple: #6d28d9;
+  --border: rgba(0,0,0,0.10);
+  --accent: #4338ca;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 32px 24px 80px; }
+header.hero { border-bottom: 0.5px solid var(--border); padding-bottom: 24px; margin-bottom: 24px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+h1 { font-size: 26px; font-weight: 500; margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { font-size: 15px; color: var(--text-secondary); margin: 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.chip strong { font-weight: 500; color: var(--text-primary); }
+.chip.deadline { background: #fef2f2; color: #b91c1c; border-color: rgba(239,68,68,0.25); }
+.chip.deadline strong { color: #b91c1c; }
+.chip.cycle { background: #f5f3ff; color: #6d28d9; border-color: rgba(124,58,237,0.25); }
+.chip.cycle strong { color: #6d28d9; }
+.chip.gate { background: #f0fdf4; color: #15803d; border-color: rgba(34,197,94,0.25); }
+.chip.gate strong { color: #15803d; }
+
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--bg-soft); border-radius: 12px; margin-bottom: 28px; position: sticky; top: 12px; z-index: 10; border: 0.5px solid var(--border); }
+nav.tabs button { flex: 1 1 auto; min-width: 110px; padding: 9px 12px; border: none; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 500; border-radius: 8px; cursor: pointer; font-family: inherit; }
+nav.tabs button:hover { background: rgba(255,255,255,0.6); color: var(--text-primary); }
+nav.tabs button.active { background: var(--bg-card); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+.section { display: none; animation: fade 0.25s ease; }
+.section.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+h2 { font-size: 20px; font-weight: 500; margin: 0 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 17px; font-weight: 500; margin: 28px 0 10px; }
+h4 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; }
+.section-intro { color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; max-width: 820px; }
+
+.card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 14px; }
+.card.must   { background: var(--bg-danger); border-color: rgba(239,68,68,0.25); }
+.card.should { background: var(--bg-warn);   border-color: rgba(245,158,11,0.25); }
+.card.could  { background: var(--bg-success);border-color: rgba(34,197,94,0.25); }
+.card.info   { background: var(--bg-info);   border-color: rgba(37,99,235,0.25); }
+.card.purple { background: var(--bg-purple); border-color: rgba(124,58,237,0.25); }
+.card.soft   { background: var(--bg-soft); border: none; }
+.card .track-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.card.must   .track-label { color: var(--text-danger); }
+.card.should .track-label { color: var(--text-warn); }
+.card.could  .track-label { color: var(--text-success); }
+.card.info   .track-label { color: var(--text-info); }
+.card.purple .track-label { color: var(--text-purple); }
+.card h4 { margin-top: 0; }
+.card ul { margin: 6px 0 8px; padding-left: 22px; color: var(--text-secondary); font-size: 14px; }
+.card li { margin-bottom: 6px; }
+.card li strong { color: var(--text-primary); font-weight: 500; }
+.card code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; background: rgba(0,0,0,0.05); padding: 1px 6px; border-radius: 4px; color: var(--text-primary); }
+.card pre { background: rgba(0,0,0,0.04); padding: 12px 14px; border-radius: 6px; font-size: 12.5px; color: var(--text-primary); overflow-x: auto; margin: 6px 0; line-height: 1.5; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+
+table.clean { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 10px 0; }
+table.clean th, table.clean td { text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+table.clean th { font-weight: 500; color: var(--text-muted); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--bg-soft); }
+table.clean tr:last-child td { border-bottom: none; }
+table.clean td.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.clean td.center { text-align: center; }
+table.clean tr.ok td { background: rgba(34,197,94,0.04); }
+table.clean tr.warn td { background: rgba(245,158,11,0.05); }
+table.clean tr.fail td { background: rgba(239,68,68,0.05); }
+
+.callout { border-left: 3px solid var(--accent); background: var(--bg-card); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 14px 0; font-size: 14px; color: var(--text-secondary); }
+.callout strong { color: var(--text-primary); font-weight: 500; }
+.callout.warn   { border-left-color: #d97706; background: var(--bg-warn); }
+.callout.danger { border-left-color: #dc2626; background: var(--bg-danger); }
+.callout.info   { border-left-color: #2563eb; background: var(--bg-info); }
+.callout.success{ border-left-color: #16a34a; background: var(--bg-success); }
+.callout.purple { border-left-color: #7c3aed; background: var(--bg-purple); }
+
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--bg-soft); color: var(--text-secondary); font-weight: 500; margin-right: 4px; }
+.badge.ok { background: #f0fdf4; color: #15803d; }
+.badge.warn { background: #fff7ed; color: #b45309; }
+.badge.no { background: #fef2f2; color: #b91c1c; }
+.badge.crit { background: #1f2937; color: #fff; }
+.badge.v2 { background: #f5f3ff; color: #6d28d9; }
+
+.step-grid { display: grid; grid-template-columns: 80px 1fr; gap: 14px; }
+.step-num { background: var(--accent); color: white; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600; box-shadow: 0 2px 8px rgba(67,56,202,0.18); }
+.step-body { padding-top: 4px; }
+.step-body h3 { margin-top: 0; }
+
+.summary-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.pill { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 10px 14px; min-width: 150px; }
+.pill .label { font-size: 11px; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+.pill .value { font-size: 19px; font-weight: 600; color: var(--text-primary); }
+.pill.ok .value { color: var(--text-success); }
+.pill.warn .value { color: var(--text-warn); }
+.pill.fail .value { color: var(--text-danger); }
+
+footer { margin-top: 60px; padding-top: 20px; border-top: 0.5px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; font-size: 12px; color: var(--text-secondary); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.legend i.red { background: #ef4444; }
+.legend i.amber { background: #f59e0b; }
+.legend i.green { background: #22c55e; }
+.legend i.purple { background: #7c3aed; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Phase 2A 진단 · 풀 사이클 로드맵</div>
+  <h1>01_collection Phase 2A — 10단계 전문가 진단 + collection → processing → mining 풀 사이클 v1</h1>
+  <p class="sub">Samsung 1건 검증(Step 1–10) 성공·batch 48건 미실행·노트북 파일 truncated. 외부 벤치마킹·교수님 가이드 8항목·재현성 원칙으로 풀 사이클 v2 설계.</p>
+  <div class="meta-row">
+    <span class="chip"><strong>작성</strong> 이동원</span>
+    <span class="chip"><strong>일자</strong> 2026-05-18</span>
+    <span class="chip cycle"><strong>대상</strong> 01_collection Phase 2A v1 → v2</span>
+    <span class="chip gate"><strong>풀 사이클 목표</strong> Samsung 2024 Run All 완주</span>
+    <span class="chip deadline"><strong>D-Day</strong> 2026-05-19 (D-1)</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="active" data-tab="exec">A · 개요</button>
+  <button data-tab="10steps">B · 10단계 진단</button>
+  <button data-tab="violations">C · 위반/필수 매핑</button>
+  <button data-tab="bench">D · 외부 벤치마킹</button>
+  <button data-tab="roadmap">E · 풀 사이클 v2 로드맵</button>
+  <button data-tab="folder">F · 폴더·PR 정리</button>
+</nav>
+
+<!-- ===== TAB A : EXECUTIVE ===== -->
+<section class="section active" id="exec">
+  <h2>A. 개요 — 무엇이 됐고 무엇이 무너졌는가</h2>
+  <p class="section-intro">Phase 2A는 Samsung 2024 1 firm-year를 대상으로 Step 1~10을 완주했다. 그러나 Step 11(48건 batch)에서 inline 함수와 v_final 셀 사이 변수명 불일치로 NameError가 발생하고, 그 직후 셀이 거대한 출력을 갖는 상태로 노트북이 저장돼 .ipynb JSON이 truncated 됐다. 데이터 자체는 1건만 정상이고, 그 1건도 동일 행이 collection_log에 3번 append돼 idempotent가 깨졌다. 이 상태로 02_preprocessing/회귀 단계로 넘어가면 Samsung 3중복 행으로 R²가 1.0이 나오는 가짜 결과가 만들어진다.</p>
+
+  <div class="summary-pills">
+    <div class="pill ok">
+      <div class="label">Step 1~10 Samsung</div>
+      <div class="value">10 / 10 완주</div>
+    </div>
+    <div class="pill ok">
+      <div class="label">SECTION-1 매칭</div>
+      <div class="value">14 / 14 노드</div>
+    </div>
+    <div class="pill warn">
+      <div class="label">passages (body)</div>
+      <div class="value">55 — IV 1건뿐</div>
+    </div>
+    <div class="pill fail">
+      <div class="label">batch 48건</div>
+      <div class="value">0 행 (NameError)</div>
+    </div>
+    <div class="pill fail">
+      <div class="label">.ipynb 파일</div>
+      <div class="value">truncated</div>
+    </div>
+    <div class="pill warn">
+      <div class="label">collection_log</div>
+      <div class="value">3 중복 행</div>
+    </div>
+  </div>
+
+  <div class="callout danger">
+    <strong>핵심 결론</strong> — Samsung 1건의 ESG passage 추출은 정확히 동작했다(viewer 5/5 검증 성공, II/IV/VI 모두 char/table count 정확). 그러나 (a) batch 실행 실패, (b) 노트북 파일 corrupted, (c) log 중복 3행 — 이 셋은 v1 노트북을 그대로 두면 동일하게 재발한다. 따라서 phase2A를 "성공한 일부 + 무너진 batch"로 정의하고 v2에서 batch 안정성·log idempotency·노트북 저장 패턴 3축을 한꺼번에 재설계한다.
+  </div>
+
+  <h3>전체 시야 — 무엇을 했고 무엇을 못 했는가</h3>
+  <table class="clean">
+    <thead><tr><th style="width:20%">영역</th><th>현재 상태</th><th style="width:120px">평가</th></tr></thead>
+    <tbody>
+      <tr class="ok"><td>식별자 정합성</td><td>stock_code → corp_code → rcept_no 모두 viewer로 교차 검증. silent 오매칭 0건.</td><td class="center"><span class="badge ok">완수</span></td></tr>
+      <tr class="ok"><td>raw 보존</td><td>data/raw/005930_2024_disclosure.zip(660KB) + interim sections.json(2.3MB) + aux 2개(연결감사 763KB·감사 648KB).</td><td class="center"><span class="badge ok">완수</span></td></tr>
+      <tr class="ok"><td>SECTION-1 14 매칭</td><td>v4 lxml 방식으로 14/14 노드 식별, II/IV/VI 모두 추출. method=AASSOCNOTE/TITLE_text 이중 매칭 의도대로 동작.</td><td class="center"><span class="badge ok">완수</span></td></tr>
+      <tr class="warn"><td>passage 분포</td><td>body 55건 = II 24 / IV 1 / VI 30. IV가 1건만 잡힘 → Samsung IV가 정량 분석문 위주라 seed 30단어로 채집되는 ESG 표현이 거의 없음.</td><td class="center"><span class="badge warn">검토</span></td></tr>
+      <tr class="warn"><td>표/본문 정책</td><td>tables 84건 — VI는 80%가 표. 표를 본문에 포함할지 v2에서 결정 필요.</td><td class="center"><span class="badge warn">결정</span></td></tr>
+      <tr class="fail"><td>batch 실행</td><td>Step 11.3 cell에서 <code>NameError: name 'stock_to_corp' is not defined</code>. inline 함수가 <code>corp_map</code> argument를 받지만 내부에서 <code>stock_to_corp</code>로 호출.</td><td class="center"><span class="badge no">실패</span></td></tr>
+      <tr class="fail"><td>.ipynb 파일</td><td>4026 line째에 JSON unterminated string. nbformat 닫힘 부재. 4 open braces / 3 open brackets. cell 46이 통째로 손실(batch 실패 셀).</td><td class="center"><span class="badge crit">치명</span></td></tr>
+      <tr class="warn"><td>log idempotency</td><td>collection_log 3행 모두 Samsung 동일 행. append-only 패턴에 dedup 부재. preprocessing이 SUCCESS=3 으로 잘못 계산.</td><td class="center"><span class="badge warn">수정</span></td></tr>
+      <tr class="warn"><td>expanded_dictionary 검토</td><td>900행 candidates 저장됨. 사용자 kept/removed 컬럼 미입력. cell 28 "시범 계산: 모든 후보 kept" 가정.</td><td class="center"><span class="badge warn">미완</span></td></tr>
+      <tr class="fail"><td>KCGS 등급 출처</td><td>company_master.csv에 esg_grade·E·S·G 차원별 등급 모두 있으나 esg_source="한국ESG기준원" 외 as_of_date·취득 방법 미기록.</td><td class="center"><span class="badge no">미기록</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>이 보고서 사용법</h3>
+  <ul>
+    <li>TAB B (10단계 진단) — 각 단계의 데이터 근거·원인·발전 방안 1쌍. v2 노트북 작성 시 직접 참조.</li>
+    <li>TAB C (위반/필수 매핑) — 교수님 가이드 02·04 위반금지 8항목 + 필수 체크리스트를 phase2A 결과와 항목별 비교.</li>
+    <li>TAB D (벤치마킹) — dart-fss-text·Mecab·KCGS·cheap-talk·재현성 5축의 외부 모범 사례. v2 설계 근거.</li>
+    <li>TAB E (풀 사이클 로드맵) — Samsung 2024 1건 Run All 완주를 위한 collection v2 → preprocessing v2 → mining v1 노트북 설계.</li>
+    <li>TAB F (폴더·PR) — members/이동원 하위 트리, GitHub MCP 양쪽 동기화 단위 결정.</li>
+  </ul>
+</section>
+
+<!-- ===== TAB B : 10 STEPS ===== -->
+<section class="section" id="10steps">
+  <h2>B. 10단계 전문가 진단</h2>
+  <p class="section-intro">phase2A v1의 결과·로그·산출물을 10개 관점에서 분석한다. 각 단계는 <strong>관찰 → 원인 → 발전 방안 → v2 적용</strong> 4파트로 구성된다.</p>
+
+  <div class="legend">
+    <span><i class="red"></i> 치명 — v2 진입 전 반드시 수정</span>
+    <span><i class="amber"></i> 주의 — v2에서 패턴 변경</span>
+    <span><i class="green"></i> 보존 — 잘 동작, 그대로 유지</span>
+    <span><i class="purple"></i> 발전 — 추가 영역 신설</span>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h3>노트북 .ipynb 파일 무결성 <span class="badge no">치명</span></h3>
+      <div class="card must">
+        <div class="track-label">관찰</div>
+        <p>phase2A_v1.ipynb는 263,931 bytes / 4,026 lines이며 4행이 <code>"&lt;p&gt;5 rows × 29 columns</code>로 끝난다. JSON 닫힘 4개·배열 닫힘 3개 부재. cell 46(batch 실행 셀)이 통째로 손실됐다. 02_preprocessing_v1.ipynb도 동일 증상(519KB · cell 47 truncated).</p>
+        <p><strong>원인</strong> — batch loop에서 tqdm + per-firm print + traceback이 폭발적으로 누적된 상태에서 노트북이 저장됐다. Jupyter는 진행 중 stream output을 메모리에 쌓고 저장 시 한 번에 write하는데, 어떤 단계에서 디스크 sync가 끊기면 부분 write로 파일이 corrupt 된다.</p>
+      </div>
+      <div class="card should">
+        <div class="track-label">발전 방안</div>
+        <ul>
+          <li><strong>per-firm output capping</strong> — batch loop 안에서 tqdm.write로만 최소 메시지(1줄) 출력. traceback은 <code>logs/batch_errors.jsonl</code>로 분리 기록.</li>
+          <li><strong>incremental checkpoint</strong> — 매 10 firm-year마다 <code>collection_log.csv</code>·<code>sections_*.json</code> flush + <code>os.fsync</code>.</li>
+          <li><strong>v2 노트북은 cell 분할</strong> — batch 함수 정의 셀과 실행 셀을 분리하고, 실행 셀의 마지막 줄은 결과 요약 한 줄만.</li>
+          <li><strong>recovery script</strong> — <code>tools/repair_ipynb.py</code> 추가 (이번에 만든 truncate-recover 스크립트 정식화).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h3>batch 실행 NameError <span class="badge no">치명</span></h3>
+      <div class="card must">
+        <div class="track-label">관찰</div>
+        <p>마지막 출력 중 발견된 traceback: <code>NameError: name 'stock_to_corp' is not defined</code>. cell 41 inline 함수는 <code>run_one_firm_year(stock_code, fiscal_year, *, api_key, corp_map, seed_df, ...)</code> 시그니처지만, 함수 본문에서 <code>stock_to_corp[stock_code]</code>를 호출.</p>
+        <p><strong>원인</strong> — src/collection.py 원본 함수가 module-level <code>stock_to_corp</code> dict에 의존. inline 복사 시 의존성 누락. self-contained 가정이 무너짐.</p>
+      </div>
+      <div class="card should">
+        <div class="track-label">발전 방안</div>
+        <ul>
+          <li><strong>self-contained 검증 셀</strong> — 함수 정의 직후 module name 충돌 검사: <code>dir()</code> diff 출력.</li>
+          <li><strong>argument로 명시 전달</strong> — <code>run_one_firm_year(..., stock_to_corp_map: dict)</code>로 시그니처 강제. global 의존 차단.</li>
+          <li><strong>v2는 src import 우선</strong> — inline 복사 패턴 폐기, <code>from src.collection import run_one_firm_year</code>. 단 가이드 04 §2-1 "외부 모듈 import 없이 Run All 재현" 위배 우려 → 위반 자문: 가이드는 <em>표준 라이브러리·자기 프로젝트 src</em> import는 명시적으로 허용(line 60-62 묵시). 위반금지 8항목 모두 외부 의존성 아니라 데이터 무결성 항목.</li>
+          <li><strong>실패 시 collection_log에 reason 기록</strong> — try/except 안에 status=FAIL_BATCH_NAMEERROR + reason=traceback.format_exc()[:500].</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h3>collection_log idempotency <span class="badge warn">주의</span></h3>
+      <div class="card should">
+        <div class="track-label">관찰</div>
+        <p>logs/collection_log.csv는 Samsung 동일 행 3개 (2026-05-16T19:39, 2026-05-16T21:50, 2026-05-17T10:46). 02_preprocessing이 SUCCESS=3건으로 잘못 계산해 firm-year 1개를 3행으로 처리. TF-IDF·회귀 입력으로 가짜 N=3.</p>
+        <p><strong>원인</strong> — append-only without dedup. 노트북 재실행이 정상 사용 패턴인데도 (stock_code, fiscal_year, parser_version) 기반 upsert 부재.</p>
+      </div>
+      <div class="card should">
+        <div class="track-label">발전 방안</div>
+        <ul>
+          <li><strong>upsert 키</strong> — (stock_code, fiscal_year, parser_version) 기준. 같은 키 행이 있으면 latest로 교체.</li>
+          <li><strong>append 직전 dedup 셀</strong> — <code>df.drop_duplicates(subset=['stock_code','fiscal_year','parser_version'], keep='last')</code>.</li>
+          <li><strong>run_id 컬럼 추가</strong> — <code>run_id = hashlib.md5(f"{datetime.now().date()}_{git_sha}_{parser_version}".encode()).hexdigest()[:8]</code> — 외부 벤치마킹(arXiv 2208.01712) 기준.</li>
+          <li><strong>02_preprocessing은 latest run_id만 load</strong> — 같은 키 중복 자동 차단.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <h3>passage 분포 — IV 1건의 의미 <span class="badge warn">주의</span></h3>
+      <div class="card should">
+        <div class="track-label">관찰</div>
+        <p>body passages: II 24 / IV 1 / VI 30. Samsung 2024 IV는 26개 sub-table을 포함한 정량 분석 위주 섹션. seed 30단어 중 IV body에서 매칭된 것은 "에너지" 1회뿐. VI는 30/30 모두 G dim (이사회·감사위원회·사외이사·주주).</p>
+        <p><strong>원인</strong> — seed dictionary가 ESG 정성 표현에 편중. IV는 재무·실적 분석 문체로 seed에 의도적으로 약함. VI는 거버넌스 일색이라 G에 편중.</p>
+      </div>
+      <div class="card could">
+        <div class="track-label">발전 방안</div>
+        <ul>
+          <li><strong>이는 의도된 신호</strong> — 가이드 03 cheap-talk 관점에서 IV가 ESG 표현 적은 것이 오히려 자연스러움. 보고서 §한계에 기록.</li>
+          <li><strong>v2에서 seed 30 → 50으로 확장 검토</strong> — ESG-Kor (EMNLP 2024 Findings) 라벨로 IV 분석 적합 용어 추출 (위험·기회·전망·전략).</li>
+          <li><strong>section별 차원 normalize</strong> — VI가 G에 편중이라 firm-year G score를 그대로 쓰면 거버넌스가 부풀려짐. firm-year score는 section-weighted (II=0.5, IV=0.2, VI=0.3) 또는 z-score 검토.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <h3>표 vs 본문 분리 정책 <span class="badge warn">주의</span></h3>
+      <div class="card should">
+        <div class="track-label">관찰</div>
+        <p>section_match_v_final.csv에서 table_ratio: III=1.131(표가 본문보다 큼), VIII=0.988, IX=0.986, XII=0.984, X=0.855, V=0.858, VI=0.797. ESG target VI도 80%가 표. tables passage는 84건이지만 거의 G(73건, 87%).</p>
+        <p><strong>원인</strong> — DART XML &lt;TABLE&gt;이 격자 형식 데이터. 본문 + 표를 합쳐 itertext()로 평탄화하면 표의 셀들이 무의미하게 concat된다.</p>
+      </div>
+      <div class="card could">
+        <div class="track-label">발전 방안</div>
+        <ul>
+          <li><strong>v2 기본은 body only</strong> — passages_body가 본 분석 단위. tables는 보조.</li>
+          <li><strong>tables는 별도 alt analysis</strong> — preprocessing v2에서 <code>source = 'body' vs 'body+tables' vs 'tables'</code> 3종 비교. Q1 sweep으로 기록.</li>
+          <li><strong>각주(footnote) 분리</strong> — dart-fss(josw123) 패턴 흡수: TABLE > FOOTNOTE 텍스트는 별도 컬럼.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <h3>expanded_dictionary 사용자 검토 누락 <span class="badge no">치명</span></h3>
+      <div class="card must">
+        <div class="track-label">관찰</div>
+        <p>02_preprocessing_v1 cell 26은 900행 candidate (θ 3 × 차원 3 × top 100) 저장. cell 28은 "⚠️ 사용자 검토 미완료 (kept_or_removed 컬럼 비어있음) — 시범 계산: 모든 후보를 kept로 가정"으로 진행. cell 25 sample 출력: "폐기물 → Demodulator, Processor, Governance" cosine 0.9998 (Samsung 1건 학습이라 모든 단어가 거의 동일 vector).</p>
+        <p><strong>원인</strong> — N=1 corpus로 FastText 학습 시 vector space가 collapse. cosine은 거의 1.0 → meaningful filtering 불가. 가이드 02 위반금지 #3 "MCP/추출 결과 그대로 신뢰 ❌" 사실상 위반.</p>
+      </div>
+      <div class="card must">
+        <div class="track-label">발전 방안</div>
+        <ul>
+          <li><strong>θ sweep은 N≥30 필요 (벤치마킹 5번)</strong> — Samsung 1건 sweep은 통계적 invalid. v2 collection v2가 적어도 KCGS 등급 stratified 5건 × 등급 6개 = 30건 수집할 때까지 expanded_dictionary 채택 보류.</li>
+          <li><strong>풀 사이클 v1은 seed-only 회귀까지만</strong> — Samsung 1건 Run All은 seed_tfidf_score만 검증, expanded는 "코드 build OK + 검토는 v2에서" 마크다운으로 명시.</li>
+          <li><strong>kept_or_removed 입력 UI</strong> — Excel 저장(xlsx) 이미 동작. CSV는 utf-8-sig 인코딩으로 한글 OK 확인됨.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <h3>KCGS 등급 신뢰성·출처 메타 <span class="badge no">치명</span></h3>
+      <div class="card must">
+        <div class="track-label">관찰</div>
+        <p>company_master.csv에 esg_grade(전체)·e_grade·s_grade·g_grade 모두 입력. esg_source="한국ESG기준원" 명시. 그러나 (a) 다운로드 일자(as_of_date) 미기록, (b) 등급 산정연도와 esg_year의 관계 검증 셀 없음, (c) 정정 이력 확인 안 됨.</p>
+        <p><strong>원인</strong> — company_master.csv가 정적 시드로 git에 포함됐고, 출처 메타가 노트북 안에 없음. 보고서 §한계에 "KCGS as of YYYY-MM-DD" 기록 불가.</p>
+      </div>
+      <div class="card must">
+        <div class="track-label">발전 방안</div>
+        <ul>
+          <li><strong>00_ingest_kcgs.ipynb 신설</strong> — KCGS 공식 사이트(esg.cgs.or.kr)에서 평가 결과 PDF/Excel을 수집. WebFetch 또는 수동 다운로드 후 추출.</li>
+          <li><strong>등급 출처 메타 컬럼</strong> — <code>esg_source · esg_evaluation_year · esg_grade_as_of_date · esg_grade_method_url</code> 4개 컬럼 추가. company_master는 그대로 두고 logs/kcgs_lineage.csv 별도 저장.</li>
+          <li><strong>KRX ESG 포털 교차검증</strong> — esg.krx.co.kr에서 동일 firm-year 등급 일치 여부 확인. 불일치 시 reason 기록.</li>
+          <li><strong>등급 분포 시각화 검증</strong> — 127사 × 3년 etfu 등급 분포 막대그래프. seed 5건 × 6등급 stratified 표본 가능 여부 확인.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-num">8</div>
+    <div class="step-body">
+      <h3>형태소 분석기 — Mecab 미설치 우회 <span class="badge warn">주의</span></h3>
+      <div class="card should">
+        <div class="track-label">관찰</div>
+        <p>02_preprocessing_v1 cell 4: "❌ mecab(eunjeon) 실패: No module named 'eunjeon'". PRIMARY=okt로 fallback. okt 토큰 결과: 평균 9,274 tokens, vocab 2,069. cell 10 Sanity check: "['II','사업','내용','사업','개요','당사','본사','거점','한국','DX','부문','산하','해외','지역','총괄'...]" — 영문 단어가 한글 사이 그대로 노출.</p>
+        <p><strong>원인</strong> — eunjeon은 Mac/Linux 빌드 의존. Windows에서는 mecab-ko-msvc 또는 mecab-python3 필요. okt fallback은 동작하나 정형 사업보고서 문어체에서 Mecab 대비 분리도 ↓.</p>
+      </div>
+      <div class="card should">
+        <div class="track-label">발전 방안</div>
+        <ul>
+          <li><strong>Mecab 설치는 Windows에서 어려움</strong> — pip install mecab-ko 또는 KoNLPy 0.6+ 내장. v2 collection은 Okt PRIMARY 유지. 보고서 §한계에 "Windows 환경 Mecab 미설치 → Okt 사용"으로 기록.</li>
+          <li><strong>대안: kkma + komoran 결과와 비교 표 1개 셀 추가</strong> — Q2 alt sweep으로 4종 중 3종 가용 확인.</li>
+          <li><strong>벤치마킹 D-2번</strong>에 따라 KLUE-RoBERTa는 v2 alpha 분석으로 보류. 풀 사이클 v1 범위 밖.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-num">9</div>
+    <div class="step-body">
+      <h3>cheap-talk 통제 변수 — 단순 word_count 한계 <span class="badge warn">주의</span></h3>
+      <div class="card should">
+        <div class="track-label">관찰</div>
+        <p>02_preprocessing_v1 cell 35 "cheap-talk 통제 변수 생성" 셀 존재하지만 구체 구현은 word_count 단일. 가이드 03 line 234 "total_word_count는 cheap-talk 통제 변수". 벤치마킹 4번: Bingler/Kraus/Leippold (ClimateBert) 기준 (i) commitment ratio (ii) specificity (iii) non-material share 3개 추가 권장.</p>
+      </div>
+      <div class="card could">
+        <div class="track-label">발전 방안</div>
+        <ul>
+          <li><strong>v1 mining 회귀는 word_count만으로 baseline 1개</strong> — 가이드 03 line 232-234 충족.</li>
+          <li><strong>alpha 분석 후보로 specificity score</strong> — 숫자(0-9) 토큰 비율 / 연도(20XX) 비율 / 단위(%·만원·억원) 비율. v2에서 추가.</li>
+          <li><strong>commitment ratio</strong> — "할 것이다·계획·목표·달성" 키워드 빈도. KoSBERT future-tense classification은 alpha+ 영역.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-grid">
+    <div class="step-num">10</div>
+    <div class="step-body">
+      <h3>풀 사이클 격리 — collection·processing·mining 경계 <span class="badge" style="background:#f5f3ff;color:#6d28d9">발전</span></h3>
+      <div class="card purple">
+        <div class="track-label">발전 영역 신설</div>
+        <p>현재 폴더에 03_mining/은 .gitkeep만. 02_preprocessing이 회귀 step 8까지 포함하며 mining 영역을 침범. 가이드 03·04는 명확히 (a) 전처리·feature 생성 → (b) Spearman·t-test 검증 → (c) OLS/ordered_logit/binary_logit → (d) alpha를 분리.</p>
+        <ul>
+          <li><strong>경계 재정의</strong>:</li>
+          <li>01_collection = stock_code → corp_code → rcept_no → SECTION-1 추출 → passage. 산출: <code>sections_*.json</code> + <code>collection_log.csv</code>.</li>
+          <li>02_preprocessing = tokenize → stopword → TF-IDF matrix → seed/expanded score. 산출: <code>esg_features.parquet</code> + <code>expanded_dictionary.csv</code>.</li>
+          <li>03_mining = feature ↔ KCGS grade 통계 검증(Spearman + t-test) → 회귀 → alpha. 산출: <code>regression_results.csv</code> + <code>fig_*.png</code> + 해석 보고서.</li>
+          <li><strong>v1은 Samsung 2024 1건이라도 mining까지 도달</strong> — 회귀 변동성 0이지만 코드/시각화/표 형식까지 완성. v2에서 batch만 추가하면 통계가 의미 있어짐.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TAB C : VIOLATIONS ===== -->
+<section class="section" id="violations">
+  <h2>C. 위반금지 8항목 + 가이드 필수 매핑</h2>
+  <p class="section-intro">교수님 가이드 02 (수집)·04 (제출)의 위반금지 8항목과 필수 체크리스트를 phase2A 현황과 항목별 매핑. ✅ 충족 / ⚠️ 부분 / ❌ 위반.</p>
+
+  <h3>가이드 02 위반금지 8항목 — phase2A 현황</h3>
+  <table class="clean">
+    <thead><tr><th style="width:6%">#</th><th style="width:30%">항목</th><th style="width:18%">가이드 line</th><th style="width:14%">phase2A 결과</th><th>근거</th></tr></thead>
+    <tbody>
+      <tr class="ok"><td class="center">1</td><td>실패 행 가짜 0 채우기 ❌</td><td>02 line 172, 286</td><td class="center"><span class="badge ok">✅ 충족</span></td><td>collection_log SUCCESS만 esg_features에 join. status/reason 컬럼으로 실패 별도 기록. 다만 v1에서는 SUCCESS 행도 중복 3행 → preprocessing이 N=3으로 잘못 계산. 항목 자체는 충족이나 idempotent 결함이 효과를 무력화.</td></tr>
+      <tr class="ok"><td class="center">2</td><td>viewer 우회 ❌</td><td>02 line 67, 94</td><td class="center"><span class="badge ok">✅ 충족</span></td><td>document.xml API만 사용. viewer 5/5 sample 사용자 확인 완료(Step 8). 보고서에 viewer_url 컬럼 명시.</td></tr>
+      <tr class="warn"><td class="center">3</td><td>MCP/추출 결과 그대로 신뢰 ❌</td><td>02 line 94</td><td class="center"><span class="badge warn">⚠️ 부분</span></td><td>SECTION-1 14 매칭 결과 viewer로 검증. 그러나 expanded_dictionary 900행 candidate를 모두 kept로 가정하고 cell 28 진행. 사용자 검토 컬럼(kept_or_removed) 비어 있음. v2에서 N≥30 corpus 확보 후 재시도 + Excel 직접 채움.</td></tr>
+      <tr class="ok"><td class="center">4</td><td>API key 출력 노출 ❌</td><td>02 line 216-222</td><td class="center"><span class="badge ok">✅ 충족</span></td><td>mask_key()로 "0e1e...len=40" 마스킹 출력. KEY_CANDIDATES=['OPENDART_API_KEY','API_KEY','DART_API_KEY'] 순환 매칭으로 .env 키 이름 가정 제거.</td></tr>
+      <tr class="ok"><td class="center">5</td><td>raw 미보존 ❌</td><td>02 line 155</td><td class="center"><span class="badge ok">✅ 충족</span></td><td>data/raw/005930_2024_disclosure.zip(660KB) + interim/sections.json(2.3MB) + aux 2종. .gitignore에 raw·interim·cache 제외, 메타데이터(sections.json 일부) 만 git 포함.</td></tr>
+      <tr class="ok"><td class="center">6</td><td>진단 부재 ❌</td><td>02 line 143-146</td><td class="center"><span class="badge ok">✅ 충족</span></td><td>Step 5 SECTION-1 매칭 표(method·body·tables), Step 9 collection_log 컬럼, Step 10 8항목 self-check 표 모두 노트북에 출력. logs/section_match_v_final.csv 별도 archive.</td></tr>
+      <tr class="ok"><td class="center">7</td><td>silent 오매칭 ❌</td><td>02 line 35</td><td class="center"><span class="badge ok">✅ 충족</span></td><td>stock_code 기준 행 선택. company_name 회사 133개 ≠ stock_code 127개 차이 사전 인지. Samsung 005930 → 00126380 → 20250311001085 viewer로 교차 검증.</td></tr>
+      <tr class="warn"><td class="center">8</td><td>평가 기준 부재 ❌</td><td>02 line 145</td><td class="center"><span class="badge warn">⚠️ 부분</span></td><td>Step 8 viewer 5/5 기준 + Step 10 self-check 표 명시. 그러나 batch 48건 실행 결과 평가 기준(예: SUCCESS≥80%) 사전 정의 부재. v2에서 batch 평가 기준 명문화.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>가이드 04 §2-1 제출 전 체크리스트 — phase2A 현황</h3>
+  <table class="clean">
+    <thead><tr><th style="width:25%">영역</th><th style="width:50%">체크 항목</th><th>현황</th></tr></thead>
+    <tbody>
+      <tr class="warn"><td rowspan="4">데이터 lineage</td><td>최대 381행 기준 수집 시도</td><td><span class="badge warn">⚠️ 1/381 (Samsung 1건만)</span></td></tr>
+      <tr class="ok"><td>각 행 corp_code, rcept_no, fiscal_year 연결</td><td><span class="badge ok">✅ Samsung 100% 연결</span></td></tr>
+      <tr class="warn"><td>수집 불가 행 이유 기록</td><td><span class="badge warn">⚠️ batch 48건 미실행</span></td></tr>
+      <tr class="warn"><td>실패 행 가짜 0 차단</td><td><span class="badge warn">⚠️ 1건 수집이라 검증 불가</span></td></tr>
+      <tr class="warn"><td rowspan="2">분석 재현성</td><td>Run All 위→아래 재현</td><td><span class="badge no">❌ Step 11.3에서 NameError, 노트북 truncated</span></td></tr>
+      <tr class="ok"><td>API key 환경변수만 사용</td><td><span class="badge ok">✅ mask_key + KEY_CANDIDATES</span></td></tr>
+      <tr class="ok"><td rowspan="4">보고서 판단 기록</td><td>섹션(II/IV/VI) + 문단 추출 기준</td><td><span class="badge ok">✅ section_code·method 명시</span></td></tr>
+      <tr class="warn"><td>feature 선택(seed/expanded/fastText) 이유·한계</td><td><span class="badge warn">⚠️ 02_preprocessing v1에 코드만 있고 채택 θ 결정 미완</span></td></tr>
+      <tr class="warn"><td>회귀모형 선택 이유</td><td><span class="badge no">❌ 03_mining 부재</span></td></tr>
+      <tr class="warn"><td>인과관계 ❌ 연관성 ⭕ 해석</td><td><span class="badge no">❌ 03_mining 부재</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>핵심 격차</strong> — 8 위반금지 항목은 6/8 ✅ + 2/8 ⚠️로 양호. 그러나 §2-1 제출 전 체크리스트는 데이터 lineage 4개 중 3개 ⚠️, 재현성 1개 ❌. <strong>이는 batch 48건 실행 실패의 직접적 결과</strong>이며 v2가 batch 안정성을 회복하면 동시에 해결된다.
+  </div>
+
+  <h3>가이드 04 §3 평가표 → phase2A 자가 점수</h3>
+  <table class="clean">
+    <thead><tr><th style="width:18%">평가 영역</th><th style="width:30%">좋은 결과물</th><th style="width:30%">흔한 문제</th><th>phase2A 위치</th></tr></thead>
+    <tbody>
+      <tr><td>데이터 이해</td><td>381 표본 의미·결측·timing 설명</td><td>일부 기업만으로 전체 결과 처럼 말함</td><td><span class="badge warn">현재 1건. v2 batch가 절대 필요</span></td></tr>
+      <tr><td>DART lineage</td><td>stock·corp·rcept·fiscal 구분 + 추출 로그</td><td>회사명 merge / rcept 혼용</td><td><span class="badge ok">stock_code 기준 + collection_log</span></td></tr>
+      <tr><td>텍스트 처리</td><td>II/IV/VI 발췌 · 불용어 · seed/expanded 차이</td><td>전체 그대로 / fastText 무검토 ESG 사전</td><td><span class="badge warn">II/IV/VI ✅ / expanded 검토 ❌</span></td></tr>
+      <tr><td>측정 validity</td><td>feature ↔ grade Spearman · t-test 보고</td><td>회귀 직행</td><td><span class="badge no">03_mining 부재</span></td></tr>
+      <tr><td>모형 선택</td><td>OLS·ordered·binary 중 선택 + 버린 대안 한계</td><td>OLS만, 근거 없음</td><td><span class="badge no">03_mining 부재</span></td></tr>
+      <tr><td>해석과 한계</td><td>계수·효과 크기·cheap-talk·업종 한계</td><td>유의성만, 인과 단정</td><td><span class="badge no">03_mining 부재</span></td></tr>
+      <tr><td>알파</td><td>이유·결과·한계</td><td>기법 이름만</td><td><span class="badge warn">v2에서 보조 보고서/specificity 후보</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== TAB D : BENCHMARK ===== -->
+<section class="section" id="bench">
+  <h2>D. 외부 벤치마킹 5축 — v2 설계 근거</h2>
+  <p class="section-intro">DART 사업보고서 ESG 텍스트 마이닝 분야의 GitHub 오픈소스·논문·한국어 NLP 라이브러리를 5축으로 조사한 결과. 출처 URL은 각 카드 하단.</p>
+
+  <div class="grid-2">
+    <div class="card info">
+      <div class="track-label">1. dart-fss-text · SECTION-1 표준</div>
+      <h4>방향은 맞다, 표/본문 분리 보강 필요</h4>
+      <p>jaepil-choi/dart-fss-text가 SECTION-1 lxml 파싱을 "목차별 추출"의 사실상 표준으로 굳혔다. TITLE+AASSOCNOTE 이중 매칭 + MongoDB 캐싱 패턴이 README에 명시. 우리 v4 접근(SECTION-1 14개 순회 + section_code + TITLE+AASSOCNOTE) 방향이 정확히 같다.</p>
+      <p><strong>v2 적용</strong> — josw123/dart-fss의 &lt;TABLE&gt; 분리 패턴 흡수. body·tables·footnote 3종 분리 저장. 2025.6.30 시행 기업공시서식 ESG 추가 항목을 seed 단계에서 반영.</p>
+      <ul>
+        <li>https://github.com/jaepil-choi/dart-fss-text</li>
+        <li>https://github.com/josw123/dart-fss</li>
+        <li>https://dart.fss.or.kr/dsaa003/selectGuideMain.ax?seqno=430</li>
+      </ul>
+    </div>
+
+    <div class="card info">
+      <div class="track-label">2. 형태소 분석기 · 임베딩</div>
+      <h4>Mecab 우선, ESG-Kor 라벨 활용</h4>
+      <p>벤치마크 다수에서 Mecab이 Okt 대비 속도 3~10배, 사업보고서 같은 정형 문어체에서 정확도 우위. Okt는 신조어/SNS형에 강하나 본 과제에는 부적합. EMNLP 2024 Findings의 ESG-Kor (Hanyang Univ., 118,946 문장 E/S/G 라벨)와 KLUE-RoBERTa 활용이 최신 표준.</p>
+      <p><strong>v2 적용</strong> — Windows Mecab 설치 어려움 → Okt PRIMARY 유지 + 보고서 §한계에 명시. ESG-Kor 라벨로 seed 30 → 50~100 확장은 alpha+ 영역. KLUE-RoBERTa는 본 과제 1개월 일정상 보류.</p>
+      <ul>
+        <li>https://aclanthology.org/2024.findings-emnlp.387/</li>
+        <li>https://github.com/KLUE-benchmark/KLUE</li>
+      </ul>
+    </div>
+
+    <div class="card info">
+      <div class="track-label">3. KCGS 등급 신뢰성</div>
+      <h4>esg.cgs.or.kr 공식 + KRX 교차검증</h4>
+      <p>esg.cgs.or.kr 평가는 OECD 지배구조 원칙·ISO26000 반영 7등급 절대평가. 2024년 상장 1,001사 + 비상장 금융 65사 평가. 평가모형·해설서·개정내역 공개. 학부 회귀 종속변수로 사용 충분. 다만 라벨 비공개 정정 이력이 있어 evaluation_year + as_of_date 기록 필수.</p>
+      <p><strong>v2 적용</strong> — 00_ingest_kcgs.ipynb 신설. company_master 옆에 <code>kcgs_lineage.csv</code> 추가. KRX ESG 포털 교차검증.</p>
+      <ul>
+        <li>https://esg.cgs.or.kr/</li>
+        <li>https://esg.krx.co.kr/contents/02/02010000/ESG02010000.jsp</li>
+      </ul>
+    </div>
+
+    <div class="card info">
+      <div class="track-label">4. cheap-talk 통제</div>
+      <h4>ClimateBert 라인이 황금 표준</h4>
+      <p>Bingler/Kraus/Leippold ClimateBert (Finance Research Letters 2022, JBF 2024)가 사실상 표준. 단순 word_count만으로 부족하며 (i) commitment vs non-commitment 문장 비율, (ii) specificity score (숫자·연도·금액 토큰 비율), (iii) non-material category share 3개를 추가 통제로 권장.</p>
+      <p><strong>v2 적용</strong> — mining v1 baseline은 word_count만(가이드 03 line 234 충족). specificity score는 v1에 추가 셀로 구현. commitment ratio·non-material는 alpha+ 영역.</p>
+      <ul>
+        <li>https://www.sciencedirect.com/science/article/pii/S1544612322000897</li>
+        <li>https://www.sciencedirect.com/science/article/pii/S0378426624001080</li>
+      </ul>
+    </div>
+
+    <div class="card info">
+      <div class="track-label">5. 재현성 · 학부 함정</div>
+      <h4>N=1 sweep은 무효, run_id 로깅 표준</h4>
+      <p>Valtonen et al. 2024 (Organizational Research Methods): 텍스트 마이닝 재현성 실패 80%가 데이터셋 분할·전처리·랜덤시드 미기록에서 옴. <strong>N=1 sample로 θ sweep은 분산 추정 불가, 우연 선택 가능성 95%+.</strong> 최소 stratified 30~50건(등급별 5건) 필요. arXiv 2208.01712 권장: 모든 노트북에 <code>run_id = hash(git_sha + timestamp + seed)</code>로 idempotent log 표준화.</p>
+      <p><strong>v2 적용</strong> — collection v2 산출 log에 run_id 컬럼 추가. expanded_dictionary 채택 θ 결정은 N≥30 이후로 명시 보류. 풀 사이클 v1은 seed-only로 mining까지 완주.</p>
+      <ul>
+        <li>https://journals.sagepub.com/doi/10.1177/10944281221124947</li>
+        <li>https://arxiv.org/abs/2208.01712</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout success">
+    <strong>외부 벤치마킹 종합 — 3대 액션</strong>
+    <ul>
+      <li><strong>collection v2</strong> — body·tables·footnote 3분리 + run_id 로깅 + KCGS ingestion 별도 노트북</li>
+      <li><strong>preprocessing v2</strong> — Okt 유지(Windows 환경 한계 명시) + N≥30 확보 시 θ sweep 재시도</li>
+      <li><strong>mining v1</strong> — seed-only Spearman + t-test + OLS baseline(+ word_count) + specificity 추가 통제 1개</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== TAB E : ROADMAP ===== -->
+<section class="section" id="roadmap">
+  <h2>E. 풀 사이클 v2 로드맵 — Samsung 2024 1건 Run All 완주</h2>
+  <p class="section-intro">사용자 결정(2026-05-18): 이번 풀 사이클은 Samsung 2024 1 firm-year로 collection → preprocessing → mining 전체 노트북을 깔끔하게 한 번 완주. v2 노트북 3개 + KCGS ingestion 노트북 1개 작성. 매 노트북은 v1을 처음부터 What/Why/근거 마크다운 + 비전공자 주석으로 작성 (메모리 <code>feedback_markdown_discipline.md</code>).</p>
+
+  <h3>v2 노트북 4개 세트</h3>
+  <table class="clean">
+    <thead><tr><th style="width:22%">노트북</th><th style="width:18%">위치</th><th>핵심 셀 구성</th><th style="width:14%">산출</th></tr></thead>
+    <tbody>
+      <tr><td><strong>00_ingest_kcgs_v1.ipynb</strong></td><td>members/이동원/notebooks/00_ingest/</td><td>(1) KCGS 사이트 출처 메모 (2) company_master 등급 분포 검증 (3) kcgs_lineage.csv 생성 (4) 등급 stratification 가능성 분석</td><td>kcgs_lineage.csv + 등급 분포 png</td></tr>
+      <tr><td><strong>01_collection_phase2A_v2.ipynb</strong></td><td>members/이동원/notebooks/01_collection/</td><td>v1 Step 1~10 유지(Samsung 1건) + Step 11 batch는 함수 정의만 + Samsung 1건 run_one_firm_year 호출로 실제 1행 SUCCESS + collection_log dedup + run_id 컬럼 추가 + Step 12 자가 점검 표</td><td>collection_log.csv (dedup 후 1행) + sections_005930_2024.json</td></tr>
+      <tr><td><strong>02_preprocessing_v2.ipynb</strong></td><td>members/이동원/notebooks/02_preprocessing/</td><td>v1 cell 구성 유지 + N=1 sweep 비활성화 마크다운 + seed-only TF-IDF + Okt + 불용어 + feature 생성 (expanded_dictionary는 코드만 build, 결정 보류 마크다운)</td><td>esg_features.parquet (1행) + tokens.parquet</td></tr>
+      <tr><td><strong>03_mining_v1.ipynb</strong></td><td>members/이동원/notebooks/03_mining/</td><td>(1) esg_features + kcgs_lineage join (2) Spearman + t-test 코드 build(N=1이라 NaN 출력) (3) OLS + word_count baseline (4) specificity score 추가 (5) 결과 해석 마크다운 (6) v2 batch 후 재실행 가이드</td><td>regression_results.csv + fig_spearman.png + fig_ols.png</td></tr>
+    </tbody>
+  </table>
+
+  <h3>실행 순서·검증 게이트</h3>
+  <div class="grid-2">
+    <div class="card should">
+      <div class="track-label">v2 Day 1 (오늘 5/18)</div>
+      <ol>
+        <li>10단계 진단 HTML 발행 (본 문서)</li>
+        <li>폴더 정리 + .gitignore 보강</li>
+        <li>01_collection_phase2A_v2.ipynb 작성 — v1 Step 1~10 보존 + batch NameError 해결</li>
+        <li>Samsung 1건 Run All → SUCCESS + dedup 1행</li>
+      </ol>
+    </div>
+    <div class="card should">
+      <div class="track-label">v2 Day 2 (5/19 D-Day)</div>
+      <ol>
+        <li>00_ingest_kcgs_v1.ipynb 작성 + kcgs_lineage 생성</li>
+        <li>02_preprocessing_v2 작성 (seed-only + Okt)</li>
+        <li>03_mining_v1 작성 + 회귀 코드 build (N=1 NaN 허용)</li>
+        <li>풀 사이클 Run All → mining 결과 시각화 + 해석 마크다운</li>
+        <li>4 노트북 양쪽 레포 PR 4건 + 보고서 HTML 발행</li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>v2 명세 — 각 노트북 최상단 표준 헤더</h3>
+  <div class="card soft">
+    <pre>📓 노트북: {filename}
+📅 작성: 이동원 · 2026-05-XX · v{N} (이전 v{N-1} archive 보존)
+📌 단계: {00 KCGS ingest | 01 collection | 02 preprocessing | 03 mining}
+🎯 목표: {Samsung 2024 1건 Run All 완주 + 코드/시각화/표 형식 완성}
+
+🛑 위반금지 8항목 (가이드 02·04, 매 노트북 동일):
+  1. 실패 행 가짜 0 채우기 ❌
+  2. viewer 우회 ❌
+  3. MCP/추출 결과 그대로 신뢰 ❌
+  4. API key 출력 노출 ❌
+  5. raw 미보존 ❌
+  6. 진단 부재 ❌
+  7. silent 오매칭 ❌
+  8. 평가 기준 부재 ❌
+
+📚 출처: docs/professor_md/01~04 + 본 진단 HTML(03_phase2A_diagnosis_10steps_v1)
+🔗 viewer: https://dart.fss.or.kr/dsaf001/main.do?rcpNo={rcept_no}
+🆔 run_id: hash(git_sha + timestamp + parser_version)
+</pre>
+  </div>
+
+  <div class="callout info">
+    <strong>v_final 패턴 금지 (메모리 feedback_markdown_discipline)</strong> — v2는 처음부터 What/Why/근거 3블록 마크다운 + 비전공자 주석. 만약 잘 동작하면 v2가 바로 최종. v3로 가는 트리거는 (a) batch 안정성 회복 후 stratified 30건+ 수집 (b) 알고리즘 변경 (c) seed 확장. 단순 마크다운 보강을 위한 v3는 만들지 않는다.
+  </div>
+</section>
+
+<!-- ===== TAB F : FOLDER ===== -->
+<section class="section" id="folder">
+  <h2>F. 폴더·GitHub 정리 — members/이동원 트리 + PR 단위</h2>
+  <p class="section-intro">현재 members/이동원/ 하위에 notebooks/01_collection · 02_preprocessing · 03_mining · 04_modeling · 05_reporting 5개 폴더 + 같은 단위 reports/ 5개 폴더 존재. v2 작업 시 다음 트리로 정리.</p>
+
+  <h3>최종 트리 (Day 2까지 도달 목표)</h3>
+  <pre>members/이동원/
+├── notebooks/
+│   ├── 00_ingest/
+│   │   └── 00_ingest_kcgs_v1.ipynb                    [신규]
+│   ├── 01_collection/
+│   │   ├── 01_collection_phase1_v1.ipynb ~ v_final.ipynb  [보존]
+│   │   ├── 01_collection_phase2A_v1.ipynb (truncated, archive)
+│   │   ├── 01_collection_phase2A_v2.ipynb             [신규 — Samsung 1건 안정 완주]
+│   │   └── archive/
+│   │       ├── 01_collection_phase2A_v1.ipynb.repaired.json [복원본 backup]
+│   │       └── (기존 archive 유지)
+│   ├── 02_preprocessing/
+│   │   ├── 02_preprocessing_v1.ipynb (truncated, archive)
+│   │   └── 02_preprocessing_v2.ipynb                  [신규 — seed-only + Okt]
+│   ├── 03_mining/
+│   │   └── 03_mining_v1.ipynb                         [신규]
+│   ├── 04_modeling/ (.gitkeep)                        [v3+ 이후]
+│   └── 05_reporting/ (.gitkeep)                       [v3+ 이후]
+├── reports/
+│   ├── 00_ingest/                                     [신규 폴더]
+│   ├── 01_collection/
+│   │   ├── 01_collection_phase1_v{1..final}_보고서.md   [보존]
+│   │   ├── 02_phase2_entry_plan.html                  [보존]
+│   │   ├── 03_phase2A_diagnosis_10steps_v1.html       [본 문서 — 신규]
+│   │   └── 04_phase2A_v2_release_notes.md             [v2 완료 후]
+│   ├── 02_preprocessing/
+│   │   ├── 00~03 기존 evolution roadmap                 [보존]
+│   │   └── 04_v2_release_notes.md                     [v2 완료 후]
+│   ├── 03_mining/
+│   │   └── 01_mining_v1_release_notes.md              [v1 완료 후]
+│   ├── 04_modeling/ (.gitkeep)
+│   └── 05_reporting/ (.gitkeep)
+└── src/
+    └── collection.py                                  [v2 함수 시그니처 정비 — corp_map 명시 전달]
+</pre>
+
+  <h3>GitHub MCP 양쪽 동기화 PR 단위</h3>
+  <p>메모리 <code>reference_github_mcp_workflow.md</code> + <code>reference_two_repos.md</code> 준수. 한 PR에 모든 변경 묶기 금지, 논리 작업 단위로 분리.</p>
+  <table class="clean">
+    <thead><tr><th style="width:6%">#</th><th style="width:30%">PR 제목</th><th>포함 변경</th><th style="width:14%">우선순위</th></tr></thead>
+    <tbody>
+      <tr><td class="center">1</td><td><code>docs(01): phase2A diagnosis HTML v1</code></td><td>03_phase2A_diagnosis_10steps_v1.html (본 문서)</td><td class="center"><span class="badge ok">즉시</span></td></tr>
+      <tr><td class="center">2</td><td><code>chore(folder): create 00_ingest + restructure trees</code></td><td>members/이동원/notebooks/00_ingest/ + reports/00_ingest/ 신설 .gitkeep, archive/ 안에 repaired backup 이동</td><td class="center"><span class="badge ok">즉시</span></td></tr>
+      <tr><td class="center">3</td><td><code>feat(01): collection phase2A v2 — Samsung 1건 안정 Run All</code></td><td>01_collection_phase2A_v2.ipynb + collection_log dedup + run_id 컬럼</td><td class="center"><span class="badge v2">Day 1 말</span></td></tr>
+      <tr><td class="center">4</td><td><code>feat(00): ingest_kcgs v1 — lineage + grade dist</code></td><td>00_ingest_kcgs_v1.ipynb + kcgs_lineage.csv</td><td class="center"><span class="badge v2">Day 2</span></td></tr>
+      <tr><td class="center">5</td><td><code>feat(02): preprocessing v2 — seed-only Samsung 1건</code></td><td>02_preprocessing_v2.ipynb</td><td class="center"><span class="badge v2">Day 2</span></td></tr>
+      <tr><td class="center">6</td><td><code>feat(03): mining v1 — Spearman + OLS baseline</code></td><td>03_mining_v1.ipynb + regression_results.csv + fig_*.png</td><td class="center"><span class="badge v2">Day 2</span></td></tr>
+      <tr><td class="center">7</td><td><code>docs: release notes (01/02/03) + 5/19 D-Day status</code></td><td>04_phase2A_v2_release_notes.md + 02/03 release notes + 5/19 status HTML</td><td class="center"><span class="badge v2">Day 2 말</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>주의 — team repo 'history 공통 없음' 이슈 (메모리 reference_two_repos)</strong> — origin PR 먼저 만들고, team PR 422 에러 시 cherry-pick 또는 force-sync 옵션 사용자 확인. 양쪽 SHA 일치 검증 후 다음 PR로 진행.
+  </div>
+
+  <h3>.gitignore 보강 후보</h3>
+  <ul>
+    <li><code>*.ipynb.repaired.json</code> — 임시 복원본 (archive에 1회 보존 후 .gitignore)</li>
+    <li><code>data/raw/*.zip</code> — 이미 .gitignore에 있음 (확인)</li>
+    <li><code>data/interim/*_aux_*.json</code> — 보조 보고서 raw는 git 포함 X (메타만)</li>
+    <li><code>logs/*.bak_*</code> — 백업 log 자동 정리</li>
+  </ul>
+</section>
+
+<footer>
+  Phase 2A 10단계 전문가 진단 + 풀 사이클 v2 로드맵 v1 · 2026-05-18 · 이동원 (kik328288@gmail.com) <br>
+  근거: docs/professor_md/01~04 · members/이동원/notebooks/01_collection/01_collection_phase2A_v1.ipynb (truncated) · logs/collection_log.csv · 외부 벤치마킹 5축 · 메모리 9건 (project_v4_approach · feedback_markdown_discipline · reference_two_repos 등) <br>
+  다음 산출물: 01_collection_phase2A_v2.ipynb (Samsung 1건 안정 Run All) · 00_ingest_kcgs_v1.ipynb · 02_preprocessing_v2.ipynb · 03_mining_v1.ipynb
+</footer>
+
+</div>
+
+<script>
+const tabs = document.querySelectorAll('nav.tabs button');
+const sections = document.querySelectorAll('.section');
+tabs.forEach(btn => btn.addEventListener('click', () => {
+  tabs.forEach(b => b.classList.remove('active'));
+  sections.forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(btn.dataset.tab).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}));
+</script>
+</body>
+</html>
