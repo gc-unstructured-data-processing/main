@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""통합 v1 발전 제안 HTML 생성 (10단계 진단 + 발전 우선순위)."""
+from pathlib import Path
+OUT = Path("/sessions/blissful-upbeat-volta/mnt/unstructured-data-processing-final-project/members/이동원/notebooks/integrated/v1/GUIDE_발전제안_v1.html")
+
+CSS = """
+:root{--ink:#101828;--soft:#475467;--line:#e4e7ec;--ok:#2e7d32;--ok-bg:#e8f5e9;--warn:#b45309;--warn-bg:#fef3c7;--dev:#1d4ed8;--dev-bg:#dbeafe;--alpha:#7c3aed;--alpha-bg:#ede9fe;--bad:#b42318;--bad-bg:#fee4e2}
+*{box-sizing:border-box}
+body{margin:0;background:#f7f8fa;color:var(--ink);font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.6}
+.wrap{max-width:960px;margin:0 auto;padding:28px 22px}
+.banner{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-bottom:18px}
+.banner h1{margin:0 0 6px;font-size:20px}
+.banner .sub{color:var(--soft);font-size:13px}
+section.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid var(--dev)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}
+th{background:#f8fafc;text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);font-size:12px;color:var(--soft)}
+td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+.diag{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.diag:last-child{border-bottom:0}
+.diag .n{flex:0 0 30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.diag .body{flex:1}
+.diag .body h4{margin:0 0 3px;font-size:14px}
+.diag .body p{margin:0;font-size:13px;color:var(--soft)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;margin-left:6px}
+.b-ok{background:var(--ok-bg);color:var(--ok)} .b-warn{background:var(--warn-bg);color:var(--warn)}
+.b-dev{background:var(--dev-bg);color:var(--dev)} .b-alpha{background:var(--alpha-bg);color:var(--alpha)}
+.prio td:first-child{font-weight:700}
+.p1{color:var(--bad);font-weight:700}.p2{color:var(--warn);font-weight:700}.p3{color:var(--ok);font-weight:700}
+code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:12px}
+.note{background:var(--warn-bg);border-left:3px solid var(--warn);padding:10px 14px;border-radius:6px;font-size:13px;margin:10px 0}
+footer{color:var(--soft);font-size:12px;text-align:center;padding:18px}
+"""
+
+def diag(n, color, title, badge, bclass, body):
+    return f'<div class="diag"><div class="n" style="background:{color}">{n}</div><div class="body"><h4>{title}<span class="badge {bclass}">{badge}</span></h4><p>{body}</p></div></div>'
+
+OK, WARN, DEV, ALPHA = "#2e7d32", "#b45309", "#1d4ed8", "#7c3aed"
+
+diags = "".join([
+diag(1, OK, "표본·식별자", "정상", "b-ok", "381 firm-year 전수, <code>zfill(6)</code>, <code>stock_code×fiscal_year</code> 키. 회의 결정 '381 다 살리기' 충족. 위반금지 #2·#7."),
+diag(2, OK, "수집 lineage", "정상", "b-ok", "김혜성 v2(결산월 무관+정정 우선순위) + recover parser → 381/381. 비12월 결산 포착. raw 보존(#5), 가짜 0 없음(#1)."),
+diag(3, OK, "XML 파싱 robustness", "정상", "b-ok", "<code>recover=True</code> + TITLE 로마숫자 + TABLE 제거 + P 추출. 평균 34,167자(김혜성 34,222와 일치 → 교차검증)."),
+diag(4, OK, "분석기 선정", "정상", "b-ok", "Kiwi 87% vs Okt 67% seed 보존 → Kiwi PRIMARY. Komoran·Kkma 제외 근거(속도·미등록어·score 미지원) 문서화. 단 표본 15개 한정 → 발전 ⑥."),
+diag(5, OK, "seed 보존", "정상", "b-ok", "Kiwi <code>add_user_word(NNP, score=50)</code>로 복합명사 보존. 신지영 미등록 11/30 손실 회피."),
+diag(6, WARN, "total_tokens 최강 연관", "주의", "b-warn", "<b>total_tokens ρ=0.654</b> — ESG feature 중 최강. 공시 분량이 등급과 가장 강하게 연결 → cheap-talk/verbosity 우려. 발전 ①."),
+diag(7, WARN, "seed_tfidf_E 약화", "주의", "b-warn", "pilot(N=29) 0.606 → 전체(N=381) 0.318. 양의 유의 유지하나 약화. 김지우 소표본 spurious +ve와 정합 — 알파 ①에서 정량 확인."),
+diag(8, WARN, "signal_ratio 무유의", "주의", "b-warn", "<code>g_signal_ratio</code> ρ=-0.067(무유의). 김지우 N=210 -0.197(유의 음)보다 약함. 측정 패러다임+corpus 차이 → 회의 measurement 합의 필요."),
+diag(9, DEV, "분석기 비교 표본 한정", "발전", "b-dev", "현재 Kiwi/Okt 비교가 표본 15개(앞 25,000자). 발전: 381 전체 corpus 비교 또는 표본 확대로 보존율 근거 강화."),
+diag(10, ALPHA, "알파 base 마련", "알파", "b-alpha", "부호 역전·section_weighted·업종 분해·cheap-talk 3종 실행. expanded fastText·고정효과·section 점수화는 미완 → 발전."),
+])
+
+HTML = f"""<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<title>ESG DART 통합 v1 — 10단계 진단·발전 제안</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><style>{CSS}</style></head><body><div class="wrap">
+
+<div class="banner">
+<h1>ESG DART 통합 v1 — 10단계 진단 · 발전 제안</h1>
+<div class="sub">작성: 이동원 · 2026-05-21 · 대상 <code>esg_dart_integrated_v1.ipynb</code> (Run All, N=381) · 5/23 회의·최종 제출 대비</div>
+</div>
+
+<section class="card">
+<h2>A. 실측 요약</h2>
+<table><tr><th>항목</th><th>값</th></tr>
+<tr><td>수집</td><td>381/381 SUCCESS (100%)</td></tr>
+<tr><td>분석기 PRIMARY</td><td>Kiwi (seed 보존 87% vs Okt 67%)</td></tr>
+<tr><td>분석 표본 N</td><td>381</td></tr>
+<tr><td>최강 연관</td><td>total_tokens ρ=0.654*** (cheap-talk 우려)</td></tr>
+<tr><td>seed_tfidf_E</td><td>ρ=0.318*** (pilot 0.606 → 약화)</td></tr>
+<tr><td>g_signal_ratio</td><td>ρ=-0.067 (무유의)</td></tr>
+<tr><td>회귀</td><td>OLS β=23.06 p=0.0006 R²=0.406 · Ordered β=29.19 p=0.002</td></tr></table>
+</section>
+
+<section class="card">
+<h2>B. 10단계 진단</h2>
+{diags}
+</section>
+
+<section class="card">
+<h2>C. 발전 우선순위</h2>
+<table class="prio"><tr><th>#</th><th>발전 과제</th><th>우선도</th><th>근거</th><th>소요</th></tr>
+<tr><td>1</td><td>cheap-talk 3종 정교화 (specificity·commitment·non-material) 통제 후 신호 잔존 검증</td><td class="p1">🔴 즉시</td><td>total_tokens ρ=0.654 → verbosity 분리 필수</td><td>1시간</td></tr>
+<tr><td>2</td><td>measurement 합의 (seed TF-IDF vs signal_ratio) + 동시 회귀</td><td class="p1">🔴 즉시</td><td>측정에 따라 부호·유의 갈림 (5/23 안건)</td><td>회의</td></tr>
+<tr><td>3</td><td>expanded dictionary fastText 확장 (θ sweep + 상위 100단어 검토 + 회사명 제외)</td><td class="p2">🟡 중기</td><td>가이드 03 line 90~122 미충족. 김혜성 5 희소 seed + 김지우 G_SIGNAL 5종 부재</td><td>1~2시간</td></tr>
+<tr><td>4</td><td>기업·연도 고정효과 패널 회귀</td><td class="p2">🟡 중기</td><td>현재 pooled OLS — 기업 특성 교란 가능</td><td>1시간</td></tr>
+<tr><td>5</td><td>section_weighted 점수화 (II/IV/VI 가중)</td><td class="p2">🟡 중기</td><td>section_chars 로깅됨, 점수화 미실행. 가이드 04 §3-1 알파 1순위</td><td>1시간</td></tr>
+<tr><td>6</td><td>분석기 전체 corpus 비교</td><td class="p3">🟢 보강</td><td>현재 표본 15 → 보존율 근거 강화</td><td>30분</td></tr>
+<tr><td>7</td><td>OrderedLogit 해석 정교화</td><td class="p3">🟢 보강</td><td>N=381에서 안정(p=0.002), 계수 해석 추가</td><td>30분</td></tr></table>
+</section>
+
+<section class="card">
+<h2>D. 회의 결정 준수 (위반 없음)</h2>
+<table><tr><th>회의 결정</th><th>준수</th><th>증거</th></tr>
+<tr><td>① 381개 다 살리기</td><td>✅</td><td>381/381 SUCCESS</td></tr>
+<tr><td>② 분석기 robust 검증 후 결정</td><td>✅</td><td>Kiwi 87% vs Okt 67% + Komoran/Kkma 제외 근거</td></tr>
+<tr><td>③ seed 30개 활용</td><td>✅</td><td>Kiwi user dict score=50, 30개 등록</td></tr>
+<tr><td>전처리까지 통합 + 알파분석</td><td>✅</td><td>단일 노트북, 알파 4종 실행</td></tr></table>
+</section>
+
+<section class="card">
+<h2>E. 5/23 회의 준비 메모</h2>
+<div class="note"><b>가장 중요한 결정 = cheap-talk(total_tokens) 통제 + measurement 채택.</b> total_tokens가 가장 강한 신호인 현 상태로는 "ESG 표현 ↔ 등급"이 "긴 보고서 ↔ 등급"으로 환원될 위험. 발전 ①(cheap-talk 3종)을 회의 전·직후 우선 실행해, verbosity 통제 후에도 seed/cosine 신호가 살아남는지 확인 권장.</div>
+</section>
+
+<footer>ESG DART 통합 v1 · 10단계 진단·발전 제안 · 이동원 · 2026-05-21</footer>
+</div></body></html>"""
+
+OUT.write_text(HTML, encoding="utf-8")
+print("GUIDE HTML 작성:", len(HTML), "chars →", OUT.name)
