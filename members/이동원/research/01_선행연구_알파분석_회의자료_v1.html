@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESG DART · 선행연구 조사 → 알파분석 설계 → 시사점 (회의자료 v1)</title>
+  <style>
+    :root {
+      --bg: #0f1216;
+      --panel: #161b22;
+      --panel-2: #1c232c;
+      --line: #2a323d;
+      --text: #e6edf3;
+      --muted: #9aa7b4;
+      --accent: #4ea1ff;
+      --e: #2ecc71;       /* 환경 */
+      --s: #f5a623;       /* 사회 */
+      --g: #b07cff;       /* 지배구조 */
+      --ok: #2ecc71;
+      --no: #ff5d5d;
+      --warn: #f5a623;
+      --chip: #232c37;
+      --radius: 14px;
+      --shadow: 0 6px 24px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #0d1014, #0f1216 40%);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ===== 상단 히어로 ===== */
+    header.hero {
+      padding: 48px 24px 36px;
+      max-width: 1080px;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 13px;
+      letter-spacing: .12em;
+      color: var(--accent);
+      background: rgba(78,161,255,.1);
+      border: 1px solid rgba(78,161,255,.3);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: clamp(24px, 4vw, 38px); margin: 0 0 12px; line-height: 1.3; }
+    .sub { color: var(--muted); font-size: 16px; max-width: 760px; }
+    .meta-row {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px;
+    }
+    .meta-pill {
+      font-size: 13px; color: var(--muted);
+      background: var(--chip); border: 1px solid var(--line);
+      padding: 6px 12px; border-radius: 8px;
+    }
+    .meta-pill b { color: var(--text); font-weight: 600; }
+
+    /* ===== 내비 ===== */
+    nav.toc {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(15,18,22,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+    }
+    nav.toc ul {
+      max-width: 1080px; margin: 0 auto; padding: 10px 24px;
+      display: flex; gap: 6px; flex-wrap: wrap; list-style: none;
+      font-size: 14px;
+    }
+    nav.toc a {
+      color: var(--muted); padding: 6px 12px; border-radius: 8px; display: inline-block;
+    }
+    nav.toc a:hover { color: var(--text); background: var(--panel-2); text-decoration: none; }
+
+    main { max-width: 1080px; margin: 0 auto; padding: 12px 24px 80px; }
+    section { padding: 40px 0 8px; scroll-margin-top: 60px; }
+    .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px; }
+    .sec-num {
+      font-size: 14px; font-weight: 700; color: var(--accent);
+      border: 1px solid rgba(78,161,255,.35); border-radius: 8px;
+      padding: 3px 10px; flex: none;
+    }
+    h2 { font-size: clamp(20px, 3vw, 27px); margin: 0; }
+    .lead { color: var(--muted); margin: 6px 0 22px; }
+
+    .panel {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 22px; margin: 16px 0;
+      box-shadow: var(--shadow);
+    }
+    .panel.tight { padding: 16px 18px; }
+
+    /* ===== 흐름 카드 ===== */
+    .flow { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .flow .step {
+      background: var(--panel-2); border: 1px solid var(--line);
+      border-radius: 12px; padding: 16px; position: relative;
+    }
+    .flow .step .k { font-size: 13px; color: var(--accent); font-weight: 700; }
+    .flow .step h3 { margin: 6px 0 6px; font-size: 16px; }
+    .flow .step p { margin: 0; font-size: 14px; color: var(--muted); }
+
+    /* ===== 논문 카드 ===== */
+    .ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .ref {
+      background: var(--panel-2); border: 1px solid var(--line);
+      border-radius: 12px; padding: 16px 16px 14px; position: relative;
+      display: flex; flex-direction: column;
+    }
+    .ref .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .tag {
+      font-size: 11px; padding: 2px 8px; border-radius: 6px;
+      background: var(--chip); border: 1px solid var(--line); color: var(--muted);
+    }
+    .tag.core { color: #fff; background: rgba(78,161,255,.22); border-color: rgba(78,161,255,.5); }
+    .tag.verified { color: var(--ok); border-color: rgba(46,204,113,.45); background: rgba(46,204,113,.12); }
+    .ref h3 { margin: 2px 0 4px; font-size: 15.5px; line-height: 1.45; }
+    .ref .cite { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+    .ref .cite b { color: var(--text); }
+    .ref .desc { font-size: 13.5px; color: #cdd6df; margin: 0 0 12px; }
+    .ref .links { margin-top: auto; display: flex; gap: 14px; font-size: 12.5px; flex-wrap: wrap; }
+    .ref .relev { font-size: 12px; color: var(--accent); margin-top: 6px; }
+
+    /* ===== 표 ===== */
+    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--line); }
+    table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 720px; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+    thead th { background: var(--panel-2); color: var(--text); font-weight: 600; position: sticky; left: 0; }
+    tbody tr:hover { background: rgba(255,255,255,.02); }
+    td.c { text-align: center; }
+    .yes { color: var(--ok); font-weight: 700; }
+    .nope { color: var(--no); font-weight: 700; }
+    .part { color: var(--warn); font-weight: 700; }
+    tr.ours td { background: rgba(78,161,255,.08); }
+    tr.ours td:first-child { font-weight: 700; color: #fff; }
+
+    .badge-e { color: var(--e); font-weight: 700; }
+    .badge-s { color: var(--s); font-weight: 700; }
+    .badge-g { color: var(--g); font-weight: 700; }
+
+    /* ===== 콜아웃 ===== */
+    .callout {
+      border-left: 4px solid var(--accent); background: var(--panel-2);
+      padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 16px 0;
+    }
+    .callout.gap { border-color: var(--warn); }
+    .callout.pick { border-color: var(--ok); }
+    .callout h4 { margin: 0 0 6px; font-size: 15px; }
+    .callout p { margin: 0; color: #cdd6df; font-size: 14px; }
+
+    ul.clean { padding-left: 18px; }
+    ul.clean li { margin: 6px 0; }
+    .muted { color: var(--muted); }
+    .hl { color: #fff; font-weight: 600; }
+
+    /* ===== 알파 후보 ===== */
+    .alpha-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+    .alpha {
+      border: 1px solid var(--line); border-radius: 12px; padding: 16px;
+      background: var(--panel-2);
+    }
+    .alpha.rec { border-color: rgba(46,204,113,.5); background: rgba(46,204,113,.06); }
+    .alpha .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .alpha .id { font-weight: 700; color: var(--accent); }
+    .alpha.rec .id { color: var(--ok); }
+    .alpha h4 { margin: 8px 0 6px; font-size: 16px; }
+    .alpha p { margin: 0 0 8px; font-size: 13.5px; color: #cdd6df; }
+    .alpha .score { font-size: 12px; color: var(--muted); }
+    .star { color: var(--warn); }
+
+    /* ===== 시사점 ===== */
+    .impl-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+    .impl { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--panel-2); }
+    .impl .ic { font-size: 22px; }
+    .impl h4 { margin: 6px 0; font-size: 16px; }
+    .impl p { margin: 0; font-size: 13.5px; color: #cdd6df; }
+
+    /* ===== 회의 안건 ===== */
+    .agenda { counter-reset: ag; }
+    .agenda .item {
+      display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line);
+    }
+    .agenda .item:before {
+      counter-increment: ag; content: "Q" counter(ag);
+      flex: none; font-weight: 700; color: var(--accent);
+      background: var(--chip); border: 1px solid var(--line);
+      border-radius: 8px; padding: 4px 10px; height: fit-content; font-size: 13px;
+    }
+    .agenda .item p { margin: 0; }
+    .agenda .item .q { font-weight: 600; }
+    .agenda .item .why { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    footer {
+      max-width: 1080px; margin: 0 auto; padding: 30px 24px 60px;
+      border-top: 1px solid var(--line); color: var(--muted); font-size: 13px;
+    }
+    .verify-note {
+      font-size: 12.5px; color: var(--muted); background: rgba(46,204,113,.06);
+      border: 1px solid rgba(46,204,113,.25); border-radius: 10px; padding: 12px 16px; margin: 16px 0;
+    }
+    .verify-note b { color: var(--ok); }
+
+    /* 참고문헌 목록 */
+    ol.refs { padding-left: 20px; font-size: 13.5px; }
+    ol.refs li { margin: 10px 0; }
+    ol.refs .t { color: #fff; }
+
+    @media (max-width: 820px) {
+      .flow, .ref-grid, .alpha-grid, .impl-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <span class="eyebrow">3조 · 비정형데이터분석 기말 프로젝트 · 회의자료 v1</span>
+    <h1>선행연구 조사 → 알파분석 설계 → 시사점 도출<br />경영학 논문화를 위한 3대 활동 정리</h1>
+    <p class="sub">
+      교수님 피드백("비정형 처리 결과는 <code>.ipynb</code>로 제출, 보고서는 <b>경영학 논문</b>으로
+      선행연구 기반 기여를 서술하라")에 따라, 보고서 집필에 앞서 <b>① 선행연구 조사·공백 추출 → ② 알파분석 설계 →
+      ③ 시사점·제언 도출</b> 순서로 회의 안건을 정리한 자료입니다. 모든 참고문헌은 KCI 원문 페이지를 직접 크롤링하여
+      <b>저자·학술지·연도·페이지·DOI·초록</b>을 확인했습니다(환각 방지).
+    </p>
+    <div class="meta-row">
+      <span class="meta-pill">작성 · <b>이동원</b></span>
+      <span class="meta-pill">날짜 · <b>2026-06-02 (KST)</b></span>
+      <span class="meta-pill">대상 주제 · <b>DART 사업보고서 텍스트 → KCGS ESG 등급 연관성</b></span>
+      <span class="meta-pill">표본 · <b>127사 × 3개년 = 381 firm-year</b></span>
+      <span class="meta-pill">검증 논문 · <b>국내(KCI) 8편</b></span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <ul>
+      <li><a href="#bg">0 · 배경</a></li>
+      <li><a href="#prior">1 · 선행연구 조사</a></li>
+      <li><a href="#gap">2 · 선행연구 공백(GAP)</a></li>
+      <li><a href="#topic">3 · 알파분석 주제 선정</a></li>
+      <li><a href="#design">4 · 알파분석 설계</a></li>
+      <li><a href="#impl">5 · 시사점·제언</a></li>
+      <li><a href="#agenda">6 · 회의 안건</a></li>
+      <li><a href="#refs">참고문헌</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- 0. 배경 -->
+    <section id="bg">
+      <div class="sec-head"><span class="sec-num">0</span><h2>배경 — 교수님 피드백과 우리의 출발점</h2></div>
+      <p class="lead">공학적(컴공) 처리 과정은 노트북에, 보고서는 "어떻게 진행했고, 어떤 결론을, 어떤 근거·시사점으로" 서술하는 경영학 논문으로.</p>
+      <div class="flow">
+        <div class="step">
+          <span class="k">활동 ①</span>
+          <h3>선행연구 조사 + 공백 추출</h3>
+          <p>동일 주제(사업보고서 텍스트 ↔ ESG 등급)의 국내 KCI/SCI 논문을 조사하고, 선행연구가 다루지 못한 지점을 추출해 <b>알파분석 주제</b>를 선정.</p>
+        </div>
+        <div class="step">
+          <span class="k">활동 ②</span>
+          <h3>알파분석 설계·진행</h3>
+          <p>추출한 공백을 메우는 심화 분석(알파)을 가설·변수·모형 수준으로 설계. 노트북 실측치(N=381)를 근거로.</p>
+        </div>
+        <div class="step">
+          <span class="k">활동 ③</span>
+          <h3>시사점·제언 도출</h3>
+          <p>알파분석 결과를 근거로 학술적·방법론적·실무적 시사점과 제언을 도출(회의 후 최종 확정).</p>
+        </div>
+      </div>
+      <div class="callout">
+        <h4>우리 프로젝트 한 줄 요약</h4>
+        <p>한국 상장기업 <b>DART 사업보고서(II·IV·VI 섹션)</b>의 비정형 텍스트를 TF-IDF·fastText 확장사전·기준문장 cosine으로 수치화하고,
+        그 텍스트 신호가 <b>한국ESG기준원(KCGS) ESG 등급</b>과 어떤 연관을 갖는지 Spearman 상관·회귀로 검증. 단, <b>인과가 아닌 연관</b>이며 <b>공시 분량(cheap-talk)</b> 우려가 핵심 쟁점.</p>
+      </div>
+    </section>
+
+    <!-- 1. 선행연구 -->
+    <section id="prior">
+      <div class="sec-head"><span class="sec-num">1</span><h2>선행연구 조사 — 검증된 국내(KCI) 논문 8편</h2></div>
+      <p class="lead">동일·유사 주제 우선. 각 카드의 [KCI 원문]·[DOI] 링크는 실제 접속·다운로드로 확인 가능합니다.</p>
+
+      <div class="verify-note">
+        <b>✔ 검증 방법</b> — 8편 모두 KCI 원문 페이지(<code>kci.go.kr</code>)를 직접 크롤링하여 메타데이터(저자·학술지·권호·페이지·발행연도·DOI·국문 초록)를
+        2026-06-02 기준으로 대조했습니다. 아래 인용정보는 KCI가 제공하는 서지정보와 일치합니다. <span class="muted">(임의 생성·추정 인용 없음)</span>
+      </div>
+
+      <h3 style="margin:24px 0 4px; font-size:17px;">① 핵심군 — 사업보고서/공시 텍스트 ↔ ESG·기업가치 (가장 근접)</h3>
+      <div class="ref-grid">
+        <article class="ref">
+          <div class="tag-row"><span class="tag core">동일주제 핵심</span><span class="tag verified">✔ 검증</span><span class="tag">사업보고서 TF-IDF</span></div>
+          <h3>기업의 ESG전략이 기업가치에 미치는 영향</h3>
+          <div class="cite"><b>김용기 (2025)</b> · 인문사회과학연구, 33(4), 275–296.</div>
+          <p class="desc"><b>사업보고서 텍스트마이닝(TF-IDF)</b>으로 E/S/G를 <b>분리</b>해 영역별 효과를 식별하고, 공시의 <b>존재(더미)와 강도(연속, TF-IDF)를 병행</b> 계량한 패널 회귀. 결과: <span class="badge-e">E=유의(+)</span>, <span class="badge-s">S=제한적</span>, <span class="badge-g">G=무유의</span>.</p>
+          <div class="relev">▶ 우리와 가장 닮음. 단, 종속변수가 <b>KCGS 등급이 아닌 기업가치(Tobin's Q)</b>이고 분량(cheap-talk) 통제·사전확장 정당화 없음 → 공백.</div>
+          <div class="links">
+            <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART003273414" target="_blank" rel="noopener">KCI 원문 ↗</a>
+            <a href="https://doi.org/10.22924/jhss.33.4.202511.012" target="_blank" rel="noopener">DOI ↗</a>
+          </div>
+        </article>
+
+        <article class="ref">
+          <div class="tag-row"><span class="tag core">등급 방법론</span><span class="tag verified">✔ 검증</span><span class="tag">KCGS 직접</span></div>
+          <h3>한국ESG기준원(KCGS) ESG 평가자료 활용 연구동향과 평가·부여 방식에 따른 해석 유의사항</h3>
+          <div class="cite"><b>김미옥·이현경·정형록·허성준 (2025)</b> · Asian Tax Journal, 26(6), 87–116.</div>
+          <p class="desc">KCGS 평가자료를 쓴 국내 사회과학 논문을 텍스트마이닝·방법론 검토. <b>표본기간별 등급체계·산업분류가 달라 해석에 주의</b>가 필요하며, 다수 논문이 <b>등급별 차등점수</b>를 쓰지만 <b>더미변수 병행</b>을 권고.</p>
+          <div class="relev">▶ 우리의 등급 숫자변환(S=6…D=0)·회귀 설계에 직접 시사. "차등점수 + 더미 병행" 권고 채택 검토.</div>
+          <div class="links">
+            <a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003296656" target="_blank" rel="noopener">KCI 원문 ↗</a>
+            <a href="https://doi.org/10.35850/KJTA.26.6.03" target="_blank" rel="noopener">DOI ↗</a>
+          </div>
+        </article>
+
+        <article class="ref">
+          <div class="tag-row"><span class="tag core">ESG 등급↔성과 기초</span><span class="tag verified">✔ 검증</span></div>
+          <h3>기업의 ESG와 재무성과</h3>
+          <div class="cite"><b>장승욱·김용현 (2013)</b> · 재무관리연구, 30(1), 131–152.</div>
+          <p class="desc">서스틴베스트 ESG 평가정보로 <b>등급이 높은 AA군 vs 낮은 E군</b>의 초과 재무성과(주식수익률·영업성과·토빈큐)를 비교. 등급이 높을수록 성과 우수, 회귀에서 <b>등급더미·기업규모·시장가치/장부가치</b>가 유의.</p>
+          <div class="relev">▶ "ESG 등급 ↔ 성과" 연결의 고전적 근거. 단, <b>텍스트 분석이 아닌 정형 데이터</b> 기반(텍스트↔등급 공백을 역설적으로 보여줌).</div>
+          <div class="links">
+            <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART001755833" target="_blank" rel="noopener">KCI 원문 ↗</a>
+          </div>
+        </article>
+
+        <article class="ref">
+          <div class="tag-row"><span class="tag verified">✔ 검증</span><span class="tag">지속가능보고서</span><span class="tag">STM</span></div>
+          <h3>한국 제조업 기업의 ESG 담론과 그 변화: 지속가능경영보고서(2014~2024)에 대한 텍스트 분석</h3>
+          <div class="cite"><b>이희섭·이경호·강신재·이예영·이태동 (2025)</b> · 동서연구, 37(3), 55–88.</div>
+          <p class="desc">제조업 263개 지속가능경영보고서에 <b>구조적 토픽모델(STM)</b>·키워드 네트워크 적용. 환경경영·산업안전·인재개발·ESG검증 등 10개 토픽 도출, 2019년 이후 정책(중대재해법·탄소중립·K-ESG) 영향 확인.</p>
+          <div class="relev">▶ 텍스트 기법은 유사하나 대상이 <b>자율공시(지속가능보고서)</b>이고 <b>등급 연관 검증 없음</b> → 의무공시(사업보고서) 공백.</div>
+          <div class="links">
+            <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART003244402" target="_blank" rel="noopener">KCI 원문 ↗</a>
+            <a href="https://doi.org/10.29274/ews.2025.37.3.55" target="_blank" rel="noopener">DOI ↗</a>
+          </div>
+        </article>
+      </div>
+
+      <h3 style="margin:28px 0 4px; font-size:17px;">② 방법군 — ESG 텍스트마이닝·연구동향 (기법·키워드 벤치마킹)</h3>
+      <div class="ref-grid">
+        <article class="ref">
+          <div class="tag-row"><span class="tag verified">✔ 검증</span><span class="tag">LDA·JST</span><span class="tag">그린워싱</span></div>
+          <h3>텍스트마이닝과 ChatGPT 분석을 활용한 기업과 대중의 ESG 인식 비교</h3>
+          <div class="cite"><b>최재훈·양성병·윤상혁 (2023)</b> · 지능정보연구, 29(4), 347–373.</div>
+          <p class="desc">지속가능보고서 vs 소셜미디어를 LDA·JST(감성토픽)·의미연결망으로 비교. 기업은 신뢰구축에 집중하나 대중은 <b>'그린워싱·중대재해·불매운동'</b> 등 부정 키워드로 의심 → 인식 격차.</p>
+          <div class="relev">▶ <b>cheap-talk/그린워싱</b> 문제의식의 국내 근거. 우리 "분량≠성과" 논의에 인용 가능.</div>
+          <div class="links">
+            <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART003031985" target="_blank" rel="noopener">KCI 원문 ↗</a>
+          </div>
+        </article>
+
+        <article class="ref">
+          <div class="tag-row"><span class="tag verified">✔ 검증</span><span class="tag">연구동향</span></div>
+          <h3>텍스트 마이닝을 통한 ESG 연구동향 분석</h3>
+          <div class="cite"><b>이가은·최영준 (2023)</b> · 기업경영연구, 30(2), 133–166.</div>
+          <p class="desc">Web of Science ESG 논문 346편 초록을 빈도·토픽모델링·중심성 분석. 공통 주제로 <b>사회적책임투자·기업가치·지속가능성과·재무성과·정보공시</b> 확인, 성장단계로 진화.</p>
+          <div class="relev">▶ "텍스트 신호 ↔ 기업가치/재무성과" 주제축이 학계 공통임을 입증. 서론 동향 인용.</div>
+          <div class="links">
+            <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART002958822" target="_blank" rel="noopener">KCI 원문 ↗</a>
+          </div>
+        </article>
+
+        <article class="ref">
+          <div class="tag-row"><span class="tag verified">✔ 검증</span><span class="tag">키워드 네트워크</span></div>
+          <h3>키워드 네트워크 분석을 활용한 ESG 연구 동향 분석</h3>
+          <div class="cite"><b>최신인·윤천성 (2022)</b> · 인문사회 21, 13(2), 2073–2084.</div>
+          <p class="desc">국내 ESG 논문 291편(2009~2022)을 토픽모델링. 'ESG 경영전략·성과', '<b>ESG 정보공시</b>', '책임투자' 3개 토픽 확인. 주요 키워드에 '정보·공시' 상위.</p>
+          <div class="relev">▶ 국내 ESG 연구에서 <b>정보공시</b>가 독립 토픽으로 잡힘 → 우리 주제(공시 텍스트)의 학술적 정당성.</div>
+          <div class="links">
+            <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART002832590" target="_blank" rel="noopener">KCI 원문 ↗</a>
+          </div>
+        </article>
+
+        <article class="ref">
+          <div class="tag-row"><span class="tag verified">✔ 검증</span><span class="tag">LDA 문헌분석</span></div>
+          <h3>토픽 모델링을 활용한 윤리경영에 관한 연구 동향: LDA 기법 기반</h3>
+          <div class="cite"><b>박정완·양재용 (2023)</b> · 윤리경영연구, 23(2), 115–142.</div>
+          <p class="desc">1997~2023년 윤리경영 문헌 269건 국문초록을 LDA로 25개 주제 도출. 연구 초점이 조직 외면→내면 윤리로 확장됨을 확인(ESG 맥락의 G 영역 배경).</p>
+          <div class="relev">▶ 지배구조(G)·윤리 영역 seed 단어(윤리·준법·컴플라이언스)의 학술적 맥락 보강.</div>
+          <div class="links">
+            <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART003027960" target="_blank" rel="noopener">KCI 원문 ↗</a>
+            <a href="https://doi.org/10.34273/kjbe.2023.23.2.005" target="_blank" rel="noopener">DOI ↗</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="callout">
+        <h4>조사 요약</h4>
+        <p>국내 ESG 텍스트마이닝 연구는 ① <b>지속가능경영보고서(자율공시)</b> 또는 ② <b>연구동향(메타)</b> ③ <b>소셜미디어</b>에 집중.
+        <b>DART 사업보고서(법정 의무공시) 텍스트를 KCGS 등급에 직접 연관</b>지은 연구는 거의 없으며, 가장 근접한 김용기(2025)도 종속변수가 기업가치(Tobin's Q)입니다.</p>
+      </div>
+    </section>
+
+    <!-- 2. GAP -->
+    <section id="gap">
+      <div class="sec-head"><span class="sec-num">2</span><h2>선행연구 공백(GAP) 매트릭스</h2></div>
+      <p class="lead">우리 프로젝트가 선행연구와 갈라지는 5개 축. <span class="yes">●</span> 충족 · <span class="part">◐</span> 부분 · <span class="nope">○</span> 미충족</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>연구</th>
+              <th>분석 텍스트</th>
+              <th class="c">종속변수<br/>= KCGS 등급</th>
+              <th class="c">분량(cheap-talk)<br/>통제</th>
+              <th class="c">fastText 확장<br/>+ θ 민감도</th>
+              <th class="c">형태소 분석기<br/>robust 검증</th>
+              <th class="c">E/S/G<br/>분리</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="ours">
+              <td>우리 프로젝트 (N=381)</td>
+              <td>DART 사업보고서<br/>(II·IV·VI)</td>
+              <td class="c yes">●</td>
+              <td class="c yes">●</td>
+              <td class="c yes">●</td>
+              <td class="c yes">●</td>
+              <td class="c yes">●</td>
+            </tr>
+            <tr>
+              <td>김용기 (2025)</td>
+              <td>사업보고서</td>
+              <td class="c nope">○ <span class="muted">(기업가치)</span></td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c yes">●</td>
+            </tr>
+            <tr>
+              <td>김미옥 외 (2025)</td>
+              <td>선행논문(메타)</td>
+              <td class="c part">◐ <span class="muted">(변환 논의)</span></td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+            </tr>
+            <tr>
+              <td>장승욱·김용현 (2013)</td>
+              <td>정형(재무) 데이터</td>
+              <td class="c part">◐ <span class="muted">(서스틴베스트)</span></td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+            </tr>
+            <tr>
+              <td>이희섭 외 (2025)</td>
+              <td>지속가능보고서</td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c part">◐ <span class="muted">(STM)</span></td>
+              <td class="c part">◐</td>
+            </tr>
+            <tr>
+              <td>최재훈 외 (2023)</td>
+              <td>지속가능보고서+SNS</td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c nope">○</td>
+              <td class="c part">◐</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout gap">
+        <h4>추출된 핵심 공백 4가지</h4>
+        <p>
+          <b>① 의무공시–등급 직접 연관</b> : 사업보고서 텍스트 신호 ↔ KCGS 등급을 직접 검증한 국내 연구 부재.<br/>
+          <b>② cheap-talk(분량) 통제</b> : 우리 데이터에서 <span class="hl">total_tokens(보고서 길이)가 ρ=0.654로 가장 강한 양의 상관</span> → 등급과 가장 강하게 묶인 게 ESG 표현 강도가 아니라 단순 분량일 수 있음. 선행연구는 이 교란을 다루지 않음.<br/>
+          <b>③ 사전 확장 정당화</b> : seed→fastText 확장의 cosine 임계값 θ 민감도 분석·잡음 검토가 선행연구에 없음.<br/>
+          <b>④ 형태소 분석기 선택 근거</b> : Kiwi vs Okt seed 보존율(87% vs 67%) 같은 robust 비교가 선행연구에 없음.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3. 알파분석 주제 선정 -->
+    <section id="topic">
+      <div class="sec-head"><span class="sec-num">3</span><h2>알파분석 주제 선정 — 공백 → 후보</h2></div>
+      <p class="lead">공백 4가지를 알파분석 후보로 전환. 각 후보의 <b>차별성·실행가능성·근거강도</b>를 ★로 평가.</p>
+      <div class="alpha-grid">
+        <div class="alpha rec">
+          <div class="top"><span class="id">알파 A · 추천</span><span class="score">차별성 <span class="star">★★★</span> · 실행 <span class="star">★★★</span> · 근거 <span class="star">★★★</span></span></div>
+          <h4>Cheap-talk / Verbosity 통제 후 잔존 신호</h4>
+          <p>공시 분량(log_tokens)·구체성(specificity, 숫자토큰 비율)·비핵심성을 통제한 뒤에도 <b>ESG 텍스트 신호(TF-IDF·cosine)가 KCGS 등급과 유의하게 연관되는가?</b> 공백 ②를 정면으로 다룸.</p>
+          <p class="score">근거: <b>total_tokens ρ=0.654</b>(최강) vs cosine_S 0.401 / seed_tfidf_E 0.318 — 분량 교란 가능성 실측.</p>
+        </div>
+        <div class="alpha">
+          <div class="top"><span class="id">알파 B</span><span class="score">차별성 <span class="star">★★★</span> · 실행 <span class="star">★★</span> · 근거 <span class="star">★★★</span></span></div>
+          <h4>측정 패러다임 비교 (강도 vs 비율)</h4>
+          <p>seed/expanded <b>TF-IDF 강도</b> vs <b>signal 토큰 비율</b>(g_signal_ratio) — 같은 corpus에서 부호·유의가 갈림(이동원 +0.318 vs 김지우 −0.197). 어느 measurement가 KCGS 등급과 더 정합적인가?</p>
+          <p class="score">근거: 통합 N=381에서 g_signal_ratio는 무유의(−0.067)로 약화. 측정 타당성 쟁점.</p>
+        </div>
+        <div class="alpha">
+          <div class="top"><span class="id">알파 C</span><span class="score">차별성 <span class="star">★★</span> · 실행 <span class="star">★★★</span> · 근거 <span class="star">★★</span></span></div>
+          <h4>fastText 확장사전 θ 민감도</h4>
+          <p>cosine 임계값 θ를 낮추면 확장 후보·잡음이 동시 증가. θ별 상위 100단어 검토로 <b>사전 크기–잡음–등급상관 트레이드오프</b>를 표로 정량화하고 최종 θ를 정당화(공백 ③).</p>
+          <p class="score">근거: 가이드 권고(Bao et al., 2024 방식) + 우리 expanded dictionary 산출물.</p>
+        </div>
+        <div class="alpha">
+          <div class="top"><span class="id">알파 D</span><span class="score">차별성 <span class="star">★★</span> · 실행 <span class="star">★★</span> · 근거 <span class="star">★★</span></span></div>
+          <h4>섹션·업종별 분해</h4>
+          <p>II·IV·VI 섹션별, N≥10 업종별로 텍스트 신호–등급 상관을 분해해 <b>어느 섹션/업종에서 변별력</b>이 큰지 확인.</p>
+          <p class="score">근거: 섹션별 분량·업종 이질성(비12월 결산·제조업 편중) 존재.</p>
+        </div>
+      </div>
+      <div class="callout pick">
+        <h4>제안: 주제는 A(메인) + C(보조)</h4>
+        <p><b>알파 A(cheap-talk 통제)</b>를 메인으로 — 선행연구가 비운 핵심 지점이자 우리 데이터가 정면으로 제기하는 질문. <b>알파 C(θ 민감도)</b>는 사전 구축 정당화를 위한 보조 분석으로 병행. B는 "측정 채택" 논의에서 함께 다룸. <span class="muted">(회의에서 확정)</span></p>
+      </div>
+    </section>
+
+    <!-- 4. 알파분석 설계 -->
+    <section id="design">
+      <div class="sec-head"><span class="sec-num">4</span><h2>알파분석 설계 (메인 = 알파 A)</h2></div>
+      <p class="lead">선행연구 공백 ②를 메우는 검증 설계. 인과가 아닌 <b>연관·강건성</b> 확인이 목적.</p>
+
+      <div class="panel">
+        <h3 style="margin-top:0;">연구질문 & 가설</h3>
+        <ul class="clean">
+          <li><b>RQ.</b> 공시 분량(verbosity)을 통제한 뒤에도 ESG 텍스트 신호가 KCGS 등급과 양의 연관을 유지하는가?</li>
+          <li><b>H1.</b> 통제 전: total_tokens가 등급과 가장 강한 양의 상관(ρ≈0.654)을 보인다. <span class="muted">(실측 확인됨)</span></li>
+          <li><b>H2.</b> log_tokens·specificity 통제 후에도 <span class="badge-e">cosine_E</span>·<span class="badge-s">cosine_S</span>·seed_tfidf 계열 계수가 양(+)·유의로 잔존한다 → 신호가 분량만의 산물이 아님.</li>
+          <li><b>H3(반증 가능).</b> 통제 후 텍스트 신호가 무유의로 사라지면 → cheap-talk 해석이 우세(중요 한계로 보고).</li>
+        </ul>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>구성</th><th>설계</th><th>비고</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>분석단위</b></td><td>stock_code × fiscal_year (381 firm-year)</td><td>회사명 아님, zfill(6)</td></tr>
+            <tr><td><b>종속변수 Y</b></td><td>KCGS ESG 등급 숫자변환 (S=6…D=0)</td><td>esg_year = fiscal_year+1</td></tr>
+            <tr><td><b>핵심 설명 X</b></td><td>seed/expanded TF-IDF(E·S·G), 기준문장 cosine(E·S·G)</td><td>두 패러다임 병행(알파 B 연계)</td></tr>
+            <tr><td><b>통제변수</b></td><td>log_tokens(분량), specificity(숫자토큰 비율), 비핵심성, 업종/연도</td><td>cheap-talk 3종 통제</td></tr>
+            <tr><td><b>모형</b></td><td>OLS · Ordered Logit · Binary Logit(A↑) 비교</td><td>등급=순서형 → ordered logit 주모형</td></tr>
+            <tr><td><b>등급 변환</b></td><td>차등점수 + <b>더미변수 병행</b></td><td>김미옥 외(2025) 권고 반영</td></tr>
+            <tr><td><b>검정</b></td><td>Spearman + Bootstrap 95% CI, Mann-Whitney U(고/저등급)</td><td>소표본 변동성 robustness 포함</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel tight">
+        <p style="margin:0; font-size:13.5px; color:var(--muted);"><b>보조 — 알파 C(θ 민감도)</b> : θ ∈ {0.5, 0.6, 0.7, 0.8}별로 expanded dictionary 크기·상위100단어 잡음비율·등급상관을 표로 정리 → 최종 θ를 데이터로 정당화. 노트북 산출물(expanded_dictionary)에서 재현.</p>
+      </div>
+
+      <div class="callout">
+        <h4>주의 — 이 설계로 말할 수 있는 것 / 없는 것</h4>
+        <p>말할 수 있는 것: "분량을 통제해도 ESG 표현 강도가 등급과 연관되는가"의 <b>강건성</b>. 말할 수 없는 것: <b>인과</b>("공시가 등급을 결정"), 모집단 대표성(381은 pilot), 시점 식별(esg_year 정렬), 기업·연도 고정효과(향후 과제).</p>
+      </div>
+    </section>
+
+    <!-- 5. 시사점 -->
+    <section id="impl">
+      <div class="sec-head"><span class="sec-num">5</span><h2>시사점·제언 (초안 — 회의 후 확정)</h2></div>
+      <p class="lead">알파분석 결과를 근거로 도출할 4개 층위. 최종 문구는 분석 완료 후 확정합니다.</p>
+      <div class="impl-grid">
+        <div class="impl">
+          <div class="ic">🎓</div>
+          <h4>학술적 시사점</h4>
+          <p>국내에서 드물게 <b>법정 의무공시(사업보고서) 텍스트 ↔ KCGS 등급</b>을 직접 연관지었고, <b>cheap-talk(분량) 통제</b>를 도입해 측정 타당성을 검증 — 선행연구(김용기 2025; 김미옥 외 2025)의 공백을 메움.</p>
+        </div>
+        <div class="impl">
+          <div class="ic">📐</div>
+          <h4>방법론적 제언</h4>
+          <p>ESG 등급 연관 분석 시 <b>공시 분량을 반드시 통제</b>하고, 등급 변환은 <b>차등점수+더미 병행</b>, 사전 확장은 <b>θ 민감도</b>로 정당화. 형태소 분석기는 seed 보존율로 선택(Kiwi 87%).</p>
+        </div>
+        <div class="impl">
+          <div class="ic">🏢</div>
+          <h4>실무·정책 제언</h4>
+          <p>ESG 공시는 <b>분량(verbosity)이 아니라 구체성</b>(목표·수치·외부검증) 중심으로 설계해야 신호 가치가 큼. 공시 표준화·외부검증 강화(김용기 2025 결론과 정합).</p>
+        </div>
+        <div class="impl">
+          <div class="ic">⚠️</div>
+          <h4>한계 (정직한 보고)</h4>
+          <p>연관≠인과 · 381은 수업용 pilot(KCGS 전체 대표 아님) · esg_year 정렬은 시점식별 아님 · 고정효과 미통제 · 분석기 의존성 잔존 · cheap-talk 완전 배제 불가.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 회의 안건 -->
+    <section id="agenda">
+      <div class="sec-head"><span class="sec-num">6</span><h2>회의에서 결정할 안건</h2></div>
+      <p class="lead">"최종 내용 전부 결정"을 목표로 한 의사결정 포인트.</p>
+      <div class="agenda panel">
+        <div class="item">
+          <div>
+            <p class="q">알파분석 주제를 <b>A(cheap-talk 통제) 메인 + C(θ 민감도) 보조</b>로 확정할까? B(측정 비교)는 어디에 둘까?</p>
+            <p class="why">근거: A는 선행연구 공백 정면 + total_tokens ρ=0.654 실측. B는 팀원 간 부호 역전 쟁점과 연결.</p>
+          </div>
+        </div>
+        <div class="item">
+          <div>
+            <p class="q">주 측정값(measurement)을 <b>seed/expanded TF-IDF 강도</b>로 갈지, <b>signal 토큰 비율</b>로 갈지, 병기할지?</p>
+            <p class="why">근거: 통합 N=381에서 TF-IDF는 양의 유의(+0.318), signal 비율은 무유의(−0.067)로 갈림.</p>
+          </div>
+        </div>
+        <div class="item">
+          <div>
+            <p class="q">KCGS 등급 변환을 <b>차등점수 + 더미 병행</b>(김미옥 외 2025 권고)으로 채택할까?</p>
+            <p class="why">근거: 표본기간별 등급체계 차이로 단일 점수변환은 해석 위험.</p>
+          </div>
+        </div>
+        <div class="item">
+          <div>
+            <p class="q">주 회귀모형을 <b>Ordered Logit</b>(등급=순서형)으로 둘지, OLS와 병행 보고할지?</p>
+            <p class="why">근거: 현재 OLS·Ordered Logit은 cosine_S 양의 유의 일관, Binary Logit(A↑)은 비유의.</p>
+          </div>
+        </div>
+        <div class="item">
+          <div>
+            <p class="q">SCI(해외) 논문을 추가로 더 확보할지? (현재 국내 KCI 8편 검증 완료)</p>
+            <p class="why">팀원 소개·논문화에는 국내 우선. 필요 시 SSCI ESG-disclosure tone/cheap-talk 1~2편 보강.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 참고문헌 -->
+    <section id="refs">
+      <div class="sec-head"><span class="sec-num">REF</span><h2>참고문헌 (KCI 원문 검증 · 2026-06-02)</h2></div>
+      <ol class="refs">
+        <li>김용기 (2025). <span class="t">기업의 ESG전략이 기업가치에 미치는 영향</span>. 인문사회과학연구, 33(4), 275–296. DOI: <a href="https://doi.org/10.22924/jhss.33.4.202511.012" target="_blank" rel="noopener">10.22924/jhss.33.4.202511.012</a> · <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART003273414" target="_blank" rel="noopener">KCI</a></li>
+        <li>김미옥·이현경·정형록·허성준 (2025). <span class="t">한국ESG기준원(KCGS) ESG 평가자료 활용 연구동향과 평가·부여 방식에 따른 해석 유의사항</span>. Asian Tax Journal, 26(6), 87–116. DOI: <a href="https://doi.org/10.35850/KJTA.26.6.03" target="_blank" rel="noopener">10.35850/KJTA.26.6.03</a> · <a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003296656" target="_blank" rel="noopener">KCI</a></li>
+        <li>이희섭·이경호·강신재·이예영·이태동 (2025). <span class="t">한국 제조업 기업의 ESG 담론과 그 변화: 지속가능경영보고서(2014~2024년)에 대한 텍스트 분석</span>. 동서연구, 37(3), 55–88. DOI: <a href="https://doi.org/10.29274/ews.2025.37.3.55" target="_blank" rel="noopener">10.29274/ews.2025.37.3.55</a> · <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART003244402" target="_blank" rel="noopener">KCI</a></li>
+        <li>최재훈·양성병·윤상혁 (2023). <span class="t">텍스트마이닝과 ChatGPT 분석을 활용한 기업과 대중의 ESG 인식 비교: 지속가능경영보고서와 소셜미디어를 기반으로</span>. 지능정보연구, 29(4), 347–373. ISSN 2288-4866 · <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART003031985" target="_blank" rel="noopener">KCI</a></li>
+        <li>이가은·최영준 (2023). <span class="t">텍스트 마이닝을 통한 ESG 연구동향 분석</span>. 기업경영연구, 30(2), 133–166. ISSN 1229-957X · <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART002958822" target="_blank" rel="noopener">KCI</a></li>
+        <li>최신인·윤천성 (2022). <span class="t">키워드 네트워크 분석을 활용한 ESG 연구 동향 분석</span>. 인문사회 21, 13(2), 2073–2084. <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART002832590" target="_blank" rel="noopener">KCI</a></li>
+        <li>박정완·양재용 (2023). <span class="t">토픽 모델링을 활용한 윤리경영에 관한 연구 동향: LDA 기법 기반의 문헌분석을 중심으로</span>. 윤리경영연구, 23(2), 115–142. DOI: <a href="https://doi.org/10.34273/kjbe.2023.23.2.005" target="_blank" rel="noopener">10.34273/kjbe.2023.23.2.005</a> · <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART003027960" target="_blank" rel="noopener">KCI</a></li>
+        <li>장승욱·김용현 (2013). <span class="t">기업의 ESG와 재무성과</span>. 재무관리연구, 30(1), 131–152. ISSN 1225-0759 · <a href="https://www.kci.go.kr/kciportal/landing/article.kci?arti_id=ART001755833" target="_blank" rel="noopener">KCI</a></li>
+      </ol>
+    </section>
+
+  </main>
+
+  <footer>
+    <p><b>검증 고지</b> — 본 자료의 8편 인용정보(저자·학술지·권호·페이지·연도·DOI·초록)는 2026-06-02 KST에 KCI 원문 페이지를 직접 조회하여 대조했습니다.
+    링크 접속 시 KCI에서 원문 PDF 다운로드/열람이 가능합니다. 추정·생성된 인용은 포함하지 않았습니다.</p>
+    <p class="muted">3조 · 비정형데이터분석 기말 프로젝트 · 회의자료 v1 · 작성 이동원 · 본 HTML은 회의 논의용이며 분석 수치는 노트북(<code>esg_dart_integrated_v1.ipynb</code>, N=381) 실측치를 인용함.</p>
+  </footer>
+
+</body>
+</html>
