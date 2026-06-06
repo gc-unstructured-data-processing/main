@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>팀 작업물 1차 비교 대시보드 v0.1 — ESG DART (4명)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#101828; --ink-soft:#475467; --line:#e4e7ec;
+    --accent:#2e7d32; --accent-soft:#e8f5e9; --warn:#b45309; --warn-soft:#fef3c7; --bad:#b42318; --bad-soft:#fee4e2;
+    --donghoon:#1d4ed8; --donghoon-soft:#dbeafe;
+    --jiyoung:#7c3aed; --jiyoung-soft:#ede9fe;
+    --hyesung:#0e7490; --hyesung-soft:#cffafe;
+    --jiwoo:#be185d; --jiwoo-soft:#fce7f3;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.55;}
+  header.top{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+  header.top h1{font-size:17px;margin:0;font-weight:700}
+  header.top .meta{font-size:12px;color:var(--ink-soft)}
+  nav.tabs{position:sticky;top:50px;z-index:49;background:#fff;border-bottom:1px solid var(--line);padding:0 24px;display:flex;gap:4px;overflow-x:auto;flex-wrap:nowrap}
+  nav.tabs button{appearance:none;background:transparent;border:0;padding:12px 14px;font-size:13px;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-weight:500}
+  nav.tabs button:hover{color:var(--ink)}
+  nav.tabs button.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  main{padding:24px;max-width:1320px;margin:0 auto}
+  .panel{display:none}
+  .panel.active{display:block}
+  .grid{display:grid;gap:16px}
+  .grid.cols-2{grid-template-columns:1fr 1fr}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  .grid.cols-4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:980px){.grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .card h3{margin:0 0 8px 0;font-size:14px;color:var(--ink-soft);font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+  .card h2{margin:0 0 6px 0;font-size:16px;font-weight:700}
+  .card.alert{border-color:var(--bad);background:linear-gradient(180deg,var(--bad-soft) 0%,#fff 80%)}
+  .card.alert h2{color:var(--bad)}
+  .kpi{display:flex;flex-direction:column;gap:4px}
+  .kpi .val{font-size:28px;font-weight:700;letter-spacing:-.02em}
+  .kpi .sub{font-size:12px;color:var(--ink-soft)}
+  .kpi.donghoon .val{color:var(--donghoon)}
+  .kpi.jiyoung .val{color:var(--jiyoung)}
+  .kpi.hyesung .val{color:var(--hyesung)}
+  .kpi.jiwoo .val{color:var(--jiwoo)}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;vertical-align:middle}
+  .pill.good{background:var(--accent-soft);color:var(--accent)}
+  .pill.warn{background:var(--warn-soft);color:var(--warn)}
+  .pill.bad{background:var(--bad-soft);color:var(--bad)}
+  .pill.donghoon{background:var(--donghoon-soft);color:var(--donghoon)}
+  .pill.jiyoung{background:var(--jiyoung-soft);color:var(--jiyoung)}
+  .pill.hyesung{background:var(--hyesung-soft);color:var(--hyesung)}
+  .pill.jiwoo{background:var(--jiwoo-soft);color:var(--jiwoo)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#f8fafc;text-align:left;font-weight:600;padding:10px 12px;color:var(--ink-soft);border-bottom:1px solid var(--line);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  .matrix td:first-child{font-weight:600;background:#f8fafc;width:170px}
+  .star{color:#f59e0b;font-weight:700}
+  .note{font-size:12px;color:var(--ink-soft);margin-top:6px}
+  .canvas-wrap{position:relative;height:340px}
+  .step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:0}
+  .step .num{flex:0 0 32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .step .body{flex:1}
+  .step .body h4{margin:0 0 4px 0;font-size:14px}
+  .step .body p{margin:0;font-size:13px;color:var(--ink-soft)}
+  .verdict{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;margin-top:8px;font-size:12px;background:#f8fafc}
+  .verdict .who{flex:0 0 70px;font-weight:600}
+  .verdict.win{background:var(--accent-soft);color:var(--accent)}
+  .verdict.warn{background:var(--warn-soft);color:var(--warn)}
+  .verdict.bad{background:var(--bad-soft);color:var(--bad)}
+  ol.discuss{list-style:none;padding:0;counter-reset:dnum}
+  ol.discuss li{counter-increment:dnum;padding:14px 16px;margin:10px 0;background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;position:relative;padding-left:54px}
+  ol.discuss li.alert{border-left-color:var(--bad);background:linear-gradient(90deg,var(--bad-soft) 0%,#fff 60%)}
+  ol.discuss li::before{content:counter(dnum);position:absolute;left:14px;top:14px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  ol.discuss li.alert::before{background:var(--bad)}
+  ol.discuss li h4{margin:0 0 6px 0;font-size:14px}
+  ol.discuss li p{margin:0;font-size:13px;color:var(--ink-soft)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;margin:8px 0}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
+  footer{padding:24px;font-size:12px;color:var(--ink-soft);text-align:center}
+  code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:12px}
+  .small{font-size:12px;color:var(--ink-soft)}
+  .flip-arrow{display:inline-block;color:var(--bad);font-weight:700}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>팀 작업물 1차 비교 대시보드 — ESG DART <span class="pill good">v0.1</span> <span class="pill jiwoo">+ 김지우</span></h1>
+  <span class="meta">데이터 수집 ↔ 전처리 ↔ 마이닝 ↔ 통계 검정 · 2026-05-19</span>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="active" data-t="t-summary">① 요약 · 부호 역전</button>
+  <button data-t="t-matrix">② 비교 매트릭스</button>
+  <button data-t="t-radar">③ 레이더·차트</button>
+  <button data-t="t-steps">④ 10단계 진단</button>
+  <button data-t="t-common">⑤ 공통 강점·약점</button>
+  <button data-t="t-discuss">⑥ 회의 토론 포인트</button>
+  <button data-t="t-next">⑦ 다음 단계</button>
+</nav>
+
+<main>
+
+<!-- ============== 1) SUMMARY ============== -->
+<section class="panel active" id="t-summary">
+  <div class="grid cols-4" style="margin-bottom:18px">
+    <div class="card kpi donghoon">
+      <span class="pill donghoon">이동원</span>
+      <div class="val">29 / 30</div>
+      <div class="sub">batch SUCCESS (pilot)<br>풀 파이프 00→03 · OLS·Binary·Ordered</div>
+    </div>
+    <div class="card kpi jiyoung">
+      <span class="pill jiyoung">신지영</span>
+      <div class="val">365 / 381</div>
+      <div class="sub">SUCCESS (95.8%)<br>전처리 · passage 13,610</div>
+    </div>
+    <div class="card kpi hyesung">
+      <span class="pill hyesung">김혜성</span>
+      <div class="val">381 / 381</div>
+      <div class="sub">SUCCESS (100%) ⭐<br>수집+전처리 · 13건 진단·복구</div>
+    </div>
+    <div class="card kpi jiwoo">
+      <span class="pill jiwoo">김지우</span>
+      <div class="val">210 / 213</div>
+      <div class="sub">stratified 77×3 · 129 cells<br>⭐ exp_B/E/F · CI · MWU · OLS · OL</div>
+    </div>
+  </div>
+
+  <div class="card alert" style="margin-bottom:18px">
+    <h2>⚠️ 부호 역전 발견 — 김지우 학기 핵심 결과 (회의 1순위 토론)</h2>
+    <p class="small">파일럿 표본에서의 양의 상관이 전체 표본에서 음의 상관으로 역전됨. 이동원의 N=29 결과도 동일 위험에 노출.</p>
+    <table style="margin-top:8px">
+      <thead><tr><th>분석자</th><th>표본</th><th>측정</th><th>Spearman ρ</th><th>p / 95% CI</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill donghoon">이동원</span></td><td>N=29 KCGS pilot</td><td>seed_tfidf_E ↔ esg_grade</td><td style="color:var(--accent)"><strong>+0.606</strong></td><td>0.0005 ⭐⭐</td></tr>
+        <tr><td><span class="pill jiwoo">김지우 파일럿</span></td><td>N=30 KOSPI 상위 10×3</td><td>g_signal_ratio ↔ kcgs_grade</td><td style="color:var(--accent)"><strong>+0.444</strong></td><td>&lt;0.05 ⭐</td></tr>
+        <tr><td><span class="pill jiwoo">김지우 전체</span></td><td>N=210 stratified 77×3</td><td>g_signal_ratio ↔ kcgs_grade</td><td style="color:var(--bad)"><strong>-0.197</strong> <span class="flip-arrow">↘</span></td><td>p=0.004 · CI [-0.326, -0.059] ⭐⭐</td></tr>
+        <tr><td><span class="pill jiwoo">김지우 전체</span></td><td>N=210</td><td>esg_tfidf_concentration ↔ kcgs</td><td style="color:var(--bad)"><strong>-0.185</strong></td><td>p=0.007 · CI [-0.311, -0.045] ⭐⭐</td></tr>
+        <tr><td><span class="pill jiwoo">김지우 전체</span></td><td>N=210</td><td>total_tokens ↔ kcgs <span class="pill warn">verbosity bias</span></td><td style="color:var(--accent)"><strong>+0.263</strong></td><td>p&lt;0.001 · CI [0.124, 0.394] ⭐⭐⭐</td></tr>
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:10px"><strong>김지우의 진단</strong>(docx §3): "KOSPI 상위 10개 대형주는 KCGS↑ 공시↑ 둘 다 높은 기업군 → 공통 원인에 의한 <strong>spurious positive correlation</strong>". 이동원의 N=29 stratified pilot도 동일 위험에 노출되어 있음. <strong>통합 corpus(N=381 또는 N=210)에서 이동원의 seed_tfidf_E와 김지우의 g_signal_ratio를 동시에 회귀에 넣어 부호를 확정하는 것이 학기 본 결과.</strong></p>
+  </div>
+
+  <div class="card">
+    <h2>회의에서 가장 먼저 합의해야 할 4가지</h2>
+    <ol class="discuss" style="margin-bottom:0">
+      <li class="alert">
+        <h4>⭐ 부호 역전 해석 (가장 중요)</h4>
+        <p>이동원 N=29 ρ=+0.606(E, seed_tfidf)와 김지우 N=210 ρ=-0.197(G, signal_ratio) 정반대. <strong>두 메트릭이 다르므로 직접 비교 불가 — 통합 corpus에서 동시에 회귀 입력해 어느 부호가 살아남는지 확인.</strong> 김지우 파일럿 부호 역전 관측 자체가 결정적 증거.</p>
+      </li>
+      <li>
+        <h4>통합 corpus 채택 기준</h4>
+        <p>김혜성 <strong>381/381</strong>(가이드 02 가장 정직) · 김지우 <strong>77×3=210</strong>(stratified 다양성) · 신지영 365 · 이동원 29. 김지우의 77개 stratified 기준을 회의에서 공유 후 결정. 회귀 안정성 vs 표집 편의 trade-off.</p>
+      </li>
+      <li>
+        <h4>seed/사전 보존 전략 (3종 결합)</h4>
+        <p>김혜성 <code>kiwi.add_user_word(NNP, score=50)</code> → 30/30 보존 <strong>PRIMARY</strong>. 김지우 Taxonomy 사전(G_SIGNAL 13 + ESG_SIGNAL 31 + BOILERPLATE 27) → <strong>signal_ratio 메트릭 보조</strong>. 신지영 11개 손실 사례 § 한계로 공유.</p>
+      </li>
+      <li>
+        <h4>회귀·검정 통합</h4>
+        <p>김지우의 <strong>OLS + Ordered Logit + Bootstrap 95% CI + Mann-Whitney U + 3종 전처리 robustness(exp_B/E/F)</strong>를 통합 03 노트북 코어로 채택. 이동원의 BinaryLogit(A 이상) 보조 추가. cheap-talk 통제: log_tokens 필수.</p>
+      </li>
+    </ol>
+  </div>
+
+  <div class="grid cols-2" style="margin-top:18px">
+    <div class="card">
+      <h2 style="color:var(--accent)">⭐ 이동원 N=29 핵심 발견</h2>
+      <table>
+        <tr><th>관계</th><th>ρ</th><th>p</th></tr>
+        <tr><td>seed_tfidf_E ↔ esg_grade</td><td><strong>+0.606</strong></td><td>0.0005 ⭐⭐</td></tr>
+        <tr><td>seed_tfidf_E ↔ e_grade</td><td>+0.582</td><td>0.0009 ⭐⭐</td></tr>
+        <tr><td>cosine_E ↔ esg_grade</td><td>+0.525</td><td>0.003 ⭐</td></tr>
+        <tr><td>cosine_S ↔ esg_grade</td><td>+0.427</td><td>0.021 ⭐</td></tr>
+        <tr><td>seed_tfidf_S/G</td><td>0.10~0.28</td><td>>0.15 ❌</td></tr>
+      </table>
+      <p class="note">OLS β=7.365, p=0.029, R²=0.295 — N=29 pilot, KCGS stratified.</p>
+    </div>
+    <div class="card">
+      <h2 style="color:var(--bad)">⭐ 김지우 N=210 핵심 발견</h2>
+      <table>
+        <tr><th>관계</th><th>ρ</th><th>p / CI</th></tr>
+        <tr><td>g_signal_ratio</td><td><strong>-0.197</strong></td><td>0.004 · CI [-0.326, -0.059] ⭐⭐</td></tr>
+        <tr><td>esg_tfidf_concentration</td><td>-0.185</td><td>0.007 · CI [-0.311, -0.045] ⭐⭐</td></tr>
+        <tr><td>total_tokens (verbosity)</td><td><strong>+0.263</strong></td><td>&lt;0.001 ⭐⭐⭐</td></tr>
+        <tr><td>esg_signal_ratio</td><td>+0.093</td><td>CI⊃0 (미미)</td></tr>
+        <tr><td>esg_g_relative</td><td>-0.049</td><td>미미</td></tr>
+      </table>
+      <p class="note">OLS Adj.R²=0.061, F-stat p=0.0006(전체 유의). 3종 전처리 부호 일관 → robust.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 2) MATRIX ============== -->
+<section class="panel" id="t-matrix">
+  <div class="card">
+    <h2>비교 매트릭스 — 14개 핵심 항목 × 4명</h2>
+    <p class="small">👑 = 통합 채택 권장, ⚠️ = 개선 필요, ⭐ = 학기 핵심 자산.</p>
+    <table class="matrix">
+      <thead>
+        <tr><th>항목</th><th>이동원</th><th>신지영</th><th>김혜성</th><th>김지우</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>노트북 구조</td>
+          <td>4개 분리 (58 cells)</td>
+          <td>1개 (36 cells)</td>
+          <td>1개 (56 cells)</td>
+          <td><strong>1개 메가형 (129 cells)</strong></td></tr>
+        <tr><td>수집 표본</td>
+          <td>batch 30 pilot (KCGS stratified)</td>
+          <td>381 시도, SUCCESS 365 (95.8%)</td>
+          <td><strong>381/381 (100%)</strong> 👑</td>
+          <td><strong>77×3=210 stratified</strong> ⭐</td></tr>
+        <tr><td>재수집·복구</td>
+          <td>Fix F (recover XML)</td>
+          <td>—</td>
+          <td>13건 진단 → 전수 복구 👑</td>
+          <td>신규상장 2개 결측 인정 (가짜 0 ❌)</td></tr>
+        <tr><td>XML 파서</td>
+          <td><code>lxml.etree(recover=True)</code> + 정규식 👑</td>
+          <td><code>BS4 lxml</code> <span class="pill bad">XMLParsedAsHTMLWarning</span></td>
+          <td><code>lxml ElementTree</code></td>
+          <td>모듈화 (<code>src/passage_filter.py</code>)</td></tr>
+        <tr><td>섹션 추출</td>
+          <td>SECTION-1 14개 lxml 순회</td>
+          <td>전체 → seed sentence 필터</td>
+          <td>II·IV·VI 정규식 + <code>section_chars_*</code> 👑</td>
+          <td><code>sentence_density_filter</code> + density 4종 ⭐</td></tr>
+        <tr><td>형태소·토큰화</td>
+          <td>Okt PRIMARY <span class="pill warn">Mecab 미설치</span></td>
+          <td>Kiwi (kiwipiepy)</td>
+          <td>Kiwi 0.23.1 + user dict 👑</td>
+          <td>다중 실험 (분석기 Kiwi 계열)</td></tr>
+        <tr><td>사용자 사전 / 분류</td>
+          <td>token_pattern <code>\b\w+\b</code></td>
+          <td>❌ 미등록 <span class="pill bad">seed 11개 손실</span></td>
+          <td>✅ NNP score=50<br><strong>30/30 보존</strong> 👑</td>
+          <td><strong>Taxonomy: G_SIGNAL 13 + ESG_SIGNAL 31 + BOILERPLATE 27</strong> ⭐</td></tr>
+        <tr><td>불용어·필터</td>
+          <td>max_df=0.95 자동</td>
+          <td>216개 (BASE+회사명)</td>
+          <td>회사명 1자/2자 분리</td>
+          <td><strong>3단계 실험 (exp_B/E/F) + 문장 필터 18종</strong> ⭐</td></tr>
+        <tr><td>passage / document</td>
+          <td>sections.json 29</td>
+          <td>passage 13,610 → doc 365</td>
+          <td>corpus 381 (avg 34,222자)</td>
+          <td>firm_year_documents 243</td></tr>
+        <tr><td>TF-IDF · feature</td>
+          <td>seed/expanded × E·S·G + cosine = 9개</td>
+          <td>미실행</td>
+          <td>미실행 (Phase 2 마무리)</td>
+          <td><strong>g_signal_ratio · esg_tfidf_concentration · total_tokens · esg_signal_ratio · BP_rate</strong> ⭐</td></tr>
+        <tr><td>robustness check</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td><strong>3종 전처리 부호 일관 검증</strong> ⭐⭐</td></tr>
+        <tr><td>통계 검정</td>
+          <td>Spearman 15 pairs + t-test + MWU</td>
+          <td>—</td>
+          <td>—</td>
+          <td><strong>Spearman + Bootstrap 95% CI + MWU + 등급별 sanity</strong> ⭐⭐</td></tr>
+        <tr><td>회귀</td>
+          <td>OLS · OrderedLogit · BinaryLogit ✅<br><span class="pill warn">N=29</span></td>
+          <td>—</td>
+          <td>—</td>
+          <td><strong>OLS + Ordered Logit · N=209</strong> ⭐</td></tr>
+        <tr><td>핵심 발견</td>
+          <td><strong>ρ=+0.606 (E, N=29)</strong></td>
+          <td>seed 11개 손실</td>
+          <td>5개 희소 seed → expanded 근거</td>
+          <td><strong>⭐ 부호 역전 +0.444→-0.197</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>seed 등장 빈도 비교 (김혜성 N=381 vs 신지영 N=365)</h2>
+    <p class="small">동일 corpus 규모인데도 seed 보존 결과가 갈리는 이유 — 사용자 사전 등록 차이.</p>
+    <table>
+      <thead><tr><th>seed</th><th>김혜성 (사용자 사전 ✓)</th><th>신지영 (사용자 사전 ✗)</th><th>해석</th></tr></thead>
+      <tbody>
+        <tr><td>탄소중립</td><td>423회</td><td><span class="pill bad">0회</span></td><td>"탄소/중립" 분리</td></tr>
+        <tr><td>넷제로</td><td>9회 ⚠️희소</td><td><span class="pill bad">0회</span></td><td>외래어·희소</td></tr>
+        <tr><td>재생에너지</td><td>679회</td><td><span class="pill bad">0회</span></td><td>"재생/에너지" 분리</td></tr>
+        <tr><td>재활용</td><td>613회</td><td><span class="pill bad">0회</span></td><td>동사 분류</td></tr>
+        <tr><td>산업재해</td><td>48회 ⚠️희소</td><td><span class="pill bad">0회</span></td><td>"산업/재해" 분리</td></tr>
+        <tr><td>중대재해</td><td>74회</td><td><span class="pill bad">0회</span></td><td>"중대/재해" 분리</td></tr>
+        <tr><td>교육훈련</td><td>17회 ⚠️희소</td><td><span class="pill bad">0회</span></td><td>"교육/훈련" 분리</td></tr>
+        <tr><td>지역사회</td><td>146회</td><td><span class="pill bad">0회</span></td><td>"지역/사회" 분리</td></tr>
+        <tr><td>독립성</td><td>1,416회</td><td><span class="pill bad">0회</span></td><td>"독립/성" 분리</td></tr>
+        <tr><td>컴플라이언스</td><td>50회</td><td><span class="pill bad">0회</span></td><td>외래어</td></tr>
+        <tr><td>부패방지</td><td>8회 ⚠️희소</td><td><span class="pill bad">0회</span></td><td>"부패/방지" 분리</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>김지우 — 3종 전처리 실험 robustness 설계 ⭐</h2>
+    <p class="small">통합 02 노트북에 그대로 채택 권장. 가이드 04 §3 "측정 validity" 평가표 최고점.</p>
+    <table>
+      <thead><tr><th>실험</th><th>불용어</th><th>숫자 처리</th><th>문장 필터</th><th>목적</th></tr></thead>
+      <tbody>
+        <tr><td>exp_A</td><td>minimal</td><td>remove_all</td><td>없음</td><td>투명성 기준선</td></tr>
+        <tr><td><strong>exp_B</strong> ⭐</td><td>standard</td><td>remove_all</td><td>없음</td><td><strong>pre-reg baseline</strong></td></tr>
+        <tr><td>exp_C</td><td>minimal</td><td>keep_quantity</td><td>없음</td><td>수치 보존 효과</td></tr>
+        <tr><td>exp_D</td><td>extended</td><td>remove_all</td><td>없음</td><td>과잉 제거 위험</td></tr>
+        <tr><td><strong>exp_E</strong></td><td>extended</td><td>remove_all</td><td><strong>18개 패턴</strong></td><td>BP% 13.3%→0% 검증</td></tr>
+        <tr><td><strong>exp_F</strong> ⭐</td><td>extended</td><td><strong>keep_quantity</strong></td><td>18개 패턴</td><td><strong>ESG 정량 약속 보존 — 최적 설정</strong></td></tr>
+      </tbody>
+    </table>
+    <p class="note">⭐ <strong>3종 모두 동일 부호·비슷한 ρ → cheap-talk 결론이 전처리 선택에 robust</strong>. 잡음 제거 강도와 무관하게 동일 방향이 나오므로 결과 안전성 ↑.</p>
+  </div>
+</section>
+
+<!-- ============== 3) RADAR + CHARTS ============== -->
+<section class="panel" id="t-radar">
+  <div class="card">
+    <h2>레이더 — 10단계 영역별 완성도 (4명)</h2>
+    <p class="small">5 = "통합 노트북에 그대로 채택 가능", 1 = "미수행·재작업 필요".</p>
+    <div class="legend">
+      <span><i style="background:var(--donghoon)"></i>이동원</span>
+      <span><i style="background:var(--jiyoung)"></i>신지영</span>
+      <span><i style="background:var(--hyesung)"></i>김혜성</span>
+      <span><i style="background:var(--jiwoo)"></i>김지우</span>
+    </div>
+    <div class="canvas-wrap" style="height:460px"><canvas id="radar"></canvas></div>
+  </div>
+
+  <div class="grid cols-2" style="margin-top:18px">
+    <div class="card">
+      <h2>수집 SUCCESS율</h2>
+      <div class="canvas-wrap"><canvas id="bar-success"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>표본 크기 (회귀 입력)</h2>
+      <div class="canvas-wrap"><canvas id="bar-N"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>⭐ 부호 역전 시각화 — 표본 크기별 Spearman ρ</h2>
+    <p class="small">동일 측정·다른 표본 크기에서 부호가 역전됨을 김지우가 직접 관측. 이동원 N=29도 동일 위험.</p>
+    <div class="canvas-wrap" style="height:380px"><canvas id="bar-flip"></canvas></div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>이동원 N=29 회귀 결과 — Spearman ρ (15 pairs)</h2>
+    <p class="small">⭐ = 강한 유의 (p&lt;0.005), ☆ = 약한 유의 (p&lt;0.05), 무표시 = 무유의. <strong>E 차원만 강한 양의 신호.</strong></p>
+    <div class="canvas-wrap" style="height:420px"><canvas id="bar-spearman"></canvas></div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>김지우 N=210 회귀 결과 — Spearman ρ + 95% CI (Bootstrap)</h2>
+    <p class="small">CI가 0을 포함하지 않으면 강한 증거 (CI⊅0). g_signal_ratio·esg_tfidf_concentration이 음, total_tokens가 양.</p>
+    <div class="canvas-wrap" style="height:380px"><canvas id="bar-jiwoo-rho"></canvas></div>
+  </div>
+</section>
+
+<!-- ============== 4) STEPS ============== -->
+<section class="panel" id="t-steps">
+  <div class="card">
+    <h2>10단계 진단 — 누가 무엇을 잘했고 무엇이 미흡한가</h2>
+    <p class="small">⭐가 붙은 단계는 회의 우선 토론.</p>
+
+    <div class="step"><div class="num">1</div><div class="body">
+      <h4>표본 단위 · 식별자 정규화</h4>
+      <p>네 명 모두 <code>stock_code.zfill(6)</code>. 단 <strong>표본 모수가 갈림</strong>.</p>
+      <div class="verdict win"><span class="who">이동원</span><span>KCGS stratified 5×7=30 pilot (S 0건이라 30 시도)</span></div>
+      <div class="verdict win"><span class="who">신지영</span><span>company_master 381 전체 시도</span></div>
+      <div class="verdict win"><span class="who">김혜성</span><span>company_master 381 전체 시도 + 비12월 결산까지 처리</span></div>
+      <div class="verdict warn"><span class="who">김지우</span><span><strong>별도 stratified 77개 기업 × 3 = 213</strong>. 회의에서 stratified 기준 공유 필요</span></div>
+    </div></div>
+
+    <div class="step"><div class="num">2</div><div class="body">
+      <h4>corp_code · rcept_no 매핑</h4>
+      <div class="verdict win"><span class="who">김혜성</span><span><code>find_business_report_v2</code>: 비12월 결산 유연 + 정정 회피 → 13건 실패 0건</span></div>
+      <div class="verdict win"><span class="who">김지우</span><span>모듈화된 corp_code_map.csv (DART 3,965건 → 81개 사용)</span></div>
+      <div class="verdict warn"><span class="who">신지영</span><span>8건 <code>no_report_found</code> 그대로 — 비12월 결산 보완 필요</span></div>
+    </div></div>
+
+    <div class="step"><div class="num">3</div><div class="body">
+      <h4>XML 파싱 robustness</h4>
+      <div class="verdict win"><span class="who">이동원</span><span><code>XMLParser(recover=True)</code> + 정규식 pre-처리 Fix F → 99% 정상 추출</span></div>
+      <div class="verdict win"><span class="who">김혜성</span><span><code>lxml ElementTree</code> + [첨부정정] status 014 진단</span></div>
+      <div class="verdict bad"><span class="who">신지영</span><span><code>BS4(xml_text, "lxml")</code> → <strong>XMLParsedAsHTMLWarning</strong>. <code>features="xml"</code> 권장</span></div>
+      <div class="verdict warn"><span class="who">김지우</span><span><code>src/passage_filter.py</code> 외부 모듈 — 통합 시 검토 필요</span></div>
+    </div></div>
+
+    <div class="step"><div class="num">4</div><div class="body">
+      <h4>섹션(II·IV·VI) 추출 + sentence-level density ⭐</h4>
+      <div class="verdict win"><span class="who">김혜성</span><span><code>section_chars_II/IV/VI</code> 별도 로깅 → section-weighted 알파 base</span></div>
+      <div class="verdict win"><span class="who">김지우</span><span><code>sentence_density_filter</code> + esg_density / signal_density / generic_density / finance_density 4종 → 가이드 03 §1 Decision box 가장 충실</span></div>
+      <div class="verdict win"><span class="who">이동원</span><span>SECTION-1 lxml 14개 순회 + section_code 체계</span></div>
+      <div class="verdict warn"><span class="who">신지영</span><span>섹션 분리 없이 전체 텍스트 → section-level feature 불가</span></div>
+    </div></div>
+
+    <div class="step"><div class="num">5</div><div class="body">
+      <h4>ESG passage 후보 정의</h4>
+      <div class="verdict win"><span class="who">김지우</span><span>sentence-level + density score → high-precision (Decision box 명시)</span></div>
+      <div class="verdict win"><span class="who">신지영</span><span>sentence 단위 + seed 필터 → 13,610 passage. high-precision but 누락 위험</span></div>
+      <div class="verdict win"><span class="who">이동원·김혜성</span><span>섹션 텍스트 전체 concat. high-recall but cheap-talk 위험</span></div>
+    </div></div>
+
+    <div class="step"><div class="num">6</div><div class="body">
+      <h4>형태소 분석기 + seed 보존 ⭐ <span class="pill bad">가장 중요</span></h4>
+      <div class="verdict win"><span class="who">김혜성</span><span>Kiwi + <code>add_user_word(NNP, score=50)</code> → <strong>30/30 보존</strong>. Kiwi 공식 권장에 부합</span></div>
+      <div class="verdict win"><span class="who">김지우</span><span>Taxonomy 분류로 우회 — G_SIGNAL 13 + ESG_SIGNAL 31 + BOILERPLATE 27 색상 분류 + 보호 상태 추적</span></div>
+      <div class="verdict bad"><span class="who">신지영</span><span>Kiwi 사용 but 사용자 사전 미등록 → <strong>11/30 seed가 전처리 후 0회</strong></span></div>
+      <div class="verdict warn"><span class="who">이동원</span><span>형태소 분석 없이 <code>token_pattern=\b\w+\b</code>. 분리 손실 없으나 한국어 정밀도 ↓</span></div>
+    </div></div>
+
+    <div class="step"><div class="num">7</div><div class="body">
+      <h4>불용어·문장 필터 ⭐</h4>
+      <div class="verdict win"><span class="who">김지우</span><span><strong>3단계 실험 설계 (exp_B/E/F)</strong> + 문장 패턴 18종 + 회사명 4변형 → BP% 13.3% → 0%. 3종 모두 동일 부호 → <strong>robustness 확인</strong></span></div>
+      <div class="verdict win"><span class="who">김혜성</span><span>회사명 1자/2자 분리</span></div>
+      <div class="verdict win"><span class="who">신지영</span><span>BASE+DISCLOSURE+회사명+DART 216개</span></div>
+      <div class="verdict win"><span class="who">이동원</span><span>가이드 line 53 + max_df=0.95 자동 처리</span></div>
+    </div></div>
+
+    <div class="step"><div class="num">8</div><div class="body">
+      <h4>seed 빈도 진단 · expanded 근거</h4>
+      <div class="verdict win"><span class="who">김혜성</span><span><strong>5개 희소 seed</strong>: 넷제로 9·산업재해 48·교육훈련 17·부패방지 8·컴플라이언스 50 → fastText 확장 근거</span></div>
+      <div class="verdict win"><span class="who">김지우</span><span><strong>G_SIGNAL 5종 본문 부재</strong> 발견 + 사라진/새로 등장 토큰 추적 (셀 45). "사업보고서가 KCGS G 항목을 거의 언급하지 않는다"는 발견으로 기록</span></div>
+      <div class="verdict warn"><span class="who">신지영</span><span>11개 손실 발견했으나 expanded 확장으로 연결 ❌</span></div>
+      <div class="verdict warn"><span class="who">이동원</span><span>manual 7개 추가 (S 6 + G 1) → 사이클 6+ fastText 예정</span></div>
+    </div></div>
+
+    <div class="step"><div class="num">9</div><div class="body">
+      <h4>TF-IDF · cosine · signal_ratio feature</h4>
+      <div class="verdict win"><span class="who">이동원</span><span>가이드 03 line 90 충실: seed/expanded × E·S·G + cosine = 9 feature (N=29)</span></div>
+      <div class="verdict win"><span class="who">김지우</span><span>Taxonomy ratio 패러다임: g_signal_ratio, esg_tfidf_concentration, esg_signal_ratio, total_tokens, BP_rate, esg_g_relative (N=210)</span></div>
+      <div class="verdict warn"><span class="who">통합 권장</span><span><strong>두 패러다임 병행 회귀</strong> — seed_tfidf_E와 signal_ratio가 같은 corpus에서 다른 부호를 보이는지 검증</span></div>
+    </div></div>
+
+    <div class="step"><div class="num">10</div><div class="body">
+      <h4>회귀 + Spearman/MWU/Bootstrap + 알파 ⭐ <span class="pill bad">핵심 발견</span></h4>
+      <div class="verdict win"><span class="who">이동원</span><span><strong>ρ=+0.606 (N=29, p=0.0005)</strong> ⭐⭐ · OLS β=7.365 p=0.029 R²=0.295 · BinaryLogit β=41.09 p=0.075 · OrderedLogit 불안정</span></div>
+      <div class="verdict bad"><span class="who">김지우</span><span><strong>ρ=-0.197 (N=210, p=0.004)</strong> ⭐⭐ · CI [-0.326, -0.059] · 파일럿→전체 부호 역전 + 표집 편의 진단 · OLS + Ordered Logit 방향 일관 · 3종 전처리 robust</span></div>
+      <div class="verdict warn"><span class="who">통합 후</span><span>이동원 seed_tfidf_E·E 차원 + 김지우 g_signal_ratio·G 차원 동시 회귀. 측정 단위 차이를 통제한 후 어느 부호가 살아남는지가 학기 결과</span></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============== 5) COMMON ============== -->
+<section class="panel" id="t-common">
+  <div class="grid cols-2">
+    <div class="card">
+      <h2 style="color:var(--accent)">✅ 공통 강점 — 네 명 모두 잘함</h2>
+      <ul>
+        <li><strong>식별자 lineage</strong> — stock_code zfill(6), corp_code 매핑, rcept_no 기록. 김지우는 "회사명 merge 금지" 명시.</li>
+        <li><strong>회사명 불용어 제거</strong> — 김혜성 1자/2자 분리, 신지영 216개, 이동원 max_df=0.95, 김지우 4변형.</li>
+        <li><strong>timing rule</strong> (esg_year = fiscal_year + 1) 코드·마크다운 명시.</li>
+        <li><strong>API key .env 분리</strong> — 가이드 04 §5 위반금지 충족.</li>
+        <li><strong>재현성 장치</strong> — 신지영 체크포인트, 김혜성 메타+JSON 캐시, 이동원 incremental, 김지우 모듈+산출물 분리.</li>
+        <li><strong>인과 vs 연관 디시플린</strong> — 가이드 04 §4 line 99 모두 명시. 김지우 docx §4 cheap-talk 정합성 분석이 가장 정교.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2 style="color:var(--bad)">⚠️ 공통 약점 — 네 명 모두 보강 필요</h2>
+      <ul>
+        <li><strong>fastText 확장 미완</strong> — 가이드 03 line 90~122 θ sweep 미실행. 김혜성+김지우 진단 결합하면 근거 강력.</li>
+        <li><strong>section_weighted feature 부재</strong> — 가이드 04 §3-1 알파 1순위. 점수화 미실행.</li>
+        <li><strong>cheap-talk 통제 정교화 부족</strong> — 이동원 word_count+specificity 2종, 김지우 log_tokens 1종. <strong>김지우 total_tokens +0.263⭐⭐⭐ 발견 자체가 시급성 입증</strong>.</li>
+        <li><strong>분석기 robustness 비교 부재</strong> — Okt vs Kiwi vs Komoran 비교 없음.</li>
+        <li><strong>표본 정의 불일치</strong> — 30/365/381/210 네 가지 존재. 통합 모수 합의 후 단일 corpus로 재실행 필요.</li>
+        <li><strong>기업·연도 고정효과 미통제</strong> — 김지우 docx §6 한계로 명시. 패널 회귀는 알파 후보.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>김지우 ⭐ — 학기 결과를 바꿀 수 있는 6가지 자산</h2>
+    <table>
+      <thead><tr><th>자산</th><th>설명</th><th>가이드 매핑</th></tr></thead>
+      <tbody>
+        <tr><td>3종 전처리 robustness (exp_B/E/F)</td><td>불용어·숫자·문장필터 변수 통제. 부호 일관 검증.</td><td>04 §3 "측정 validity"</td></tr>
+        <tr><td>Bootstrap 95% CI</td><td>CI⊅0 = 강한 증거. Spearman p-value 보강.</td><td>03 §3단계 feature 검증</td></tr>
+        <tr><td>Mann-Whitney U + 등급별 sanity</td><td>고등급(A/A+) vs 저등급(B/B+) 평균 차이.</td><td>03 §3단계 line 192</td></tr>
+        <tr><td>Decision Box 형식 (Alt/Choice/Just/Limit)</td><td>가이드 03 §1·§2 Decision box 그대로 적용.</td><td>03 전체</td></tr>
+        <tr><td>9개 시행착오 기록 (셀 67)</td><td>duplicate, mismatch, boilerplate, leakage, pilot overlap 등 9개 trouble + 대응.</td><td>04 §2 보고서 판단</td></tr>
+        <tr><td>파일럿→전체 부호 역전 자체 관측</td><td>+0.444 → -0.197. KOSPI 상위 10개 표집 편의 진단.</td><td>04 §4 표본 해석 한계</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============== 6) DISCUSS ============== -->
+<section class="panel" id="t-discuss">
+  <div class="card">
+    <h2>회의 토론 포인트 — 90~120분 진행 순서</h2>
+    <p class="small">각 항목 합의 결과를 <code>integration_decisions.md</code>에 기록 후 v0.2 통합 작업 시작.</p>
+    <ol class="discuss">
+      <li class="alert">
+        <h4>⭐ [T+0~20분] 부호 역전 해석 (가장 중요)</h4>
+        <p>이동원 N=29 ρ=+0.606(E, seed_tfidf) vs 김지우 N=210 ρ=-0.197(G, signal_ratio) 정반대. 김지우의 파일럿→전체 부호 역전 관측 + 표집 편의 진단 공유. 통합 corpus에서 어느 부호가 살아남는지가 학기 본 결과. 두 메트릭 차이(seed_tfidf vs signal_ratio) 통제한 동시 회귀 합의.</p>
+      </li>
+      <li>
+        <h4>[T+20~35분] 통합 corpus 결정</h4>
+        <p>김혜성 381(가장 정직) · 김지우 77×3=210(stratified 다양성) · 신지영 365 · 이동원 30. 김지우의 stratified 기준 회의 공유 후 결정: (a) 김혜성 381, (b) 김지우 77+50, (c) 김지우 stratified 그대로.</p>
+      </li>
+      <li>
+        <h4>[T+35~50분] seed/사전 보존 전략 (3종 결합)</h4>
+        <p>김혜성 Kiwi+user dict(score=50) 30/30 PRIMARY. 김지우 Taxonomy(G_SIGNAL 13+ESG_SIGNAL 31+BOILERPLATE 27) 보조. 신지영 11개 손실 사례 §한계로 공유. 이동원 token_pattern §한계에 비교.</p>
+      </li>
+      <li>
+        <h4>[T+50~65분] expanded dictionary 확장</h4>
+        <p>김혜성 5개 희소 seed + 김지우 G_SIGNAL 5종 부재 → fastText 확장 근거. 이동원 manual 7개 + fastText θ sweep (0.70/0.80/0.85 + 상위 100단어 검토 + 회사명 제외). 최종본 <code>data/expanded_dictionary_v1.csv</code>.</p>
+      </li>
+      <li>
+        <h4>[T+65~80분] 회귀·검정 통합</h4>
+        <p>김지우의 <strong>OLS + Ordered Logit + Bootstrap 95% CI + Mann-Whitney U + 3종 전처리 robustness</strong> 통합 03 코어. 이동원 BinaryLogit(A 이상) 보조. cheap-talk 통제: log_tokens 필수 + specificity 옵션.</p>
+      </li>
+      <li>
+        <h4>[T+80~95분] 알파 분석 1개 합의</h4>
+        <p>후보 1 — section_weighted (II/IV/VI 가중) / 후보 2 — 업종별 분해 / <strong>후보 3 — 부호 역전 자체를 알파로 정식화 (김지우 발견 본 메시지로 격상) ⭐ 권장</strong> / 후보 4 — 기업·연도 고정효과 robustness.</p>
+      </li>
+      <li>
+        <h4>[T+95~120분] 모형 선택 + D-Day 일정 분담</h4>
+        <p>통합 corpus로 OLS · OrderedLogit · BinaryLogit 셋 다 비교. 통합 01·02·03·04(알파) ipynb · 보고서 .md · 발표 슬라이드 4명 분담.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============== 7) NEXT ============== -->
+<section class="panel" id="t-next">
+  <div class="card">
+    <h2>회의 후 다음 단계 산출물 (v0.2)</h2>
+    <table>
+      <thead><tr><th>산출물</th><th>위치</th><th>통합 권장</th></tr></thead>
+      <tbody>
+        <tr><td><code>01_collection.ipynb</code></td><td><code>_integrated/notebooks/</code></td><td>김혜성 v2 + 이동원 Fix F</td></tr>
+        <tr><td><code>02_preprocessing.ipynb</code></td><td><code>_integrated/notebooks/</code></td><td>김혜성 Kiwi+user dict + 김지우 Taxonomy + 김지우 exp_B/E/F + 이동원 TF-IDF·cosine</td></tr>
+        <tr><td><code>03_mining.ipynb</code></td><td><code>_integrated/notebooks/</code></td><td><strong>김지우 Spearman+Bootstrap+MWU+OLS+OrderedLogit</strong> + 이동원 BinaryLogit</td></tr>
+        <tr><td><code>04_alpha.ipynb</code></td><td><code>_integrated/notebooks/</code></td><td>합의된 알파 (부호 역전 robustness · section_weighted · 업종 분해 중 1)</td></tr>
+        <tr><td><code>expanded_dictionary_v1.csv</code></td><td><code>data/</code></td><td>김혜성 진단 + 김지우 Taxonomy + fastText 확장</td></tr>
+        <tr><td><code>integration_decisions.md</code></td><td><code>_integrated/reports/</code></td><td>회의록 기반 채택 기록</td></tr>
+        <tr><td>최종 보고서 .md</td><td><code>_integrated/reports/</code></td><td>5~10 페이지 (김지우 docx 8개 절 구조 베이스 권장)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>벤치마킹 참고 — 본 대시보드 설계 근거</h2>
+    <ul>
+      <li><strong>F-pattern 레이아웃</strong> (DataCamp 2025): 상단 좌측 80% 주목 → KPI 4종 카드 상단 배치.</li>
+      <li><strong>Cognitive load &lt; 9</strong> (UXPin): 12+ KPI는 40% 참여도 하락 → 핵심 KPI 4개 + 서브 패널 분리.</li>
+      <li><strong>Sticky navigation</strong> (Improvado 2026): 22% 빠른 navigation → 상단 sticky tabs.</li>
+      <li><strong>Radar chart</strong> (Chart.js): 다중 데이터 포인트 비교 → 10단계 진단 레이더.</li>
+      <li><strong>Color-coded pills</strong>: 작업자별 4색 일관성 유지 (이동원=blue, 신지영=purple, 김혜성=teal, 김지우=pink).</li>
+      <li><strong>Alert card</strong> (부호 역전): 핵심 위험·발견은 그라데이션 배경으로 시각 강조.</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  팀 작업물 1차 비교 대시보드 v0.1 (rev 김지우 반영) · ESG DART 기말 프로젝트 · 2026-05-19<br>
+  분석 대상 — 이동원 (00→03) · 신지영 (전처리) · 김혜성 (수집+전처리) · 김지우 (풀파이프+검정+회귀+robustness)<br>
+  본 자료는 <code>members/_integrated/reports/v0.1/</code>에 저장됩니다. 회의 결정 반영 후 v0.2로 갱신.
+</footer>
+
+<script>
+// Tab navigation
+document.querySelectorAll("#tabs button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("#tabs button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    document.getElementById(btn.dataset.t).classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+});
+
+const C = {
+  donghoon: "#1d4ed8",
+  jiyoung:  "#7c3aed",
+  hyesung:  "#0e7490",
+  jiwoo:    "#be185d",
+  accent:   "#2e7d32",
+  warn:     "#b45309",
+  bad:      "#b42318",
+  inkSoft:  "#475467",
+};
+
+if (typeof Chart === "undefined") {
+  document.querySelectorAll(".canvas-wrap").forEach(el => {
+    el.innerHTML = '<div class="note dev"><b>차트 비활성</b> — Chart.js CDN을 불러오지 못해 표 데이터만 표시합니다. 네트워크가 가능한 환경에서는 차트가 자동 렌더링됩니다.</div>';
+  });
+} else {
+
+// Radar — 10단계 완성도
+new Chart(document.getElementById("radar"), {
+  type: "radar",
+  data: {
+    labels: [
+      "1. 식별자 정규화",
+      "2. corp/rcept 매핑",
+      "3. XML robustness",
+      "4. 섹션 추출",
+      "5. passage 정의",
+      "6. seed 보존 ⭐",
+      "7. 불용어·필터",
+      "8. expanded 근거",
+      "9. feature 생성",
+      "10. 회귀+검정+알파"
+    ],
+    datasets: [
+      {label:"이동원", data:[5,3,5,4,3,3,4,3,4,4], backgroundColor:"rgba(29,78,216,0.12)", borderColor:C.donghoon, borderWidth:2, pointRadius:3},
+      {label:"신지영", data:[4,3,2,2,4,2,4,2,0,0], backgroundColor:"rgba(124,58,237,0.12)", borderColor:C.jiyoung, borderWidth:2, pointRadius:3},
+      {label:"김혜성", data:[5,5,5,5,3,5,5,5,0,0], backgroundColor:"rgba(14,116,144,0.12)", borderColor:C.hyesung, borderWidth:2, pointRadius:3},
+      {label:"김지우", data:[4,4,3,5,5,4,5,4,5,5], backgroundColor:"rgba(190,24,93,0.12)", borderColor:C.jiwoo, borderWidth:2, pointRadius:3}
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    scales:{ r:{ min:0, max:5, ticks:{stepSize:1, display:false}, pointLabels:{font:{size:11}}, grid:{color:"#e4e7ec"} } },
+    plugins:{ legend:{position:"bottom"} }
+  }
+});
+
+// Bar — 수집 SUCCESS율
+new Chart(document.getElementById("bar-success"), {
+  type: "bar",
+  data:{
+    labels:["이동원 (pilot)","신지영","김혜성","김지우"],
+    datasets:[{
+      label:"SUCCESS rate %",
+      data:[93.3, 95.8, 100.0, 98.6],
+      backgroundColor:[C.donghoon, C.jiyoung, C.hyesung, C.jiwoo],
+      borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>c.parsed.y+"%"}} },
+    scales:{ y:{ min:80, max:101, ticks:{callback:v=>v+"%"} } }
+  }
+});
+
+// Bar — N (회귀 입력)
+new Chart(document.getElementById("bar-N"), {
+  type: "bar",
+  data:{
+    labels:["이동원","신지영","김혜성","김지우"],
+    datasets:[{
+      label:"표본 크기 N",
+      data:[29, 365, 381, 210],
+      backgroundColor:[C.donghoon, C.jiyoung, C.hyesung, C.jiwoo],
+      borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ y:{ beginAtZero:true } }
+  }
+});
+
+// Bar — 부호 역전
+new Chart(document.getElementById("bar-flip"), {
+  type: "bar",
+  data:{
+    labels:[
+      "이동원 N=29 (E, seed_tfidf)",
+      "김지우 파일럿 N=30 (G, signal_ratio)",
+      "김지우 전체 N=210 (G, signal_ratio)",
+      "김지우 전체 N=210 (esg_tfidf_concentration)",
+      "김지우 전체 N=210 (total_tokens)"
+    ],
+    datasets:[{
+      label:"Spearman ρ",
+      data:[0.606, 0.444, -0.197, -0.185, 0.263],
+      backgroundColor:[C.donghoon, C.jiwoo, C.bad, C.bad, C.warn],
+      borderRadius:4
+    }]
+  },
+  options:{
+    indexAxis:"y",
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip:{callbacks:{
+      afterLabel:(c)=>{
+        const notes = ["p=0.0005 ⭐⭐", "p<0.05 ⭐ (대형주 편향)", "p=0.004 ⭐⭐ CI⊅0", "p=0.007 ⭐⭐ CI⊅0", "p<0.001 ⭐⭐⭐ verbosity bias"];
+        return notes[c.dataIndex];
+      }
+    }} },
+    scales:{ x:{min:-0.4, max:0.7,
+      grid:{ color:(ctx)=> ctx.tick.value===0 ? "#000" : "#e4e7ec", lineWidth:(ctx)=> ctx.tick.value===0 ? 2 : 1 }
+    } }
+  }
+});
+
+// Bar — 이동원 Spearman ρ
+const spLabels = [
+  "seed_tfidf_E ↔ ESG ⭐⭐",
+  "expanded_tfidf_E ↔ ESG ⭐⭐",
+  "seed_tfidf_E ↔ E ⭐⭐",
+  "expanded_tfidf_E ↔ E ⭐⭐",
+  "cosine_E ↔ ESG ⭐",
+  "cosine_S ↔ ESG ☆",
+  "seed_tfidf_S ↔ ESG",
+  "cosine_G ↔ ESG",
+  "seed_tfidf_S ↔ S",
+  "seed_tfidf_G ↔ G",
+  "expanded_tfidf_S ↔ S",
+  "seed_tfidf_G ↔ ESG",
+  "expanded_tfidf_G ↔ G",
+  "expanded_tfidf_S ↔ ESG",
+  "expanded_tfidf_G ↔ ESG"
+];
+const spVals = [0.606,0.606,0.582,0.582,0.525,0.427,0.275,0.262,0.235,0.226,0.207,0.183,0.226,0.103,0.183];
+const spColors = spVals.map((v,i)=> i<4 ? C.accent : (i<6 ? C.donghoon : C.inkSoft));
+new Chart(document.getElementById("bar-spearman"), {
+  type:"bar",
+  data:{labels:spLabels, datasets:[{label:"Spearman ρ", data:spVals, backgroundColor:spColors, borderRadius:4}]},
+  options:{
+    indexAxis:"y",
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ x:{min:0, max:0.8} }
+  }
+});
+
+// Bar — 김지우 N=210 Spearman ρ + CI
+const jiwooLabels = ["g_signal_ratio","esg_tfidf_concentration","total_tokens","esg_signal_ratio","esg_g_relative","bp_contamination_rate"];
+const jiwooRho = [-0.197, -0.185, 0.263, 0.093, -0.049, -0.072];
+const jiwooLo  = [-0.326, -0.311, 0.124, -0.046, null, null];
+const jiwooHi  = [-0.059, -0.045, 0.394, 0.226, null, null];
+const jiwooSig = ["★★","★★","★★★","미미","미미","미미"];
+new Chart(document.getElementById("bar-jiwoo-rho"), {
+  type:"bar",
+  data:{labels:jiwooLabels, datasets:[
+    {label:"Spearman ρ", data:jiwooRho,
+     backgroundColor:jiwooRho.map(v=> v<0 ? C.bad : (v>0.15 ? C.warn : C.inkSoft)),
+     borderRadius:4}
+  ]},
+  options:{
+    indexAxis:"y",
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip:{ callbacks:{
+      afterLabel:(c)=>{
+        const lo = jiwooLo[c.dataIndex], hi = jiwooHi[c.dataIndex];
+        const ci = (lo!==null && hi!==null) ? `95% CI [${lo}, ${hi}]` : "CI 미보고";
+        return `${jiwooSig[c.dataIndex]} · ${ci}`;
+      }
+    }} },
+    scales:{ x:{min:-0.4, max:0.4,
+      grid:{ color:(ctx)=> ctx.tick.value===0 ? "#000" : "#e4e7ec", lineWidth:(ctx)=> ctx.tick.value===0 ? 2 : 1 }
+    } }
+  }
+});
+}
+</script>
+</body>
+</html>
