@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESG 평가는 공시의 '무엇'을 잘 읽어내는가 · 연구 기획 회의</title>
+<style>
+  :root{
+    --bg:#0f1424; --panel:#161d33; --panel2:#1c2440; --ink:#eef2fb; --mut:#9aa6c4;
+    --line:#2a3454; --acc:#5b8cff;
+    --g:#2bb673; --e:#e0a13c; --s:#d9534f; --gov:#5b8cff;
+    --good:#2bb673; --warn:#e0a13c; --bad:#d9534f; --pick:#9b6cff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    line-height:1.55;font-size:15px}
+  a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+  .wrap{max-width:1140px;margin:0 auto;padding:28px 20px 90px}
+
+  header.top{border:1px solid var(--line);border-radius:16px;
+    background:linear-gradient(135deg,#18213c,#141a2e);padding:24px 26px;margin-bottom:20px}
+  header.top .kick{color:var(--acc);font-weight:700;letter-spacing:.04em;font-size:12.5px}
+  header.top h1{margin:6px 0 6px;font-size:26px;line-height:1.28}
+  header.top .sub{margin:0 0 4px;color:#cdd7f5;font-size:14.5px}
+  header.top p{margin:6px 0 0;color:var(--mut);font-size:13.5px}
+  .rule{margin-top:14px;padding:10px 14px;border:1px dashed var(--line);border-radius:10px;
+    background:#101732;color:#cdd6ef;font-size:12.5px}
+  .rule b{color:#fff}
+
+  .macro{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:stretch;margin:20px 0 26px}
+  .macro .step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .macro .step .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;
+    background:var(--acc);color:#0b1020;font-weight:800;font-size:13px;margin-bottom:7px}
+  .macro .step b{display:block;font-size:14px;margin-bottom:3px}
+  .macro .step span{font-size:12px;color:var(--mut)}
+  .macro .ar{display:grid;place-items:center;color:var(--acc);font-size:24px;font-weight:800}
+
+  .sec{margin:30px 0;scroll-margin-top:14px}
+  .sec>h2{font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .sec>h2 .num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;
+    background:var(--acc);color:#0b1020;font-weight:800;font-size:14px}
+  .sec>.lead{color:var(--mut);font-size:13.5px;margin:0 0 14px;padding-left:40px}
+
+  .cards{display:grid;gap:14px}
+  .c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px 16px}
+  .card h4{margin:0 0 7px;font-size:14px}
+  .card p{margin:0;color:#c7d0ec;font-size:13px}
+  .card .tag{display:inline-block;font-size:11px;color:var(--mut);border:1px solid var(--line);
+    border-radius:20px;padding:2px 9px;margin-bottom:8px}
+  .card .link{margin-top:9px;font-size:12px}
+  .card .conn{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);font-size:12.5px;color:#bfe6d2}
+  .card .conn b{color:#5fe0a3}
+
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;font-size:13px}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--panel2);color:#cdd7f5;font-weight:700;font-size:12px}
+  tr:last-child td{border-bottom:none}
+
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap}
+  .pill.g{background:rgba(43,182,115,.16);color:#5fe0a3;border:1px solid rgba(43,182,115,.4)}
+  .pill.e{background:rgba(224,161,60,.16);color:#f0c074;border:1px solid rgba(224,161,60,.4)}
+  .pill.s{background:rgba(217,83,79,.16);color:#f0928e;border:1px solid rgba(217,83,79,.4)}
+  .pill.vol{background:rgba(91,140,255,.16);color:#9bb8ff;border:1px solid rgba(91,140,255,.4)}
+  .pill.pick{background:rgba(155,108,255,.18);color:#c3a6ff;border:1px solid rgba(155,108,255,.5)}
+  .pill.rej{background:rgba(217,83,79,.14);color:#f0928e;border:1px solid rgba(217,83,79,.35)}
+  .pill.merge{background:rgba(43,182,115,.14);color:#7fe3b0;border:1px solid rgba(43,182,115,.35)}
+
+  .insight{border-left:4px solid var(--acc);background:#121a33;border-radius:8px;padding:12px 15px;margin:12px 0;font-size:13.5px}
+  .insight.warn{border-left-color:var(--warn)}.insight.pick{border-left-color:var(--pick)}
+  .insight b{color:#fff}
+
+  .define{border:1px solid rgba(155,108,255,.5);background:#181433;border-radius:10px;padding:12px 15px;margin:12px 0;font-size:13.5px}
+  .define b{color:#c3a6ff}
+
+  .cand{border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin:11px 0;background:var(--panel)}
+  .cand .row1{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .cand .row1 .id{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;
+    background:var(--panel2);border:1px solid var(--line);font-weight:800;font-size:13px}
+  .cand .row1 h4{margin:0;font-size:14.5px;flex:1;min-width:200px}
+  .cand .pc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+  .cand .pc div{font-size:12.5px}
+  .cand .pc .pro{color:#bfe6d2}.cand .pc .con{color:#f1c2bf}
+  .cand .pc b{display:block;font-size:11px;letter-spacing:.03em;margin-bottom:3px;text-transform:uppercase}
+  .cand .pc .pro b{color:#5fe0a3}.cand .pc .con b{color:#f0928e}
+  .cand.sel{border-color:rgba(155,108,255,.55);box-shadow:0 0 0 1px rgba(155,108,255,.35) inset}
+  .cand.rej{opacity:.82}
+
+  .final{border:1px solid rgba(155,108,255,.55);background:linear-gradient(135deg,#1d1838,#171a33);
+    border-radius:14px;padding:18px 20px;margin-top:14px}
+  .final .lab{color:#c3a6ff;font-weight:800;font-size:12px;letter-spacing:.05em}
+  .final h3{margin:6px 0 8px;font-size:18px}
+  .final p{margin:0;color:#d3d9f0;font-size:13.5px}
+
+  .legibility{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:4px}
+  .lg{border-radius:12px;padding:14px;border:1px solid var(--line);background:var(--panel)}
+  .lg .h{font-weight:800;font-size:15px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+  .lg .v{font-size:12.5px;color:#c7d0ec;min-height:54px}
+  .lg .verdict{margin-top:8px;font-size:11.5px;font-weight:700}
+  .lg.vol{border-top:3px solid var(--gov)}.lg.gov{border-top:3px solid var(--g)}
+  .lg.env{border-top:3px solid var(--e)}.lg.soc{border-top:3px solid var(--s)}
+
+  .flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin:10px 0}
+  .flow .node{flex:1;min-width:150px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:12px 13px;font-size:12.5px}
+  .flow .node b{display:block;color:#fff;margin-bottom:3px}
+  .flow .arrow{display:grid;place-items:center;color:var(--acc);font-size:20px;font-weight:800}
+
+  .agenda{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .ag{border-radius:12px;padding:14px 16px;border:1px solid var(--line);background:var(--panel)}
+  .ag h4{margin:0 0 9px;font-size:13.5px}
+  .ag ul{margin:0;padding-left:18px}.ag li{margin:6px 0;font-size:12.5px;color:#c7d0ec}
+  .ag.agreed{border-left:4px solid var(--good)}.ag.disc{border-left:4px solid var(--gov)}
+  .ag.risk{border-left:4px solid var(--warn)}.ag.over{border-left:4px solid var(--bad)}
+  .ag.val{border-left:4px solid var(--pick);grid-column:1/3}
+  .from{color:#f0928e}.to{color:#5fe0a3;font-weight:700}
+
+  .refs{font-size:12.5px;color:#c7d0ec}.refs li{margin:6px 0}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 4px}
+  nav.toc a{font-size:12px;border:1px solid var(--line);border-radius:20px;padding:4px 11px;color:#cdd7f5;background:var(--panel)}
+  footer{margin-top:30px;color:var(--mut);font-size:12px;text-align:center}
+  @media(max-width:860px){
+    .macro{grid-template-columns:1fr}.macro .ar{transform:rotate(90deg)}
+    .c2,.c3,.legibility,.agenda,.cand .pc{grid-template-columns:1fr}
+    .ag.val{grid-column:auto}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="kick">RESEARCH PLANNING MEETING · 연구 기획 회의 자료</div>
+    <h1>ESG 평가는 공시의 '무엇'을 잘 읽어내는가</h1>
+    <p class="sub">한국 상장사 사업보고서를 <b style="color:#fff">분량 · 환경(E) · 사회(S) · 지배구조(G)</b>로 나눠, ESG 등급과 가장 잘 맞는 신호를 찾는다 · 127사 × 3년 = 381 기업-연도</p>
+    <p>회의 흐름: ① 선행연구 조사·공백 추출 → ② 알파분석 설계 → ③ 시사점·제언 도출</p>
+    <div class="rule">🔒 <b>해석 규율</b> — 우리는 평가가 <b>무엇을 보상하는지(구조)</b>를 본다. 기업이 거기에 <b>반응했는지(행동)는 보지 않는다.</b> 그래서 모든 문장은 "~할 수 있다(may)" 수준. 인과·행동변화는 주장하지 않는다.</div>
+    <nav class="toc">
+      <a href="#s0">0 배경</a><a href="#s1">1 선행연구 조사</a><a href="#s2">2 공백(GAP)</a>
+      <a href="#s3">3 주제 선정</a><a href="#s4">4 설계 및 연결</a><a href="#s5">5 시사점·제언</a>
+      <a href="#s6">6 회의 안건</a><a href="#sr">참고문헌</a>
+    </nav>
+  </header>
+
+  <!-- macro flow -->
+  <div class="macro">
+    <div class="step"><span class="n">1</span><b>선행연구 조사 · 공백 추출</b><span>선행연구는 등급 차이에 집중 — 차원별로 무엇이 잘 읽히는지는 증거가 적다</span></div>
+    <div class="ar">→</div>
+    <div class="step"><span class="n">2</span><b>알파분석 설계</b><span>후보 비교 → 선택 → "가독성 지도" 설계</span></div>
+    <div class="ar">→</div>
+    <div class="step"><span class="n">3</span><b>시사점 · 제언 도출</b><span>기업·투자자·평가기관·규제 의사결정 입력 개선</span></div>
+  </div>
+
+  <!-- 0 배경 -->
+  <section class="sec" id="s0">
+    <h2><span class="num">0</span> 배경 — 우리가 다루는 문제</h2>
+    <p class="lead">ESG 등급·공시는 단순 정보가 아니라 <b>공개적인 평가 시스템</b>이다. 무엇을 점수에 반영하느냐에 따라, 기업이 어떤 정보를 더 내놓을지에 <b>인센티브를 만들 수 있다.</b></p>
+    <div class="cards c3">
+      <div class="card"><span class="tag">규제</span><h4>인프라가 된 ESG</h4><p>한국: 2025년 자산 2조↑ → 2030년 전체 코스피로 지속가능경영 공시 의무화. 국민연금 등 연기금이 투자·의결권에 ESG 반영.</p></div>
+      <div class="card"><span class="tag">신뢰성 문제</span><h4>평가가 서로 안 맞음</h4><p>평가기관 간 등급 상관 0.38~0.71 (신용등급 0.99). <b>공시를 늘려도 불일치가 줄지 않는</b> 패턴. 불일치는 자본비용·기업가치에 부정적.</p></div>
+      <div class="card"><span class="tag">상위 질문</span><h4>측정이 대상에 영향 줄 수 있다</h4><p>그래서 질문은 "공시가 정보적인가"가 아니라 <b>"이 평가가 공시의 무엇을 잘 읽고, 그래서 무엇을 보상하는가"</b>.</p></div>
+    </div>
+    <div class="insight">📌 <b>문제</b> — 평가가 <i>실제로 무엇을 잘 읽고 보상하는지</i>를 모른 채 의무화·투자·평가·공시 결정이 내려지고 있다. 평가가 분량과 일부 차원만 잘 읽는다면, 기업은 그쪽으로 정보를 내놓을 <b>유인을 가질 수 있다.</b></div>
+  </section>
+
+  <!-- 1 선행연구 -->
+  <section class="sec" id="s1">
+    <h2><span class="num">1</span> 선행연구 조사 <span style="font-size:12px;color:var(--mut);font-weight:600">— 왜 "평가가 무엇을 읽는가"가 핵심 질문인가</span></h2>
+    <p class="lead">세 연구의 공통 메시지: <b>평가는 현실을 재기만 하는 게 아니라, 무엇이 점수에 반영되는지에 따라 관심·정보 생산을 끌어당길 수 있다.</b> → 그래서 "평가가 공시의 <i>무엇</i>을 잘 읽는가"가 중요해진다.</p>
+    <div class="cards c3">
+      <div class="card"><span class="tag">반응성 · Reactivity</span><h4>Espeland &amp; Sauder (2007)</h4>
+        <p>평가·순위가 생기면 평가받는 쪽은 점수를 잘 받으려 움직일 수 있다(로스쿨 랭킹 연구).</p>
+        <div class="conn"><b>→ 우리 주장 연결:</b> 그러니 <i>평가가 무엇을 점수에 반영하는지</i>가 출발점. 우리는 그 '무엇'을 데이터로 본다.</div>
+        <div class="link"><a href="https://www.journals.uchicago.edu/doi/10.1086/517897" target="_blank">AJS 113(1) ↗</a></div></div>
+      <div class="card"><span class="tag">신호 보내기 · Signaling</span><h4>Connelly et al. (2011)</h4>
+        <p>정보를 가진 쪽은 상대가 <i>알아볼 수 있는</i> 방식으로 신호를 보낸다.</p>
+        <div class="conn"><b>→ 우리 주장 연결:</b> ESG 공시도 신호 → 평가기관이 <i>알아보기 쉬운(잘 읽히는)</i> 공시가 무엇인지가 핵심.</div>
+        <div class="link"><a href="https://journals.sagepub.com/doi/10.1177/0149206310388419" target="_blank">J. of Management 37(1) ↗</a></div></div>
+      <div class="card"><span class="tag">측정 가능한 것만 보상 · Multitask</span><h4>Holmström &amp; Milgrom (1991)</h4>
+        <p>여러 일 중 일부만 측정되면 노력이 그쪽으로 쏠릴 수 있다('시험에 나오는 것만 공부').</p>
+        <div class="conn"><b>→ 우리 주장 연결:</b> E·S·G 중 <i>잘 측정/읽히는 차원</i>이 다르면 보상이 한쪽으로 쏠릴 수 있다. 우리는 그 차이를 본다.</div>
+        <div class="link"><a href="https://academic.oup.com/jleo/article-abstract/7/special_issue/24/2194011" target="_blank">JLEO 7 ↗</a></div></div>
+    </div>
+    <div style="height:12px"></div>
+    <p style="font-size:13px;color:var(--mut);margin:0 0 8px">배경(문제 확인용) 실증 문헌 — <i>왜 이게 풀어야 할 문제인지</i>를 보여준다.</p>
+    <table>
+      <tr><th>문헌</th><th>쉬운 한 줄</th><th>링크</th></tr>
+      <tr><td>유지선 (2025), 국제회계연구 119</td><td>KCGS·MSCI 1,273 기업-연도; 정보환경이 등급 차이를 만들고, 차이는 기업가치에 영향</td><td><a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003183859" target="_blank">↗</a></td></tr>
+      <tr><td>Kim &amp; Kim (2023), 선물연구 31(3)</td><td>등급이 엇갈릴수록 정보비대칭↑, 기업가치·국민연금 투자에 부정적</td><td><a href="https://www.emerald.com/jdqs/article/31/3/219/198795/The-impact-of-ESG-rating-disagreement-on-corporate" target="_blank">↗</a></td></tr>
+      <tr><td>Berg, Kölbel &amp; Rigobon (2022), Review of Finance</td><td>평가기관 간 등급 상관 0.38~0.71; 차이의 56%가 "측정 방식"에서 발생</td><td><a href="https://academic.oup.com/rof/article/26/6/1315/6590670" target="_blank">↗</a></td></tr>
+      <tr><td>Christensen, Serafeim &amp; Sikochi (2022), The Accounting Review</td><td>공시를 늘릴수록 평가 불일치가 오히려 커짐</td><td><a href="https://publications.aaahq.org/accounting-review/article-abstract/97/1/147/4390/Why-is-Corporate-Virtue-in-the-Eye-of-The-Beholder" target="_blank">↗</a></td></tr>
+      <tr><td>Drempetic et al. (2020), J. Business Ethics</td><td>ESG 점수는 대기업에 유리하게 기운다(보고할 자원이 많아서)</td><td><a href="https://link.springer.com/article/10.1007/s10551-019-04164-1" target="_blank">↗</a></td></tr>
+      <tr><td>Loughran &amp; McDonald (2014), J. of Finance</td><td>금융 텍스트에서 '분량'은 강력한 대용치지만 그 자체가 정보는 아니다</td><td><a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/jofi.12162" target="_blank">↗</a></td></tr>
+    </table>
+  </section>
+
+  <!-- 2 GAP -->
+  <section class="sec" id="s2">
+    <h2><span class="num">2</span> 선행연구 공백 (GAP)</h2>
+    <div class="cards c2">
+      <div class="card"><h4>선행연구가 <span style="color:#5fe0a3">본 것</span></h4><p>주로 ESG <b>'등급 차이'의 원인</b>(유지선 2025; Berg et al. 2022)과 그 <b>차이가 기업가치에 주는 영향</b>(Kim &amp; Kim 2023). 공시를 늘릴수록 평가가 더 엇갈린다는 점도 보고(Christensen et al. 2022).</p></div>
+      <div class="card"><h4>선행연구가 <span style="color:#f0c074">덜 본 것</span></h4><p>대체로 ESG를 <b>하나의 총점·등급</b>으로 다룸. 공시 텍스트 <i>안에서</i> <b>'분량 vs 내용'</b>, <b>'E·S·G 차원별 차이'</b>를 나눠 본 실증은 <b>상대적으로 제한적.</b></p></div>
+    </div>
+    <div class="insight">🎯 <b>채택 공백</b> — ESG 평가가 정보 생산에 인센티브를 만들 수 있다는 점은 여러 연구가 시사한다. 그러나 그 평가가 공시 텍스트 <i>안에서</i> 무엇을 더 잘 읽고 보상하는지(분량 vs 내용, E·S·G 차원별 차이)를 나눠 본 <b>실증은 상대적으로 제한적이다.</b> 우리 프로젝트는 이 지점을 데이터로 들여다본다.</div>
+    <div class="cards c2">
+      <div class="card"><h4>❌ 기각한 공백</h4><p>"더 정교한 NLP", "더 큰 표본" — 경영 의사결정을 바꾸지 않음.</p></div>
+      <div class="card"><h4>✅ 타당성 필터</h4><p>기업·투자자·규제·평가기관 중 누구도 영향받지 않으면 의미가 사라지는가? → <b>그렇다</b> → 실재하는 의사결정 문제.</p></div>
+    </div>
+    <div class="insight pick">➡️ <b>이 공백이 다음 질문으로 이어진다</b> — "그렇다면 우리 데이터로 <i>무엇을 나눠</i> 검증할 것인가?" → <b>아래 3번에서 후보를 비교해 결정한다.</b></div>
+  </section>
+
+  <!-- 3 주제 선정 -->
+  <section class="sec" id="s3">
+    <h2><span class="num">3</span> 알파분석 주제 선정 <span style="font-size:12px;color:var(--pick);font-weight:700;margin-left:6px">▶ 의사결정 섹션</span></h2>
+    <p class="lead">아직 정해지지 않았다는 전제로 비교한다. <b>공백 → 후보 5개 → 장단점 → 선택 근거 → 최종 추천.</b></p>
+
+    <div class="flow">
+      <div class="node"><b>선행연구 공백</b>공시 안에서 무엇이 잘 읽히는지 증거가 적다</div>
+      <div class="arrow">→</div>
+      <div class="node"><b>후보 5개</b>"무엇을 나눠 볼까"의 방식들</div>
+      <div class="arrow">→</div>
+      <div class="node"><b>장단점 비교</b>방어 가능성·decision-usefulness</div>
+      <div class="arrow">→</div>
+      <div class="node"><b>최종 추천</b>가독성 지도(통합)</div>
+    </div>
+    <div class="insight" style="border-left-color:var(--pick)">🔗 <b>공백이 후보를 만든다</b> — 공백은 "공시 텍스트 안에서 <i>무엇을 나눠</i> 봐야 하는가"를 묻는다. 그래서 <i>나눌 수 있는 방식</i>들을 후보로 놓는다.</div>
+
+    <div class="cand sel"><div class="row1"><span class="id">A</span><h4>분량 vs 내용 분리 (cheap-talk)</h4><span class="pill merge">통합 채택</span></div>
+      <div class="pc"><div class="pro"><b>장점</b>"더 많은 공시 = 보상?"에 직답. n_tokens 이미 보유, 구현 쉬움.</div><div class="con"><b>단점</b>단독으론 <i>어느 차원</i>이 읽히는지 못 말함.</div></div></div>
+    <div class="cand sel"><div class="row1"><span class="id">B</span><h4>E/S/G 차원별 차이</h4><span class="pill merge">통합 채택</span></div>
+      <div class="pc"><div class="pro"><b>장점</b>"어느 차원이 보상되나"에 정면 대답. 함의 풍부.</div><div class="con"><b>단점</b>재무 통제 필요, 변수 많음.</div></div></div>
+    <div class="cand sel"><div class="row1"><span class="id">C</span><h4>섹션 국소화 (II·IV·VI 중 어디)</h4><span class="pill merge">통합 채택</span></div>
+      <div class="pc"><div class="pro"><b>장점</b>신호가 <i>어디서</i> 읽히는지(거버넌스→VI) 보여줌.</div><div class="con"><b>단점</b>섹션 분할 정확도에 의존.</div></div></div>
+    <div class="cand rej"><div class="row1"><span class="id">D</span><h4>측정 방법 강건성 (사전 vs 임베딩)</h4><span class="pill pick">보조(robustness)</span></div>
+      <div class="pc"><div class="pro"><b>장점</b>측정 타당성 방어.</div><div class="con"><b>단점</b><i>무엇이 보상되나</i>에 직접 답 안 함.</div></div></div>
+    <div class="cand rej"><div class="row1"><span class="id">E</span><h4>시계열 반응 분석 (기업이 등급에 반응해 공시를 바꾸는지)</h4><span class="pill rej">기각</span></div>
+      <div class="pc"><div class="pro"><b>장점</b>반응성을 가장 직접 검증.</div><div class="con"><b>단점</b>데이터·인과식별 한계로 <b>방어 불가</b>. 해석 규율과 충돌.</div></div></div>
+
+    <div class="insight pick">🧭 <b>왜 이렇게 고르나</b> — ① 공백은 "무엇을 <i>나눠</i> 봐야 하는가"를 묻는다. A·B·C를 따로 쓰면 각각 일부만 답한다. ② 세 축을 <b>합치면</b> "분량을 걷어낸 뒤(A) / 어느 차원이(B) / 어디서(C) 읽히는가"라는 <b>하나의 완결된 그림</b>이 된다. ③ <b>D</b>는 강건성 보조로 편입, <b>E</b>는 방어 불가로 기각.</div>
+
+    <div class="define">📖 <b>가독성 지도(Legibility Map)란?</b> = 평가시스템이 어떤 종류의 정보를 다른 정보보다 더 잘 읽어내는 것처럼 보이는지를 보여주는 틀. (이하 '가독성 지도'로 줄여 부른다.)</div>
+
+    <div class="final">
+      <div class="lab">✅ 최종 추천 알파분석</div>
+      <h3>"가독성 지도" = A + B + C (강건성 D)</h3>
+      <p>공시 텍스트를 <b>분량 vs 내용 · E/S/G 차원 · 문서 섹션</b>으로 나눠, 평가(등급)와 가장 잘 맞는 신호가 <b>어디에</b> 있는지를 한 장으로 그린다. 추가 연구질문 없이 기존 데이터·feature로 가능하며, 네 행위자 모두의 의사결정에 연결된다.</p>
+    </div>
+  </section>
+
+  <!-- 4 설계 및 연결 -->
+  <section class="sec" id="s4">
+    <h2><span class="num">4</span> 알파분석 설계 및 연결</h2>
+    <p class="lead">공백 → 추천 주제 → 설계가 어떻게 이어지는지 명시. 분석 축 3개(A·B·C)는 모두 기존 feature.</p>
+    <div class="flow">
+      <div class="node"><b>공백</b>무엇이 보상되나 미분해</div><div class="arrow">→</div>
+      <div class="node"><b>추천 주제</b>가독성 지도(A+B+C)</div><div class="arrow">→</div>
+      <div class="node"><b>설계</b>분량 통제 → 차원 분해 → 섹션 국소화 → 방법 강건성</div><div class="arrow">→</div>
+      <div class="node"><b>증거</b>아래 지도</div>
+    </div>
+
+    <h4 style="margin:18px 0 8px;font-size:15px">가독성 지도 — 핵심 증거</h4>
+    <div class="legibility">
+      <div class="lg vol"><div class="h">분량 <span class="pill vol">표면</span></div><div class="v">등급과 ρ=<b>0.663</b> (최강). 재무 통제 후도 β=0.718 견고.</div><div class="verdict" style="color:#9bb8ff">▶ 표면적으로 가장 잘 맞음 (cheap-talk 경계)</div></div>
+      <div class="lg gov"><div class="h">지배구조 G <span class="pill g">가독</span></div><div class="v">통제 후 β=<b>1.955</b> (p&lt;.001). VI 섹션 ρ 0.426→0.526. 사전 비의존 분류서도 VI 문장 97.9% G.</div><div class="verdict" style="color:#5fe0a3">▶ 독립적으로 잘 읽힘</div></div>
+      <div class="lg env"><div class="h">환경 E <span class="pill e">모호</span></div><div class="v">통제 후 β 0.432→0.172 (유의성 소멸).</div><div class="verdict" style="color:#f0c074">▶ 규모로 흡수될 수 있음</div></div>
+      <div class="lg soc"><div class="h">사회 S <span class="pill s">불투명</span></div><div class="v">통제 후 비유의 (β≈−0.07, p=.92).</div><div class="verdict" style="color:#f0928e">▶ 등급과 맞지 않음</div></div>
+    </div>
+
+    <h4 style="margin:20px 0 8px;font-size:15px">왜 거버넌스가 더 잘 읽힐 수 있나 — 관측·감사·검증이 쉬워서</h4>
+    <div class="cards c3">
+      <div class="card"><span class="tag">관측 가능</span><h4>이산적·구조적 사실</h4><p>사외이사 수, 감사위원회 존재, 위원회 구성, 대표이사·이사회의장 분리 — <b>셀 수 있는</b> 사실(서술이 아니라 구조).</p></div>
+      <div class="card"><span class="tag">표준화</span><h4>의무·정형 공시 위치</h4><p>상법·공시규정에 따라 사업보고서 <b>VI 섹션</b>에 정형화되어 들어감 → 평가자가 같은 위치·형식에서 읽을 수 있음.</p></div>
+      <div class="card"><span class="tag">감사 가능</span><h4>외부 대조 가능</h4><p>등기·공시 기록과 대조해 사실 확인 가능. 자기보고에만 의존하지 않음.</p></div>
+    </div>
+    <div class="insight">🔍 <b>대조</b> — <b>사회(S)</b>는 서술적·자기보고·미래지향이라 표준화·검증이 약해 점수로 환산되기 어렵다. <b>환경(E)</b>은 일부 정량화 가능하나 사업보고서에서는 서술 중심이고 업종·규모와 얽혀 <i>외형</i>을 반영할 수 있다(정량 환경 데이터는 주로 지속가능보고서에 있다). → 가독성 차이는 <b>차원이 얼마나 코드화·검증 가능한가</b>의 차이로 설명될 수 있다.</div>
+    <div class="insight warn">⚠️ 이는 평가의 <b>보상 구조</b>에 대한 증거이지, 기업이 거기에 <b>반응했다는 증거가 아니다.</b></div>
+  </section>
+
+  <!-- 5 시사점 -->
+  <section class="sec" id="s5">
+    <h2><span class="num">5</span> 시사점 · 제언 <span style="font-size:12px;color:var(--mut);font-weight:600">— 방어 가능한 3가지</span></h2>
+    <p class="lead">모든 함의는 "~할 수 있다(may)" 수준. 행동을 처방하지 않고 의사결정 입력을 개선한다.</p>
+    <div class="cards c3">
+      <div class="card"><span class="tag">① 기업 · 투자자</span><h4>분량을 정보로 오인하지 않기</h4><p>기업: 분량 경쟁은 평가적 보상이 낮을 수 있음. 거버넌스(VI)에 구체적·검증 가능 서술이 잘 맞을 수 있음 <i>(단 "잘 읽히게"≠"잘하기")</i>.<br>투자자: 합산·길이로 스크리닝 ✕, 차원 나눠 <b>G에 가중</b>, E·S는 외부 정량 데이터로 보완.</p></div>
+      <div class="card"><span class="tag">② ESG 평가기관</span><h4>합산이 감추는 차이 드러내기</h4><p>합산 등급은 차원 차이를 감출 수 있음. <b>분량·규모 통제</b> + <b>차원별 신뢰도 공개</b> 권고. 미통제 시 <i>장황한 대기업</i>을 보상할 수 있음.</p></div>
+      <div class="card"><span class="tag">③ 규제당국</span><h4>분량 아닌 구조를 의무화</h4><p>"더 많은 공시"는 길이·불일치를 늘릴 수 있음. 기계가독 거버넌스 + 검증 가능 정량 지표 + 섹션 표준화. <b>한국 2025/2030 공시가 이 결정의 현장.</b></p></div>
+    </div>
+  </section>
+
+  <!-- 6 회의 안건 -->
+  <section class="sec" id="s6">
+    <h2><span class="num">6</span> 회의 안건</h2>
+    <div class="agenda">
+      <div class="ag agreed"><h4>✅ 이미 합의</h4><ul>
+        <li>프레이밍: "정보 품질" → "정보 품질 + 평가가 만들 수 있는 인센티브"</li>
+        <li>이론 배경 3개로 한정, 나머지는 부록</li>
+        <li>모든 주장은 연관·구조 수준, <b>인과·행동변화 금지</b></li>
+      </ul></div>
+      <div class="ag disc"><h4>🔶 토론 필요</h4><ul>
+        <li><b>알파 주제 최종 확정</b> — A+B+C 통합에 동의? D를 본분석으로 승격할지?</li>
+        <li>발표에서 분량(cheap-talk)을 얼마나 전면에 둘지</li>
+        <li>S "불투명"을 본질적 한계 vs 사업보고서 통로 한계로 표현 <i>(후자가 방어적)</i></li>
+        <li>규제 권고를 얼마나 강하게 낼지 (표본은 pilot)</li>
+      </ul></div>
+      <div class="ag risk"><h4>⚠️ 남은 리스크</h4><ul>
+        <li>표본 381 기업-연도 = 수업용 pilot, 대표성 없음</li>
+        <li>타이밍 불일치 (esg_year = fiscal_year vs 가이드 +1)</li>
+        <li>G 가독성이 KCGS 거버넌스 평가 역사(2003 출발)의 영향일 수 있음</li>
+      </ul></div>
+      <div class="ag over"><h4>🚩 잠재 과대주장 (→ 즉시 완화)</h4>
+        <table style="margin-top:4px"><tr><td class="from">"행동을 바꾼다/유도한다"</td><td class="to">→ "인센티브를 만들 수 있다"</td></tr>
+        <tr><td class="from">"G가 본질적으로 가장 중요"</td><td class="to">→ "사업보고서에서 더 잘 읽힐 수 있다"</td></tr>
+        <tr><td class="from">"공시가 등급을 만든다"</td><td class="to">→ "공시 언어가 등급과 맞을 수 있다"</td></tr></table>
+      </div>
+      <div class="ag val"><h4>🔬 검증 필요</h4><ul>
+        <li>G 강건성: 업종·연도 FE, 길이 통제, 사전 비의존 분류 — 발표 전 수치 재검 (대부분 완료)</li>
+        <li>E의 "규모 흡수"가 표본 특이성인지 점검</li>
+        <li>인용 문헌 서지정보 최종 대조 (완료)</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- refs -->
+  <section class="sec" id="sr">
+    <h2><span class="num">R</span> 참고문헌</h2>
+    <ol class="refs">
+      <li>Espeland &amp; Sauder (2007). Rankings and Reactivity. <i>American Journal of Sociology</i> 113(1). <a href="https://www.journals.uchicago.edu/doi/10.1086/517897" target="_blank">↗</a></li>
+      <li>Connelly, Certo, Ireland &amp; Reutzel (2011). Signaling Theory: A Review and Assessment. <i>Journal of Management</i> 37(1). <a href="https://journals.sagepub.com/doi/10.1177/0149206310388419" target="_blank">↗</a></li>
+      <li>Holmström &amp; Milgrom (1991). Multitask Principal-Agent Analyses. <i>JLEO</i> 7. <a href="https://academic.oup.com/jleo/article-abstract/7/special_issue/24/2194011" target="_blank">↗</a></li>
+      <li>유지선 (2025). ESG 평가등급 격차의 결정요인과 기업가치와의 관계. <i>국제회계연구</i> 119. <a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003183859" target="_blank">↗</a></li>
+      <li>Kim &amp; Kim (2023). The impact of ESG rating disagreement on corporate value. <i>선물연구</i> 31(3). <a href="https://www.emerald.com/jdqs/article/31/3/219/198795/The-impact-of-ESG-rating-disagreement-on-corporate" target="_blank">↗</a></li>
+      <li>Berg, Kölbel &amp; Rigobon (2022). Aggregate Confusion. <i>Review of Finance</i> 26(6). <a href="https://academic.oup.com/rof/article/26/6/1315/6590670" target="_blank">↗</a></li>
+      <li>Christensen, Serafeim &amp; Sikochi (2022). Why Is Corporate Virtue in the Eye of the Beholder? <i>The Accounting Review</i> 97(1). <a href="https://publications.aaahq.org/accounting-review/article-abstract/97/1/147/4390/Why-is-Corporate-Virtue-in-the-Eye-of-The-Beholder" target="_blank">↗</a></li>
+      <li>Drempetic, Klein &amp; Zwergel (2020). The Influence of Firm Size on the ESG Score. <i>J. Business Ethics</i> 167(2). <a href="https://link.springer.com/article/10.1007/s10551-019-04164-1" target="_blank">↗</a></li>
+      <li>Loughran &amp; McDonald (2014). Measuring Readability in Financial Disclosures. <i>J. of Finance</i> 69(4). <a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/jofi.12162" target="_blank">↗</a></li>
+      <li><span style="color:var(--mut)">[부록] Meyer &amp; Rowan (1977, AJS); DiMaggio &amp; Powell (1983, ASR); "How Do Companies Respond to ESG Ratings? Evidence from Italy" (J. Business Ethics, 2021)</span> <a href="https://link.springer.com/article/10.1007/s10551-020-04441-4" target="_blank">↗</a></li>
+    </ol>
+  </section>
+
+  <footer>ESG 연구 기획 회의 대시보드 · 흐름: 선행연구·공백 → 알파분석 설계 → 시사점·제언 · 모든 주장은 연관·구조 수준(인과·행동변화 아님) · 표본 381 기업-연도(pilot)</footer>
+</div>
+</body>
+</html>

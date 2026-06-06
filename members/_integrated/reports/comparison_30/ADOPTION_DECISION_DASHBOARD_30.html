@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESG DART 30단계 채택 의사결정 대시보드</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --ink: #111827;
+      --muted: #526070;
+      --line: #d8dee8;
+      --blue: #1d4ed8;
+      --teal: #0f766e;
+      --rose: #be185d;
+      --violet: #7c3aed;
+      --amber: #b45309;
+      --green: #15803d;
+      --slate: #334155;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+      line-height: 1.56;
+    }
+    .wrap { max-width: 1440px; margin: 0 auto; padding: 24px 20px 88px; }
+    .hero, .panel, .note {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .hero {
+      padding: 26px;
+      border-top: 6px solid var(--blue);
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; line-height: 1.22; letter-spacing: 0; }
+    h2 { margin: 0 0 12px; font-size: 19px; letter-spacing: 0; }
+    h3 { margin: 0 0 6px; font-size: 15px; letter-spacing: 0; }
+    p { margin: 0; }
+    .sub, .muted { color: var(--muted); font-size: 13px; }
+    .grid { display: grid; gap: 14px; }
+    .two { grid-template-columns: 1fr 1fr; }
+    .three { grid-template-columns: repeat(3, 1fr); }
+    .four { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 1040px) { .two, .three, .four { grid-template-columns: 1fr; } }
+    .card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 100%;
+    }
+    .card strong { display: block; font-size: 20px; margin-bottom: 2px; }
+    .tag {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      margin: 4px 5px 0 0;
+      white-space: nowrap;
+    }
+    .jw { color: var(--rose); border-color: #f3b6cf; background: #fff1f6; }
+    .hs { color: var(--teal); border-color: #9ad8d1; background: #ecfeff; }
+    .dw { color: var(--blue); border-color: #b9cdfd; background: #eff6ff; }
+    .sy { color: var(--violet); border-color: #c9b8ff; background: #f5f3ff; }
+    .bar-row { display: grid; grid-template-columns: 88px 1fr 58px; align-items: center; gap: 10px; margin: 9px 0; font-size: 13px; }
+    .bar { height: 12px; border-radius: 999px; background: #edf1f6; overflow: hidden; }
+    .bar i { display: block; height: 100%; border-radius: 999px; }
+    .flow { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .flow div { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #f8fafc; }
+    .flow b { color: var(--slate); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    table { width: 100%; border-collapse: collapse; font-size: 12.7px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 10px 10px; text-align: left; vertical-align: top; }
+    th { background: #f8fafc; color: var(--muted); font-weight: 900; }
+    .decision { min-width: 1320px; }
+    .stage { width: 18%; }
+    .stage b { display: block; font-size: 13px; color: var(--ink); }
+    .stage small { color: var(--muted); display: block; margin-top: 4px; }
+    .pick b { display: block; margin-bottom: 3px; }
+    .pick span { display: block; color: var(--muted); }
+    .risk { color: #7f1d1d; }
+    .use { color: var(--green); font-weight: 900; }
+    .warn { color: var(--amber); font-weight: 900; }
+    .principles li, .compact li { margin: 4px 0; }
+    .principles, .compact { margin: 8px 0 0; padding-left: 18px; font-size: 13px; }
+    details { border: 1px solid var(--line); border-radius: 8px; padding: 11px 13px; background: #fff; margin-bottom: 8px; }
+    summary { cursor: pointer; font-weight: 900; }
+    @media (max-width: 760px) {
+      .decision, table, thead, tbody, tr, th, td { display: block; min-width: 0; }
+      thead { display: none; }
+      tr { border: 1px solid var(--line); border-radius: 10px; margin: 10px 0; }
+      td { border-bottom: 0; }
+      td::before { content: attr(data-label); display: block; font-weight: 900; color: var(--muted); margin-bottom: 3px; }
+      .stage { width: auto; background: #f8fafc; }
+      .flow { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>ESG DART 30단계 채택 의사결정 대시보드</h1>
+      <p class="sub">목표는 1등 노트북을 고르는 것이 아니라, 최종 통합본에 넣을 코드와 해석을 단계별로 분리 채택하는 것입니다. 기준은 교수님 가이드 준수, 재현성, 381 전수성, cheap-talk 해석력, 발표 방어력입니다.</p>
+      <div style="margin-top:12px">
+        <span class="tag jw">김지우: cheap-talk·부호역전·FE 해석</span>
+        <span class="tag hs">김혜성: 381 수집 코어·분석기/θ sweep 기준</span>
+        <span class="tag dw">이동원: 통합 v1·재현성·최종 노트북 골격</span>
+        <span class="tag sy">신지영: 381 전수 재실행·FastText·회귀/알파</span>
+      </div>
+    </section>
+
+    <section class="grid four">
+      <article class="card">
+        <h3>최종 골격</h3>
+        <strong>이동원 v1</strong>
+        <p class="muted">Run All 기준 통합 노트북 골격, 위반금지 헤더, 재현 가능한 제출 흐름의 베이스로 사용.</p>
+      </article>
+      <article class="card">
+        <h3>수집 엔진</h3>
+        <strong>김혜성 + 신지영</strong>
+        <p class="muted">결산월 유연, 정정 우선순위, 381/381 성공, collection_meta와 corpus JSON lineage 결합.</p>
+      </article>
+      <article class="card">
+        <h3>전처리·확장</h3>
+        <strong>신지영 + 김혜성</strong>
+        <p class="muted">seed score=50 보존, FastText θ sweep, expanded dictionary 실행값을 쓰되 후보 잡음은 큐레이션.</p>
+      </article>
+      <article class="card">
+        <h3>해석 프레임</h3>
+        <strong>김지우 + 이동원</strong>
+        <p class="muted">verbosity confounding, sign reversal, governance boilerplate, 인과 아닌 연관 해석을 최종 보고서 문장으로 채택.</p>
+      </article>
+    </section>
+
+    <section class="grid two">
+      <div class="panel">
+        <h2>코드 채택 비중</h2>
+        <div class="bar-row"><span>신지영</span><div class="bar"><i style="width:83%;background:var(--violet)"></i></div><b>10</b></div>
+        <div class="bar-row"><span>이동원</span><div class="bar"><i style="width:75%;background:var(--blue)"></i></div><b>9</b></div>
+        <div class="bar-row"><span>김혜성</span><div class="bar"><i style="width:67%;background:var(--teal)"></i></div><b>8</b></div>
+        <div class="bar-row"><span>김지우</span><div class="bar"><i style="width:25%;background:var(--rose)"></i></div><b>3</b></div>
+        <p class="muted">30단계별 주 코드 출처 기준. 김지우 코드는 본선보다 알파/robustness 모듈로 쓰는 것이 적합합니다.</p>
+      </div>
+      <div class="panel">
+        <h2>생각·해석 채택 비중</h2>
+        <div class="bar-row"><span>김지우</span><div class="bar"><i style="width:83%;background:var(--rose)"></i></div><b>10</b></div>
+        <div class="bar-row"><span>신지영</span><div class="bar"><i style="width:67%;background:var(--violet)"></i></div><b>8</b></div>
+        <div class="bar-row"><span>이동원</span><div class="bar"><i style="width:58%;background:var(--blue)"></i></div><b>7</b></div>
+        <div class="bar-row"><span>김혜성</span><div class="bar"><i style="width:42%;background:var(--teal)"></i></div><b>5</b></div>
+        <p class="muted">cheap-talk과 한계 해석은 김지우가 가장 강하고, 교수님 가이드와 재현성 문장은 이동원/신지영 축으로 정리합니다.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>최종 통합 원칙</h2>
+      <div class="flow">
+        <div><b>1. 본선 코드는 381 전수 우선</b><p class="muted">수집·전처리·회귀는 381 기준인 김혜성/신지영/이동원 코드를 우선합니다. 김지우의 KOSPI 243 코드는 robustness와 설명 보강으로 둡니다.</p></div>
+        <div><b>2. 해석은 cheap-talk 우선</b><p class="muted">강한 상관을 “예측 성공”처럼 쓰지 않고, 공시량·법정공시·boilerplate 위험을 먼저 설명합니다.</p></div>
+        <div><b>3. 위험한 코드는 그대로 복붙 금지</b><p class="muted">신지영 expanded 394는 강점이지만 후보에 고유명사 잡음이 있어 김혜성식 큐레이션 로그를 붙여야 안전합니다.</p></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>30단계별 코드·생각 채택표</h2>
+      <div class="table-wrap">
+        <table class="decision">
+          <thead>
+            <tr>
+              <th>단계</th>
+              <th>코드 채택</th>
+              <th>생각/해석 채택</th>
+              <th>보완자</th>
+              <th>최종 통합 방식</th>
+              <th>주의점</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="stage" data-label="단계"><b>1. 381 표본 정의</b><small>표본 편의 방지</small></td><td class="pick" data-label="코드 채택"><b>김혜성 + 신지영</b><span>381 firm-year 수집 성공 로직</span></td><td data-label="생각/해석 채택">김지우의 pilot/full sample 부호역전 경고</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식"><span class="use">본선은 381</span>, 김지우 243은 robustness 사례로 사용</td><td class="risk" data-label="주의점">김지우 표본을 본선으로 쓰면 교수님이 표본 편의를 물을 수 있음</td></tr>
+            <tr><td class="stage" data-label="단계"><b>2. 식별자 join</b><small>stock_code×fiscal_year</small></td><td class="pick" data-label="코드 채택"><b>신지영</b><span>company_name 133 vs stock_code 127 진단</span></td><td data-label="생각/해석 채택">AGENTS/교수님 가이드의 silent mismatch 논리</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식">신지영 진단 표를 앞부분에 배치</td><td class="risk" data-label="주의점">회사명 merge 흔적은 모두 제거</td></tr>
+            <tr><td class="stage" data-label="단계"><b>3. zfill(6)</b><small>종목코드 보존</small></td><td class="pick" data-label="코드 채택"><b>신지영</b><span>길이분포 {6:381}</span></td><td data-label="생각/해석 채택">교수님 가이드 위반금지 7번</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">CSV 로드 직후 assert 셀로 고정</td><td class="risk" data-label="주의점">005930이 5930으로 깨지는 순간 전 단계 신뢰도 하락</td></tr>
+            <tr><td class="stage" data-label="단계"><b>4. timing 정렬</b><small>esg_year=fiscal_year+1</small></td><td class="pick" data-label="코드 채택"><b>신지영 + 이동원</b><span>DART 검색 범위와 평가연도 정렬</span></td><td data-label="생각/해석 채택">이동원: 인과가 아니라 서술적 lag</td><td data-label="보완자">김지우</td><td data-label="최종 통합 방식">검색 시점과 분석 정렬을 분리해 설명</td><td class="risk" data-label="주의점">CSV 표기와 가이드 lag가 다를 때 혼동 가능</td></tr>
+            <tr><td class="stage" data-label="단계"><b>5. 실패 행 처리</b><small>가짜 0 금지</small></td><td class="pick" data-label="코드 채택"><b>김혜성 + 신지영</b><span>실패 13건 진단 및 복구</span></td><td data-label="생각/해석 채택">실패를 데이터 품질 로그로 보는 관점</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식">collection_meta status/reason 표를 유지</td><td class="risk" data-label="주의점">실패를 0점 처리하면 위반금지 직격</td></tr>
+            <tr><td class="stage" data-label="단계"><b>6. raw/lineage</b><small>원문 보존</small></td><td class="pick" data-label="코드 채택"><b>신지영 + 김혜성</b><span>rcept_no, viewer_url, section chars</span></td><td data-label="생각/해석 채택">DART lineage가 분석보다 먼저라는 김지우 문장</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식">lineage audit 셀을 초반에 배치</td><td class="risk" data-label="주의점">raw ZIP/JSON 산출물 경로 명시 필요</td></tr>
+            <tr><td class="stage" data-label="단계"><b>7. II/IV/VI 추출</b><small>관련 섹션 한정</small></td><td class="pick" data-label="코드 채택"><b>신지영 + 김혜성</b><span>SECTION 진단과 섹션별 글자 수</span></td><td data-label="생각/해석 채택">김지우의 섹션 선택 Decision Box</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식">섹션 선택 이유를 markdown으로 먼저 설명</td><td class="risk" data-label="주의점">전체 문서 분석은 boilerplate 노이즈가 커짐</td></tr>
+            <tr><td class="stage" data-label="단계"><b>8. XML 직접 파싱</b><small>MCP passage 금지</small></td><td class="pick" data-label="코드 채택"><b>김혜성 + 이동원</b><span>lxml/recover parser와 직접 파싱</span></td><td data-label="생각/해석 채택">신지영: API 직접 호출이 재현성 높다는 설명</td><td data-label="보완자">신지영</td><td data-label="최종 통합 방식">MCP/LLM passage는 참고 금지 문장 추가</td><td class="risk" data-label="주의점">LLM 추출문을 원문처럼 쓰면 교수님 가이드 위반</td></tr>
+            <tr><td class="stage" data-label="단계"><b>9. firm-year 1행</b><small>분석 단위 고정</small></td><td class="pick" data-label="코드 채택"><b>이동원</b><span>통합 feature 1행 구조</span></td><td data-label="생각/해석 채택">AGENTS의 stock_code×fiscal_year 원칙</td><td data-label="보완자">신지영</td><td data-label="최종 통합 방식">최종 analysis_df schema를 이동원식으로 정리</td><td class="risk" data-label="주의점">섹션 행과 firm-year 행을 섞지 않기</td></tr>
+            <tr><td class="stage" data-label="단계"><b>10. 분석기 robust</b><small>Kiwi vs Okt</small></td><td class="pick" data-label="코드 채택"><b>이동원 + 김혜성</b><span>Kiwi/Okt 비교 지표</span></td><td data-label="생각/해석 채택">이동원: seed 보존율 87% vs 67%</td><td data-label="보완자">신지영</td><td data-label="최종 통합 방식">신지영 Kiwi 본선 앞에 비교 근거 셀 삽입</td><td class="risk" data-label="주의점">신지영 단독 사용 시 Okt 비교가 약함</td></tr>
+            <tr><td class="stage" data-label="단계"><b>11. Komoran/Kkma 제외</b><small>버린 대안 설명</small></td><td class="pick" data-label="코드 채택"><b>이동원</b><span>정성·정량 제외 근거</span></td><td data-label="생각/해석 채택">교수님 심층 질문 대비 프레임</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">코드보다 markdown Q&A 문단으로 채택</td><td class="risk" data-label="주의점">제외 근거 없으면 “왜 Kiwi?” 질문에 취약</td></tr>
+            <tr><td class="stage" data-label="단계"><b>12. seed 보존</b><small>score=50</small></td><td class="pick" data-label="코드 채택"><b>신지영</b><span>30개 seed 문장 속 단일 토큰 검증</span></td><td data-label="생각/해석 채택">김혜성 score 방식</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식">신지영 코드 채택, 김혜성 출처를 방법론에 명시</td><td class="risk" data-label="주의점">복합명사 깨지면 TF-IDF 전체가 흔들림</td></tr>
+            <tr><td class="stage" data-label="단계"><b>13. 불용어/boilerplate</b><small>seed 보호</small></td><td class="pick" data-label="코드 채택"><b>이동원 + 신지영</b><span>회사명·숫자·법률/회계 제거</span></td><td data-label="생각/해석 채택">신지영: 일반 경영 용어 노이즈 해석</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">stopword 목록과 seed 보호 assert 동시 사용</td><td class="risk" data-label="주의점">seed가 불용어에 들어가면 측정값이 사라짐</td></tr>
+            <tr><td class="stage" data-label="단계"><b>14. seed TF-IDF</b><small>E/S/G 직접 측정</small></td><td class="pick" data-label="코드 채택"><b>신지영</b><span>seed_tfidf_score와 차원별 score</span></td><td data-label="생각/해석 채택">이동원: E/S/G 차원별 validity</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">신지영 실행값을 본선 feature로 채택</td><td class="risk" data-label="주의점">E/S/G raw 합계 직접 비교는 금지</td></tr>
+            <tr><td class="stage" data-label="단계"><b>15. expanded dictionary</b><small>확장 사전</small></td><td class="pick" data-label="코드 채택"><b>신지영 + 김혜성</b><span>394개 실행값 + 큐레이션 기준</span></td><td data-label="생각/해석 채택">신지영: 희소 seed 5개로 확장 필요성 설명</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식">신지영 394를 쓰되 김혜성식 잡음 검토 로그를 붙임</td><td class="risk" data-label="주의점">고유명사·오타 후보가 있어 무검토 사용은 위험</td></tr>
+            <tr><td class="stage" data-label="단계"><b>16. FastText 학습</b><small>산업특화 임베딩</small></td><td class="pick" data-label="코드 채택"><b>신지영</b><span>gensim FastText 직접 학습</span></td><td data-label="생각/해석 채택">김혜성: 산업특화 확장 논리</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">신지영 코드, 김혜성 threshold 실험 문장 결합</td><td class="risk" data-label="주의점">학습 파라미터와 corpus 기준을 명시해야 재현 가능</td></tr>
+            <tr><td class="stage" data-label="단계"><b>17. θ sweep</b><small>임계값 선택</small></td><td class="pick" data-label="코드 채택"><b>신지영</b><span>θ=.55/.60/.65/.70/.75 표</span></td><td data-label="생각/해석 채택">김혜성: 낮은 θ는 잡음, 높은 θ는 누락</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">신지영 업데이트1 표를 본선에 넣고 θ=.65 선택 사유 작성</td><td class="risk" data-label="주의점">θ=.65가 “정답”이 아니라 trade-off임을 명시</td></tr>
+            <tr><td class="stage" data-label="단계"><b>18. 후보 검토</b><small>잡음 제거</small></td><td class="pick" data-label="코드 채택"><b>김혜성</b><span>후보 검토 기준</span></td><td data-label="생각/해석 채택">신지영: 고유명사/일반어 노이즈 발견</td><td data-label="보완자">신지영</td><td data-label="최종 통합 방식">채택/기각 예시 10개 표를 새로 추가</td><td class="risk" data-label="주의점">현재 신지영 후보에는 베개, 인명, 지명성 단어가 일부 보임</td></tr>
+            <tr><td class="stage" data-label="단계"><b>19. 기준 문장 cosine</b><small>보조 측정</small></td><td class="pick" data-label="코드 채택"><b>신지영 + 이동원</b><span>reference_cosine_mean</span></td><td data-label="생각/해석 채택">신지영: 일반 경영어 노이즈 주의</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">보조 feature로 사용, 본선 단독 해석은 피함</td><td class="risk" data-label="주의점">cosine은 문서 길이와 고빈도 일반어 영향을 받을 수 있음</td></tr>
+            <tr><td class="stage" data-label="단계"><b>20. 다중공선성</b><small>동시투입 회피</small></td><td class="pick" data-label="코드 채택"><b>김지우</b><span>VIF/joint/orthogonalization</span></td><td data-label="생각/해석 채택">이동원: feature 묶음별 회귀</td><td data-label="보완자">신지영</td><td data-label="최종 통합 방식">본선은 feature별 분리, 알파에 직교화 추가</td><td class="risk" data-label="주의점">seed/expanded/cosine을 한 번에 넣으면 해석 불안정</td></tr>
+            <tr><td class="stage" data-label="단계"><b>21. Spearman</b><small>validity 1차</small></td><td class="pick" data-label="코드 채택"><b>신지영</b><span>381 Spearman 상위표</span></td><td data-label="생각/해석 채택">이동원: 회귀 전 validity gate</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">신지영 수치와 이동원 설명 문장을 결합</td><td class="risk" data-label="주의점">total_word_count가 최강이라는 점을 숨기면 안 됨</td></tr>
+            <tr><td class="stage" data-label="단계"><b>22. Mann-Whitney</b><small>상하위 평균차</small></td><td class="pick" data-label="코드 채택"><b>신지영</b><span>A 이상 vs B+ 이하</span></td><td data-label="생각/해석 채택">교수님 가이드: 분포 차이로 feature 정당화</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식">Spearman 다음에 MWU 표를 배치</td><td class="risk" data-label="주의점">평균차를 인과 효과처럼 말하지 않기</td></tr>
+            <tr><td class="stage" data-label="단계"><b>23. 약한 연관 해석</b><small>효과크기 신중</small></td><td class="pick" data-label="코드 채택"><b>이동원</b><span>CI/효과크기 정리</span></td><td data-label="생각/해석 채택">김지우: small sample instability</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">유의성보다 방향·효과크기·불안정성을 함께 서술</td><td class="risk" data-label="주의점">별표가 많다고 실질 설명력이 큰 것은 아님</td></tr>
+            <tr><td class="stage" data-label="단계"><b>24. 회귀 3종</b><small>OLS/Ordered/Binary</small></td><td class="pick" data-label="코드 채택"><b>신지영</b><span>381 기준 3종 모델</span></td><td data-label="생각/해석 채택">이동원: 질문에 맞게 모형 선택</td><td data-label="보완자">김지우</td><td data-label="최종 통합 방식">신지영 모델 표를 본선, 김지우 FE는 알파</td><td class="risk" data-label="주의점">Binary는 expanded p=.110이라 과장 금지</td></tr>
+            <tr><td class="stage" data-label="단계"><b>25. cheap-talk 통제</b><small>분량 통제</small></td><td class="pick" data-label="코드 채택"><b>김지우 + 신지영</b><span>직교화 + log_total_word_count</span></td><td data-label="생각/해석 채택">김지우: verbosity confounding</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식">본선 회귀는 신지영, 해석과 추가 검증은 김지우</td><td class="risk" data-label="주의점">total_word_count ρ=.650을 cheap-talk로 정면 처리</td></tr>
+            <tr><td class="stage" data-label="단계"><b>26. FE</b><small>industry/year</small></td><td class="pick" data-label="코드 채택"><b>김지우</b><span>FE robustness</span></td><td data-label="생각/해석 채택">김지우: 표본/업종 통제 한계</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식">본선 필수 모델이 아니라 알파/한계 보강으로 사용</td><td class="risk" data-label="주의점">381 통합본에 FE를 무리하게 얹으면 셀 복잡도 증가</td></tr>
+            <tr><td class="stage" data-label="단계"><b>27. cheap-talk 정면 검토</b><small>연구 질문 중심</small></td><td class="pick" data-label="코드 채택"><b>김지우 + 신지영</b><span>sign reversal, section/word count</span></td><td data-label="생각/해석 채택">김지우: governance paradox</td><td data-label="보완자">이동원</td><td data-label="최종 통합 방식">최종 결론의 중심 문단으로 사용</td><td class="risk" data-label="주의점">“공시 언어와 등급의 연관”이지 “ESG 실력 예측” 아님</td></tr>
+            <tr><td class="stage" data-label="단계"><b>28. 알파분석</b><small>이유·결과·한계</small></td><td class="pick" data-label="코드 채택"><b>신지영 + 이동원</b><span>section alpha와 4축 alpha</span></td><td data-label="생각/해석 채택">김지우: 부호역전/거버넌스 cheap-talk</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">신지영 section 결과와 김지우 해석을 한 섹션으로 통합</td><td class="risk" data-label="주의점">알파는 멋보다 “왜 했고 무엇이 한계인가”가 핵심</td></tr>
+            <tr><td class="stage" data-label="단계"><b>29. 한계와 비인과</b><small>연관성 해석</small></td><td class="pick" data-label="코드 채택"><b>이동원</b><span>보고서 문장 골격</span></td><td data-label="생각/해석 채택">김지우 + 신지영</td><td data-label="보완자">김혜성</td><td data-label="최종 통합 방식">결론 첫 문장부터 causal language 금지</td><td class="risk" data-label="주의점">“영향을 준다/예측한다” 표현은 삭제</td></tr>
+            <tr><td class="stage" data-label="단계"><b>30. 제출 재현성</b><small>Run All·출력 보존</small></td><td class="pick" data-label="코드 채택"><b>이동원</b><span>통합 v1 제출 골격</span></td><td data-label="생각/해석 채택">AGENTS 노트북 6규칙</td><td data-label="보완자">신지영</td><td data-label="최종 통합 방식">이동원 v1에 신지영/김혜성/김지우 모듈을 이식</td><td class="risk" data-label="주의점">신지영 업데이트1은 출력은 있으나 execution_count 공란이라 최종 제출 전 재실행 확인 필요</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="panel">
+        <h2>최종 노트북 조립 순서</h2>
+        <ol class="principles">
+          <li>이동원 통합 v1을 제출 골격으로 둔다.</li>
+          <li>김혜성/신지영 수집 함수를 모듈 단위로 이식한다.</li>
+          <li>신지영 seed 보존·FastText·회귀 코드를 381 본선으로 넣는다.</li>
+          <li>김혜성의 분석기 비교와 후보 큐레이션 근거를 보강 셀로 붙인다.</li>
+          <li>김지우 cheap-talk/부호역전/거버넌스 해석을 결과·한계·알파 섹션에 이식한다.</li>
+          <li>마지막에 교수님 가이드 위반금지 8항목 self-check 셀을 추가한다.</li>
+        </ol>
+      </div>
+      <div class="panel">
+        <h2>그대로 쓰면 위험한 부분</h2>
+        <ul class="principles">
+          <li>신지영 expanded 394개는 강하지만 고유명사/오타성 후보를 채택·기각 로그로 정리해야 합니다.</li>
+          <li>김지우 결과는 해석력이 강하지만 243 표본이므로 본선 수치가 아니라 robustness/알파로 둡니다.</li>
+          <li>이동원 통합 v1은 안정적 골격이지만 FastText 확장 실행은 신지영/김혜성 쪽으로 보강합니다.</li>
+          <li>김혜성 코드는 수집과 θ sweep 근거가 강하지만 최종 보고서 문장과 회귀 표는 신지영/이동원 쪽이 더 바로 쓰기 좋습니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>발표용 질문 대응</h2>
+      <details open>
+        <summary>왜 한 사람 결과를 통째로 쓰지 않나요?</summary>
+        <p class="muted">각 노트북의 강점이 다릅니다. 최종 제출물은 381 전수 재현성과 cheap-talk 해석을 동시에 만족해야 하므로, 코드와 해석을 분리 채택하는 것이 교수님 가이드에 더 맞습니다.</p>
+      </details>
+      <details>
+        <summary>신지영 코드를 많이 쓰면 충분한가요?</summary>
+        <p class="muted">본선 실행값은 좋지만, 분석기 비교와 expanded 후보 기각 로그가 더 필요합니다. 이 부분은 김혜성/이동원 근거를 붙여야 방어력이 올라갑니다.</p>
+      </details>
+      <details>
+        <summary>김지우 결과는 왜 본선이 아니라 알파인가요?</summary>
+        <p class="muted">KOSPI 243 심층 분석이라 표본 제한이 있습니다. 대신 부호역전, verbosity confounding, governance cheap-talk 해석은 최종 결론을 가장 설득력 있게 만듭니다.</p>
+      </details>
+    </section>
+
+    <footer class="muted">Generated 2026-05-23 · git 미실행 · 최종 통합 의사결정 보조 대시보드</footer>
+  </main>
+</body>
+</html>

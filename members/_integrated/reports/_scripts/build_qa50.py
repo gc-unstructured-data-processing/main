@@ -1,0 +1,972 @@
+from __future__ import annotations
+
+from datetime import date
+from html import escape
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT_MD = ROOT / "질의응답_50_v1.md"
+OUT_HTML = ROOT / "질의응답_50_v1.html"
+
+
+SECTIONS = [
+    ("A", "전체 스토리와 연구 질문", "Q01-Q06"),
+    ("B", "데이터와 DART 수집", "Q07-Q19"),
+    ("C", "텍스트 처리와 형태소 분석", "Q20-Q24"),
+    ("D", "Feature 설계와 측정 validity", "Q25-Q33"),
+    ("E", "통계 검증과 회귀모형", "Q34-Q42"),
+    ("F", "Cheap-talk 알파분석", "Q43-Q47"),
+    ("G", "해석, 한계, 발표 방어", "Q48-Q50"),
+]
+
+
+def qa(
+    no: int,
+    section: str,
+    question: str,
+    short: str,
+    easy: str,
+    evidence: str,
+    defense: str,
+) -> dict[str, str | int]:
+    return {
+        "no": no,
+        "section": section,
+        "question": question,
+        "short": short,
+        "easy": easy,
+        "evidence": evidence,
+        "defense": defense,
+    }
+
+
+QA = [
+    qa(
+        1,
+        "A",
+        "이 프로젝트를 한 문장으로 설명하면 무엇인가요?",
+        "사업보고서의 ESG 관련 표현이 KCGS 외부 ESG 등급과 통계적으로 함께 움직이는지, 그리고 그 연관이 실제 ESG 신호인지 공시 장황함인지를 확인한 공시 언어 연구입니다.",
+        "쉽게 말하면 기업이 보고서에 ESG 이야기를 많이, 또는 구체적으로 쓰는 회사일수록 외부 평가도 높은지 살펴본 것입니다. 다만 '보고서가 등급을 올렸다'가 아니라 '두 값이 같이 움직인다'는 연관성만 봅니다.",
+        "보고서 v2의 핵심 질문, docs 01의 과제 개요, docs 04의 인과 해석 금지 기준.",
+        "교수님이 '예측 모델이냐'고 물으면 '아닙니다. 등급을 맞히는 모델이 아니라 공시 언어와 외부 평가 사이의 패턴을 검증한 연구입니다'라고 답합니다.",
+    ),
+    qa(
+        2,
+        "A",
+        "왜 ESG 등급 예측이 아니라 공시 연구라고 말해야 하나요?",
+        "데이터 정렬과 모형이 인과나 예측 성능을 목표로 하지 않고, 사업보고서 언어와 KCGS 등급의 서술적 연관을 확인하도록 설계됐기 때문입니다.",
+        "예측 연구라면 새 기업의 등급을 얼마나 잘 맞히는지가 중심입니다. 이 프로젝트는 '왜 높은 등급 기업의 보고서가 더 길고 ESG 어휘가 많은가'라는 공시의 의미를 읽는 데 초점이 있습니다.",
+        "docs 01과 docs 04는 결과를 인과관계나 엄밀한 예측으로 단정하지 말라고 명시합니다.",
+        "발표에서는 '맞혔다', '원인이다' 대신 '이 표본에서는 통계적으로 연관된다', 'cheap-talk 가능성과 일관된다'라는 표현을 씁니다.",
+    ),
+    qa(
+        3,
+        "A",
+        "교수님이 강조한 스토리텔링은 어떤 흐름으로 잡으면 좋나요?",
+        "문제 인식, 원자료 확보, 텍스트를 숫자로 바꾸는 과정, 통계 검증, cheap-talk 해석의 5막 구조로 설명하면 자연스럽습니다.",
+        "스토리는 'ESG를 잘하는 기업은 보고서도 다르게 쓸까?'에서 시작합니다. 그 다음 OpenDART로 원문을 모으고, Python으로 II/IV/VI 섹션을 파싱하고, Kiwi와 TF-IDF/FastText로 언어를 숫자로 바꾼 뒤, Spearman과 회귀로 등급과의 관계를 확인합니다.",
+        "보고서 v2 3장 도구 활용 스토리, 원본 노트북의 Decision Box 1-18.",
+        "수치만 나열하지 말고 '왜 이 도구가 필요했는가'를 매 단계 붙입니다. 예: 'MCP는 방향 확인, Python은 재현 가능한 최종 계산'입니다.",
+    ),
+    qa(
+        4,
+        "A",
+        "왜 사업보고서를 분석 대상으로 삼았나요?",
+        "사업보고서는 상장기업이 매년 제출하는 공식 공시이며, ESG 관련 사업 내용, 경영진단, 이사회 구조가 반복적으로 담기는 표준화된 원문이기 때문입니다.",
+        "뉴스나 홈페이지 문구는 홍보 성격이 강하고 회사마다 형식이 다릅니다. 반면 사업보고서는 OpenDART에서 접수번호로 추적할 수 있고, 같은 기업을 2022-2024년까지 비교할 수 있습니다.",
+        "docs 01은 사업보고서 II/IV/VI 섹션을 주요 분석 대상으로 제시하고, docs 02는 DART lineage 기록을 요구합니다.",
+        "한계도 같이 말합니다. 사업보고서는 공식 공시라 신뢰성이 있지만, 실제 현장 성과보다 작성 관행과 법정 공시 의무의 영향을 받을 수 있습니다.",
+    ),
+    qa(
+        5,
+        "A",
+        "MCP와 Skill은 결과를 만든 핵심 도구인가요?",
+        "MCP와 Skill은 가이드 이해, 절차 점검, 보고서 보강 방향 정리에 쓰인 보조 도구이고, 최종 수치의 source of truth는 Python으로 OpenDART 원문을 직접 파싱한 결과입니다.",
+        "쉽게 말하면 MCP/Skill은 길 안내 역할이고, 최종 계산기는 Python입니다. 길 안내를 참고했지만, 실제 원문과 표는 API, XML, CSV, notebook 출력으로 다시 확인했습니다.",
+        "보고서 v2 3.3절, docs 02의 'MCP passage extraction은 그대로 신뢰하지 말라'는 주의.",
+        "질문을 받으면 'LLM이 문단을 만들어낸 것이 아니라 OpenDART XML을 Python으로 직접 읽어 재현 가능하게 만들었습니다'라고 선을 긋습니다.",
+    ),
+    qa(
+        6,
+        "A",
+        "이 프로젝트에서 각 도구의 역할은 어떻게 나뉘었나요?",
+        "OpenDART API는 원자료 접근, Python은 재현 가능한 수집·파싱·분석, Kiwi/FastText는 텍스트 수치화, MCP/Skill은 절차 검토와 문서화 보조로 역할을 분리했습니다.",
+        "도구를 한 줄로 정리하면 'API로 가져오고, Python으로 검산하고, NLP로 숫자로 바꾸고, 통계로 검증하고, MCP/Skill은 놓친 요구사항을 체크했다'입니다.",
+        "보고서 v2의 도구 역할 표와 원본 노트북의 수집 함수, 형태소 비교, 회귀 결과.",
+        "스토리텔링 포인트는 '도구를 많이 썼다'가 아니라 '각 도구가 맡은 책임을 분리해 신뢰성을 높였다'입니다.",
+    ),
+    qa(
+        7,
+        "B",
+        "381 firm-year는 정확히 무엇을 뜻하나요?",
+        "127개 상장기업을 2022, 2023, 2024 회계연도별로 본 127 x 3 = 381개의 기업-연도 관측치입니다.",
+        "firm-year는 '한 회사의 한 해'입니다. 삼성전자 2024년, 삼성전자 2023년, 다른 기업 2024년은 각각 다른 관측치입니다.",
+        "docs 01, 02, 04와 보고서 v2 2장 데이터 개요.",
+        "표본은 수업용 pilot panel이므로 KCGS 전체 기업을 대표한다고 말하지 않습니다. '최대 381개를 기준으로 전수 수집을 시도했다'고 표현합니다.",
+    ),
+    qa(
+        8,
+        "B",
+        "왜 분석 단위가 회사명이 아니라 stock_code x fiscal_year인가요?",
+        "회사명은 사명 변경, 표기 차이, 동명 가능성 때문에 조용한 오매칭이 생길 수 있어, 6자리 종목코드와 회계연도를 결합한 키가 더 안전합니다.",
+        "예를 들어 회사명이 조금 바뀌어도 종목코드는 같은 기업을 안정적으로 가리킵니다. 그리고 같은 회사라도 2022년 보고서와 2024년 보고서는 다른 텍스트이므로 fiscal_year도 필요합니다.",
+        "AGENTS.md 식별자 규칙, docs 02의 company_name 133개 vs stock_code 127개 주의.",
+        "교수님이 merge 기준을 물으면 '회사명 merge는 금지했고, stock_code는 항상 zfill(6)로 맞췄습니다'라고 답합니다.",
+    ),
+    qa(
+        9,
+        "B",
+        "stock_code를 왜 6자리 문자열로 보존해야 하나요?",
+        "CSV에서 005930 같은 종목코드가 숫자로 읽히면 5930이 되어 OpenDART 매핑이 실패하므로, 문자열로 읽고 zfill(6)을 적용해야 합니다.",
+        "앞의 0도 코드의 일부입니다. 주민등록번호 앞자리를 떼면 다른 값이 되는 것처럼, 종목코드도 6자리가 유지되어야 합니다.",
+        "원본 노트북 Decision Box 1, AGENTS.md 식별자 규칙.",
+        "방어 포인트는 '작은 전처리처럼 보이지만 수집 실패와 silent mismatch를 막는 핵심 품질 관리'입니다.",
+    ),
+    qa(
+        10,
+        "B",
+        "왜 esg_year = fiscal_year + 1로 맞췄나요?",
+        "KCGS 평가연도 t의 등급과 직전 회계연도 t-1 사업보고서 언어를 서술적으로 정렬하기 위해서입니다.",
+        "예를 들어 2025년 ESG 등급은 2024 회계연도 사업보고서 언어와 연결합니다. 보고서 제출과 평가 발표의 정확한 시차를 인과로 식별하는 설계는 아닙니다.",
+        "docs 01, 02, 03, 04 모두 timing 기준으로 esg_year = fiscal_year + 1을 제시합니다.",
+        "교수님이 '미래 정보를 쓴 것 아니냐'고 물으면 '예측이 아니라 직전 회계연도 공시와 다음 평가연도 등급의 서술적 정렬입니다'라고 답합니다.",
+    ),
+    qa(
+        11,
+        "B",
+        "stock_code, corp_code, rcept_no는 각각 무엇인가요?",
+        "stock_code는 상장 종목 식별자, corp_code는 OpenDART 내부 회사 코드, rcept_no는 특정 사업보고서 접수번호입니다.",
+        "비유하면 stock_code는 증권시장 이름표, corp_code는 DART 시스템 내부 회원번호, rcept_no는 특정 보고서의 영수증 번호입니다. 분석 merge는 stock_code와 fiscal_year로 하고, 수집 추적은 corp_code와 rcept_no로 합니다.",
+        "docs 02의 식별자 표, 보고서 v2 4.1절 OpenDART lineage.",
+        "세 코드를 섞어 말하지 않는 것이 중요합니다. 특히 rcept_no는 회사가 아니라 특정 보고서를 가리킵니다.",
+    ),
+    qa(
+        12,
+        "B",
+        "웹크롤링 또는 DART 수집은 어떤 절차로 했나요?",
+        "무작위 HTML 긁기가 아니라 OpenDART의 공식 API 흐름을 따라 stock_code -> corp_code -> rcept_no -> document.xml ZIP -> II/IV/VI 섹션 파싱 순서로 수집했습니다.",
+        "웹크롤링이라고 부를 수 있지만, 핵심은 재현 가능한 API 기반 수집입니다. 브라우저에서 눈으로 복사하지 않고, 접수번호와 원문 ZIP을 저장해 같은 문서를 다시 찾을 수 있게 했습니다.",
+        "docs 02의 직접 API 수집 절차, 원본 노트북의 find_business_report_v2, download_document_xml, extract_esg_sections.",
+        "전문가식 표현은 'scraping'보다 'API-based reproducible collection with DART lineage'입니다. 발표에서는 쉽게 '공식 공시 API로 원문을 추적 가능하게 모았다'고 말합니다.",
+    ),
+    qa(
+        13,
+        "B",
+        "사업보고서를 찾을 때 왜 반기보고서나 분기보고서를 제외했나요?",
+        "연구 질문이 회계연도 단위 사업보고서 언어와 KCGS 평가연도 등급의 관계를 보는 것이므로, 반기·분기보고서는 시간 범위와 문서 성격이 다릅니다.",
+        "한 해 전체를 담는 사업보고서와 중간 보고서를 섞으면 텍스트 길이와 내용이 달라집니다. 그러면 ESG 표현 차이인지 문서 종류 차이인지 헷갈립니다.",
+        "원본 노트북 Decision Box 4와 find_business_report_v2 검색 전략.",
+        "정정공시가 있으면 최신 정정본을 우선하는 이유도 설명합니다. 같은 회계연도 보고서 중 최종 확정에 가까운 문서를 쓰기 위해서입니다.",
+    ),
+    qa(
+        14,
+        "B",
+        "document.xml ZIP 안에서 본 보고서 XML은 어떻게 골랐나요?",
+        "접수번호와 같은 이름의 XML, 언더스코어가 없는 XML, 가장 큰 XML 순서로 본 보고서 후보를 선택했습니다.",
+        "ZIP 안에는 첨부파일 XML도 섞일 수 있습니다. 아무 XML이나 읽으면 본문이 아닌 첨부를 분석할 수 있으므로 우선순위를 정했습니다.",
+        "원본 노트북 Decision Box 5와 download_document_xml 함수.",
+        "방어 포인트는 '원문 ZIP을 보존하고 선택 규칙을 명시했기 때문에 나중에 특정 rcept_no를 다시 검증할 수 있다'입니다.",
+    ),
+    qa(
+        15,
+        "B",
+        "수집 실패 행을 0점으로 채우지 않는 이유는 무엇인가요?",
+        "텍스트가 없는 것과 수집에 실패한 것은 전혀 다른 의미이므로, 실패를 0으로 넣으면 분석 결과가 왜곡됩니다.",
+        "예를 들어 API 오류로 문서를 못 받은 회사를 ESG 표현이 전혀 없는 회사처럼 처리하면, 낮은 점수가 기술적 실패 때문인지 실제 공시 때문인지 구분할 수 없습니다.",
+        "AGENTS.md 위반금지 1번, docs 04 제출 체크리스트.",
+        "이번 최종 실행에서는 381/381건 모두 SUCCESS라 가짜 0 처리 대상은 없었지만, 설계는 status/reason 로그를 남기도록 되어 있었다고 말합니다.",
+    ),
+    qa(
+        16,
+        "B",
+        "왜 사업보고서 전체가 아니라 II, IV, VI 섹션을 썼나요?",
+        "II는 사업과 환경·사회 활동, IV는 경영진의 방향성과 성과 설명, VI는 이사회와 지배구조를 담아 E/S/G 신호가 집중되는 영역이기 때문입니다.",
+        "전체 보고서를 쓰면 재무제표 주석, 숫자 표, 반복 문구가 많이 섞입니다. II/IV/VI만 쓰면 ESG 관련 서술을 더 잘 볼 수 있습니다.",
+        "docs 01, docs 02, docs 04의 섹션 선택 기준, 원본 노트북 Decision Box 6.",
+        "한계도 같이 말합니다. 섹션 선택이 연구자의 판단을 포함하므로, 다른 섹션을 포함하면 결과가 달라질 수 있습니다.",
+    ),
+    qa(
+        17,
+        "B",
+        "DART XML 파싱에서 어려운 점은 무엇이었나요?",
+        "DART 원문은 표, 첨부, 섹션 제목, 정정 구조가 섞여 있어 단순 문자열 검색만으로는 안정적인 텍스트 추출이 어렵습니다.",
+        "그래서 노트북은 대분류 로마숫자 제목을 경계로 삼고 TABLE 블록을 제거하며, II/IV/VI 섹션이 실제로 0자가 아닌지 sanity check를 수행했습니다.",
+        "원본 노트북 extract_esg_sections 함수와 수집 품질 진단.",
+        "교수님이 '그냥 검색해도 되지 않나'라고 물으면 '검색은 빠르지만 재현성과 섹션 경계가 약해서 Python 파싱으로 통일했습니다'라고 답합니다.",
+    ),
+    qa(
+        18,
+        "B",
+        "수집 품질은 어떻게 확인했나요?",
+        "381건 전체 성공 여부, II/IV/VI 각 섹션 0자 여부, 섹션별 글자 수 비중, 글자 수 이상치를 확인했습니다.",
+        "수집이 되었다고 끝이 아니라, 실제로 분석할 텍스트가 들어왔는지 봐야 합니다. 세 섹션 중 하나가 0자라면 파싱 실패일 수 있습니다.",
+        "원본 노트북 1-4, 1-5 수집 품질 진단과 보고서 v2 4.4절.",
+        "핵심 숫자는 381/381 SUCCESS, II/IV/VI 0자 firm-year 없음, 글자 수 편차 약 42배입니다.",
+    ),
+    qa(
+        19,
+        "B",
+        "글자 수 편차 42배는 왜 중요한가요?",
+        "보고서 길이가 기업별로 크게 다르면 ESG 점수가 단어의 질보다 문서 분량을 반영할 위험이 커지기 때문입니다.",
+        "긴 보고서는 어떤 단어든 더 많이 나올 가능성이 있습니다. 그래서 ESG 어휘가 많다는 사실만으로 ESG 성과가 좋다고 말할 수 없습니다.",
+        "보고서 v2 4.5절, 원본 노트북 cheap-talk 통제 변수 필요성 진단.",
+        "이 지점이 cheap-talk 스토리의 출발점입니다. '언어 신호가 있다'와 '분량이 더 강하다'를 동시에 보여줘야 합니다.",
+    ),
+    qa(
+        20,
+        "C",
+        "왜 한국어 형태소 분석기가 필요했나요?",
+        "한국어는 조사와 어미가 붙고 복합명사가 많아, 공백 기준 분리만으로는 ESG 핵심 단어를 안정적으로 세기 어렵기 때문입니다.",
+        "예를 들어 '감사위원회는'을 그대로 두면 '감사위원회' seed와 매칭되지 않을 수 있습니다. 형태소 분석은 문장을 의미 단위 토큰으로 쪼개는 과정입니다.",
+        "보고서 v2 5장, 원본 노트북 2장 형태소 분석기 비교.",
+        "쉬운 표현은 '문장을 단어 부품으로 정리해서 컴퓨터가 셀 수 있게 만드는 단계'입니다.",
+    ),
+    qa(
+        21,
+        "C",
+        "Kiwi와 Okt 중 왜 Kiwi를 선택했나요?",
+        "Kiwi에 사용자 사전을 적용했을 때 seed 보존율이 28/30, 93%로 Okt의 20/30, 67%보다 높았기 때문입니다.",
+        "Okt가 더 빠르긴 했지만, '감사위원회', '중대재해', '산업재해' 같은 핵심 복합명사를 분리하는 문제가 있었습니다. 이 연구는 속도보다 ESG 단어 보존이 더 중요했습니다.",
+        "보고서 v2 5.2절, 원본 노트북 Decision Box 7.",
+        "답변 포인트는 '대량 서비스가 아니라 연구용 측정 validity가 목적이라 seed 보존율을 우선했다'입니다.",
+    ),
+    qa(
+        22,
+        "C",
+        "Kiwi 사용자 사전 score=50은 왜 넣었나요?",
+        "탄소중립, 안전보건, 감사위원회처럼 쪼개지면 안 되는 seed 복합명사를 하나의 토큰으로 보존하기 위해서입니다.",
+        "사용자 사전은 '이 단어는 우리 연구에서 중요한 단어니까 한 덩어리로 봐 달라'고 분석기에 알려주는 장치입니다.",
+        "원본 노트북 Decision Box 7-9와 보고서 v2 5.2절.",
+        "과도한 조작이 아니냐는 질문에는 'seed 30개는 과제와 ESG 문헌에 맞춘 사전이고, 보존 여부를 Kiwi/Okt 비교표로 공개했다'고 답합니다.",
+    ),
+    qa(
+        23,
+        "C",
+        "불용어는 왜 제거했고 seed는 왜 보호했나요?",
+        "조사, 일반 명사, 기업명처럼 ESG 의미가 약하거나 모든 문서에 반복되는 단어를 줄여 feature가 핵심 표현에 집중하도록 하기 위해서입니다.",
+        "불용어 제거는 잡음을 줄이는 청소 작업입니다. 다만 ESG seed를 불용어로 지우면 연구 질문 자체가 사라지므로 seed는 보호했습니다.",
+        "원본 노트북 Decision Box 9, AGENTS.md 노트북 규칙.",
+        "교수님이 '어떤 단어를 버렸나'라고 물으면 회사명 토큰, 일반 불용어, seed 보호 원칙을 설명하면 됩니다.",
+    ),
+    qa(
+        24,
+        "C",
+        "Komoran과 Kkma는 왜 본선에서 제외했나요?",
+        "본 프로젝트의 반복 실험과 381건 처리에서는 Kiwi의 사용자 사전 지원과 처리 안정성이 더 적합했고, Kkma는 느리며 Komoran은 파일 기반 사용자 사전 관리가 번거로웠기 때문입니다.",
+        "제외는 '성능이 나쁘다'는 절대평가가 아니라, 이 과제의 시간, 재현성, seed 보존 목적에 맞춘 우선순위 판단입니다.",
+        "보고서 v2 5.2절의 비채택 근거.",
+        "방어할 때는 '최소한 Kiwi와 Okt는 동일 샘플로 직접 비교했고, 제외 분석기는 프로젝트 조건상 비효율적이라 명시했다'고 말합니다.",
+    ),
+    qa(
+        25,
+        "D",
+        "TF-IDF는 쉽게 말해 무엇인가요?",
+        "TF-IDF는 어떤 단어가 특정 문서에서 자주 나오면서도 전체 문서에 너무 흔하지 않을 때 높은 점수를 주는 방식입니다.",
+        "예를 들어 모든 회사가 '이사회'를 쓰면 그 단어는 중요해 보여도 회사를 구분하지 못합니다. 반대로 특정 회사 보고서에서 '온실가스 감축'이 유독 많이 나오면 그 회사의 E 신호로 볼 수 있습니다.",
+        "docs 01, docs 03의 TF-IDF 설명과 보고서 v2 6장.",
+        "쉬운 표현은 '흔한 말은 낮게, 그 문서에서 두드러지는 말은 높게'입니다.",
+    ),
+    qa(
+        26,
+        "D",
+        "Seed dictionary는 무엇이고 왜 30개인가요?",
+        "E, S, G 각각 10개씩 핵심 ESG 단어를 정한 출발 사전으로, 최소한의 해석 가능한 기준점을 만들기 위해 사용했습니다.",
+        "seed는 씨앗 단어입니다. 처음부터 수천 개 단어를 자동으로 쓰면 해석이 어려우므로, 온실가스, 안전보건, 감사위원회처럼 사람이 이해할 수 있는 단어에서 시작합니다.",
+        "docs 01의 seed/expanded dictionary 요구, AGENTS.md 5/19 회의 결정의 seed 30개 활용.",
+        "seed-only는 좁다는 한계가 있으므로 FastText expanded dictionary로 보완했다고 연결합니다.",
+    ),
+    qa(
+        27,
+        "D",
+        "TF-IDF에서 max_df=0.80은 왜 중요했나요?",
+        "너무 많은 문서에 등장하는 단어를 제외해 변별력 없는 의무공시 어휘가 점수를 지배하지 않도록 하기 위해서입니다.",
+        "'이사회', '사외이사', '주주'는 G와 관련 있지만 거의 모든 사업보고서에 나오는 법정 공시 단어입니다. 모든 문서에 있으면 높은 등급과 낮은 등급을 구분하기 어렵습니다.",
+        "보고서 v2 6.2절, 원본 노트북 Decision Box 10.",
+        "버그가 아니라 의도된 진단이라고 설명합니다. 의무공시 어휘가 빠진 것은 'G cheap-talk'과 Governance Paradox를 이해하는 단서입니다.",
+    ),
+    qa(
+        28,
+        "D",
+        "FastText expanded dictionary를 왜 만들었나요?",
+        "seed 30개만으로는 기업이 실제로 쓰는 다양한 ESG 표현을 충분히 포착하기 어려워, corpus 내부 유사어를 확장하기 위해 만들었습니다.",
+        "기업은 '온실가스' 대신 '배출량', '감축', '재사용' 같은 표현을 쓸 수 있습니다. FastText는 단어 주변 문맥을 보고 seed와 가까운 후보를 찾습니다.",
+        "docs 01, docs 03의 expanded dictionary 설명, 보고서 v2 6.3절.",
+        "중요한 방어 포인트는 '자동 후보를 그대로 쓰지 않고 threshold와 수동 검토를 거쳤다'입니다.",
+    ),
+    qa(
+        29,
+        "D",
+        "theta=0.65는 어떻게 정했나요?",
+        "0.55, 0.60, 0.65, 0.70, 0.75를 sweep해 후보 수, 잡음 비율, 수동 검토 가능성을 비교한 뒤 0.65를 선택했습니다.",
+        "theta는 단어가 seed와 얼마나 비슷해야 후보로 받을지 정하는 문턱입니다. 낮으면 후보가 너무 많고, 높으면 좋은 단어를 놓칠 수 있습니다.",
+        "원본 노트북 Decision Box 12, 보고서 v2 6.3절. theta=0.65에서 후보 493개, 잡음 추정 5개, 약 1.0%.",
+        "성능을 보고 사후 조정한 것이 아니라, 후보 수와 해석 가능성의 균형으로 정했다고 강조합니다.",
+    ),
+    qa(
+        30,
+        "D",
+        "FastText 후보를 그대로 쓰지 않았다는 증거는 무엇인가요?",
+        "배출량, 재사용, 보건, 감사위원 같은 단어는 채택하고, 블룸버그, 디자, 침공, 콩기름처럼 ESG 차원 신호가 아닌 후보는 기각하는 수동 검토를 했습니다.",
+        "임베딩은 문맥이 비슷한 단어를 잘 찾지만, 때로는 우연히 가까운 단어도 가져옵니다. 그래서 사람이 최종 사전을 읽고 걸러야 합니다.",
+        "보고서 v2 6.3-6.4절, 원본 노트북 expanded dictionary curation.",
+        "docs 04의 'fastText 후보를 검토 없이 ESG 사전으로 확정하지 말라'는 평가 기준에 대한 직접 대응입니다.",
+    ),
+    qa(
+        31,
+        "D",
+        "기준 문장 cosine similarity는 무엇인가요?",
+        "E/S/G 기준 문장과 기업 공시 문장의 TF-IDF 벡터 방향이 얼마나 비슷한지 보는 보조 지표입니다.",
+        "cosine은 길이보다 방향을 봅니다. 두 문장이 같은 단어를 많이 공유하고 비슷한 의미축을 가지면 값이 커집니다.",
+        "docs 01의 기준 문장 cosine 설명, 보고서 v2 6.5절과 7.2절.",
+        "cosine은 주력 결론이 아니라 seed/expanded와 다른 방식으로 텍스트 유사도를 확인하는 보조 측정이라고 말합니다.",
+    ),
+    qa(
+        32,
+        "D",
+        "Seed, expanded, cosine feature set은 어떻게 다르나요?",
+        "Seed는 좁고 해석 가능한 핵심 단어, expanded는 seed 주변 유사어까지 넓힌 사전, cosine은 기준 문장과의 문장 수준 유사도입니다.",
+        "세 feature set은 같은 질문을 다른 렌즈로 보는 장치입니다. 하나의 측정 방식에만 의존하면 결과가 특정 전처리에 묶일 수 있습니다.",
+        "보고서 v2 8.2절의 회귀 feature set 구성, 원본 노트북 3장.",
+        "발표에서는 '좁은 사전, 확장 사전, 문장 유사도' 세 단계로 말하면 쉽습니다.",
+    ),
+    qa(
+        33,
+        "D",
+        "왜 회귀분석 전에 Spearman과 Mann-Whitney로 validity를 봤나요?",
+        "feature가 ESG 등급과 기본적으로 연관되는지 확인하지 않고 회귀로 바로 가면, 의미 없는 숫자를 복잡한 모형에 넣는 문제가 생기기 때문입니다.",
+        "validity는 '우리가 만든 점수가 정말 연구 질문과 닿아 있는가'를 확인하는 과정입니다. 먼저 순위상관과 그룹 차이를 보고, 그 다음 회귀로 넘어갔습니다.",
+        "docs 03, docs 04의 측정 validity 요구와 보고서 v2 7장.",
+        "교수님 평가표의 핵심 항목입니다. '분포만 보고 끝내지 않고 등급과의 관계를 검증했다'고 답합니다.",
+    ),
+    qa(
+        34,
+        "E",
+        "왜 Pearson이 아니라 Spearman을 먼저 봤나요?",
+        "ESG 등급은 D, C, B, B+, A, A+처럼 순서는 있지만 간격이 완전히 같다고 보기 어려운 서열형 변수이기 때문입니다.",
+        "Spearman은 실제 숫자 간격보다 순위가 같이 움직이는지를 봅니다. 등급이 높은 기업일수록 텍스트 점수도 대체로 높은지 확인하는 데 적합합니다.",
+        "docs 03과 docs 04의 Spearman 설명, 보고서 v2 7.1절.",
+        "Pearson을 완전히 금지한 것이 아니라, ESG 등급의 성격상 첫 validity 검증은 Spearman이 더 자연스럽다고 말합니다.",
+    ),
+    qa(
+        35,
+        "E",
+        "Spearman 결과의 핵심은 무엇인가요?",
+        "ESG feature들은 대체로 양의 연관을 보였지만, n_tokens의 rho=0.663이 모든 개별 ESG feature보다 강했다는 점이 핵심입니다.",
+        "텍스트 ESG 점수도 등급과 같이 움직입니다. 하지만 가장 강하게 같이 움직인 것은 ESG 단어 자체보다 문서의 길이였습니다.",
+        "보고서 v2 7.2절. expanded_score_G rho=0.425, expanded_score_E rho=0.373, ref_cosine_E rho=0.321, n_tokens rho=0.663.",
+        "결론은 두 겹입니다. '연관은 있다'와 '그러나 분량이 더 강하다'를 함께 말해야 합니다.",
+    ),
+    qa(
+        36,
+        "E",
+        "Mann-Whitney U 검정은 왜 했고 결과는 어땠나요?",
+        "A 이상 그룹과 B+ 이하 그룹의 feature 분포가 다른지 확인하기 위해 비모수 그룹 차이 검정을 수행했습니다.",
+        "평균만 보면 이상치에 흔들릴 수 있습니다. Mann-Whitney는 두 그룹의 순위 분포가 다른지 보므로 등급형 데이터와 비정규 분포에 더 안전합니다.",
+        "보고서 v2 7.3절. A 이상 평균 n_tokens 7,306.7 vs B+ 이하 3,444.8, p<0.001.",
+        "이 결과도 Spearman과 같은 방향입니다. 상위 등급 기업이 ESG feature와 토큰 수가 높지만, 가장 큰 차이는 역시 토큰 수입니다.",
+    ),
+    qa(
+        37,
+        "E",
+        "회귀분석은 왜 필요했나요?",
+        "여러 feature와 log_n_tokens를 함께 넣어, ESG 언어 점수가 단순 분량 효과를 넘어 독립적으로 등급과 연관되는지 확인하기 위해서입니다.",
+        "상관은 두 변수의 관계를 따로 봅니다. 회귀는 분량 같은 통제변수를 함께 넣고도 특정 feature가 의미가 있는지 봅니다.",
+        "docs 03의 회귀 옵션, 보고서 v2 8장.",
+        "회귀도 인과를 증명하지 않는다는 점을 꼭 붙입니다. 회귀는 통제된 연관성 확인입니다.",
+    ),
+    qa(
+        38,
+        "E",
+        "왜 OLS, Ordered logit, Binary logit 세 가지를 모두 봤나요?",
+        "ESG 등급의 성격을 서로 다른 방식으로 다루어 결과가 특정 모형 선택에만 의존하지 않는지 확인하기 위해서입니다.",
+        "OLS는 설명이 쉽지만 등급 간 간격이 같다고 가정합니다. Ordered logit은 등급 순서를 보존합니다. Binary logit은 A 이상 여부로 단순화해 해석이 쉽습니다.",
+        "docs 03, docs 04의 모형 선택 기준과 보고서 v2 8.1절.",
+        "발표에서는 '직관, 이론 정합성, 보조 강건성'의 세 역할로 설명하면 깔끔합니다.",
+    ),
+    qa(
+        39,
+        "E",
+        "OLS 결과의 핵심은 무엇인가요?",
+        "Expanded feature set에서 R2는 0.476이고, log_n_tokens beta=1.297, p<0.001로 분량 효과가 매우 강했습니다.",
+        "또한 expanded_score_G beta=3.174, p<0.001로 G 확장 사전은 독립적인 신호를 보였고, E는 약하게 유의했으며 S는 비유의였습니다.",
+        "보고서 v2 8.3절. expanded_score_E beta=0.432, p=0.025; expanded_score_S beta=-0.695, p=0.302.",
+        "계수 크기를 그대로 등급 상승폭처럼 과장하지 않습니다. 표준화와 변수 단위를 고려해 방향과 유의성 중심으로 설명합니다.",
+    ),
+    qa(
+        40,
+        "E",
+        "Ordered logit 결과는 OLS와 어떻게 이어지나요?",
+        "Ordered logit에서도 log_n_tokens beta가 약 2.0으로 일관되게 유의했고, expanded_score_G beta=4.944, p<0.001로 강한 신호가 유지되었습니다.",
+        "이는 ESG 등급을 단순 숫자처럼 보지 않고 순서형 결과로 다뤄도 핵심 결론이 크게 바뀌지 않는다는 뜻입니다.",
+        "보고서 v2 8.3절과 원본 노트북 M1b Ordered Logistic 결과.",
+        "단, ordered logit은 비례오즈 가정과 계수 해석의 어려움이 있으므로 OLS와 함께 읽었다고 말합니다.",
+    ),
+    qa(
+        41,
+        "E",
+        "Binary logit 결과는 무엇을 말해주나요?",
+        "A 이상 여부로 압축해도 log_n_tokens의 odds ratio가 약 7.9로 매우 강하고, expanded_score_G도 유의하게 나타났습니다.",
+        "Binary logit은 '상위 등급인가 아닌가'라는 질문으로 바꿔 봅니다. 세부 등급 정보는 줄지만 발표자가 설명하기 쉽고 강건성 확인에 좋습니다.",
+        "보고서 v2 8.3절. expanded feature set Pseudo R2=0.270, log_n_tokens OR=7.857, p<0.001.",
+        "OR은 확률 자체가 8배라는 뜻이 아니라 odds가 약 8배라는 뜻입니다. 이 차이를 조심해서 말합니다.",
+    ),
+    qa(
+        42,
+        "E",
+        "log_n_tokens OR 약 7.9는 쉽게 어떻게 설명하나요?",
+        "토큰 수가 e배, 즉 약 2.7배 증가할 때 A 이상 등급일 odds가 약 7.9배 높아진다는 의미입니다.",
+        "odds는 확률 p 자체가 아니라 p/(1-p)입니다. 예를 들어 상위 등급 가능성의 '비율형 가능성'이 커진다고 이해하면 됩니다.",
+        "보고서 v2 8.3절 Binary logistic 결과.",
+        "교수님이 과장 해석을 지적할 수 있으므로 '확률이 8배'라고 말하지 않고 'odds가 약 8배'라고 정확히 말합니다.",
+    ),
+    qa(
+        43,
+        "F",
+        "cheap-talk는 이 연구에서 무슨 뜻인가요?",
+        "기업이 실제 성과와 무관하게 ESG 관련 표현을 많이 쓰거나 길게 설명해 외부 평가와 함께 움직이는 가능성을 뜻합니다.",
+        "여기서 cheap-talk는 '거짓말'이라는 단정이 아닙니다. 공시 언어의 양과 외부 평가가 강하게 연결되어 실제 ESG 성과와 언어 표현 사이에 괴리가 있을 수 있다는 해석 틀입니다.",
+        "보고서 v2 9장과 11장 한계, docs 03의 cheap-talk 통제 설명.",
+        "윤리적 비난처럼 말하지 말고 '공시 장황함 또는 disclosure verbosity'로 중립적으로 설명합니다.",
+    ),
+    qa(
+        44,
+        "F",
+        "직교화 알파분석은 왜 했나요?",
+        "ESG feature가 log_n_tokens의 대리변수인지, 아니면 분량과 분리된 독립 신호를 갖는지 보기 위해서입니다.",
+        "먼저 각 ESG feature를 log_n_tokens로 설명해 보고, 남은 잔차를 등급 회귀에 넣었습니다. 남은 부분이 유의하면 단순 분량 이상의 신호가 있다는 뜻입니다.",
+        "보고서 v2 9.1절. expanded_score_E는 직교화 후 beta=0.432, p=0.025; S는 비유의; G는 beta=3.174, p<0.001.",
+        "FWL 정리 기반의 분해라고 설명할 수 있지만, 발표에서는 '분량으로 설명되는 부분을 덜어낸 뒤 남은 신호를 본 것'이라고 쉽게 말합니다.",
+    ),
+    qa(
+        45,
+        "F",
+        "업종·연도 고정효과 알파분석은 무엇을 확인했나요?",
+        "분량 효과가 특정 업종이나 특정 연도 때문인지 확인하기 위해 industry와 year 더미를 추가했습니다.",
+        "어떤 업종은 원래 보고서가 길고 등급도 높을 수 있습니다. 업종·연도를 통제해도 log_n_tokens 효과가 유지되는지 본 것입니다.",
+        "보고서 v2 9.2절. FE 추가 후 R2=0.490, log_n_tokens beta=1.311, 기존 대비 변화 1.1%.",
+        "결론은 'cheap-talk 효과가 단순 업종·연도 부산물로만 설명되지는 않는다'입니다. 그러나 업종 4그룹 단순화와 3개 연도 한계는 남습니다.",
+    ),
+    qa(
+        46,
+        "F",
+        "Section-level 알파분석은 어떤 의미가 있나요?",
+        "II, IV, VI 중 어느 섹션의 분량이 ESG 등급과 더 강하게 연결되는지 확인해 cheap-talk의 발화 지점을 본 분석입니다.",
+        "결과적으로 IV 경영진단 섹션 beta=0.726이 가장 강했고, VI 이사회 섹션 beta=0.701, II 사업의 내용 beta=0.355 순이었습니다.",
+        "보고서 v2 9.3절.",
+        "스토리텔링으로는 '단순히 보고서가 긴 것이 아니라, 경영진이 자발적으로 설명하는 IV 섹션의 길이가 특히 강했다'고 말합니다.",
+    ),
+    qa(
+        47,
+        "F",
+        "Governance Paradox는 무엇인가요?",
+        "법정 의무공시에 가까운 G seed 단어는 거의 모두에게 등장해 변별력이 약하지만, expanded_G는 실제 차별적 표현을 포착해 G 등급과 강하게 연결된다는 역설입니다.",
+        "이사회, 사외이사, 주주는 중요하지만 누구나 쓰는 단어입니다. 반면 감사위원, 독립성, 준법 같은 확장 표현은 기업 간 차이를 더 잘 드러낼 수 있습니다.",
+        "보고서 v2 9.4절. seed_G 0점 73.8%, expanded_G 0점 2.4%, expanded_G -> g_grade OLS R2=0.414.",
+        "핵심 표현은 '의무공시 어휘와 실천을 드러내는 차별적 어휘는 다르다'입니다.",
+    ),
+    qa(
+        48,
+        "G",
+        "S, 즉 사회 차원 결과가 약한 이유는 무엇이라고 보나요?",
+        "S 관련 정보가 사업보고서의 II/IV/VI 섹션만으로는 충분히 구체적으로 드러나지 않거나, 사회 영역 표현이 분량 효과와 더 많이 겹쳤을 가능성이 있습니다.",
+        "사회 차원은 안전, 공급망, 임직원, 지역사회처럼 범위가 넓습니다. 기업마다 쓰는 표현도 다양해 seed와 expanded로도 안정적으로 잡기 어려울 수 있습니다.",
+        "보고서 v2 8.3절과 9.1절. expanded_score_S는 OLS와 직교화 후 모두 비유의.",
+        "한계로 인정하는 편이 좋습니다. 'S는 없다'가 아니라 '본 자료와 본 측정 방식에서는 독립 신호가 약했다'고 말합니다.",
+    ),
+    qa(
+        49,
+        "G",
+        "이 연구의 가장 큰 한계는 무엇인가요?",
+        "표본이 수업용 381 firm-year이고, 사업보고서 언어만 사용했으며, 결과가 인과가 아니라 연관이라는 점입니다.",
+        "KCGS 등급은 여러 정보를 종합한 외부 평가이고, 사업보고서 텍스트는 그중 일부만 반영합니다. 또한 긴 보고서를 쓰는 기업은 규모, 자원, 작성 관행도 다를 수 있습니다.",
+        "docs 04의 주의사항, 보고서 v2 11장 한계.",
+        "좋은 방어는 한계를 숨기지 않는 것입니다. '그래서 OLS만 쓰지 않고 Ordered/Binary, FE, 직교화, 섹션분해를 함께 봤다'고 연결합니다.",
+    ),
+    qa(
+        50,
+        "G",
+        "교수님이 마지막으로 '그래서 무엇을 배웠나'라고 물으면 어떻게 답하나요?",
+        "ESG 공시 언어는 외부 등급과 연관되지만, 그 연관의 상당 부분은 ESG 표현의 질보다 공시 분량과 작성 관행에 기대고 있음을 배웠다고 답합니다.",
+        "우리의 최종 메시지는 균형입니다. 공시 언어에는 신호가 있습니다. 특히 G expanded feature는 분량을 덜어내도 강합니다. 그러나 n_tokens가 더 강하게 움직이므로, 보고서가 길고 그럴듯하다고 실제 ESG 성과가 높다고 단정하면 안 됩니다.",
+        "보고서 v2 결론, 원본 노트북 cheap-talk evidence matrix, docs 04 해석과 한계 기준.",
+        "마무리 문장 예시: 'MCP와 Skill로 가이드를 구조화하고, OpenDART API와 Python으로 원문을 재현 가능하게 수집했으며, NLP와 통계 검증으로 공시 언어의 신호와 cheap-talk 가능성을 함께 보여준 프로젝트입니다.'",
+    ),
+]
+
+
+SOURCE_ITEMS = [
+    ("보고서 v2", "보고서_v2.md", "최종 서술, 핵심 수치, 해석 기준"),
+    ("보고서 HTML v2", "보고서_내용_v2.html", "발표용 HTML 구조와 본문 흐름"),
+    ("원본 노트북", "../notebooks/비정형 데이터 처리 Final Term Project_3조_원본.ipynb", "Decision Box 1-18, 수집·분석 출력"),
+    ("교수님 가이드 01", "../docs/01_assignment_overview.md", "연구 질문, TF-IDF/FastText/cosine, 인과 해석 금지"),
+    ("교수님 가이드 02", "../docs/02_dart_data_collection.md", "DART lineage, MCP 주의, OpenDART 수집 절차"),
+    ("교수님 가이드 03", "../docs/03_minimal_analysis_example.md", "feature validity, Spearman, 회귀 선택지"),
+    ("교수님 가이드 04", "../docs/04_submission_and_evaluation.md", "평가 기준, 제출 체크리스트, cheap-talk 해석"),
+]
+
+
+STORY_STEPS = [
+    "문제 인식: ESG 공시 언어가 외부 평가 등급과 함께 움직이는지 묻는다.",
+    "원자료 확보: 127개 기업 x 3개 회계연도 = 381 firm-year의 DART 사업보고서를 OpenDART lineage로 추적한다.",
+    "텍스트 정제: II/IV/VI 섹션을 파싱하고 Kiwi 사용자 사전으로 ESG 복합명사를 보존한다.",
+    "측정 설계: seed TF-IDF, FastText expanded dictionary, 기준 문장 cosine으로 ESG 표현을 숫자로 만든다.",
+    "검증과 해석: Spearman, Mann-Whitney, OLS/Ordered/Binary, 알파분석으로 '연관은 있지만 분량 효과가 강하다'는 cheap-talk 결론을 도출한다.",
+]
+
+
+def md_escape(text: str) -> str:
+    return text
+
+
+def build_markdown() -> str:
+    today = date.today().isoformat()
+    lines: list[str] = [
+        "# 발표 예상 질의응답 50단계 v1",
+        "",
+        f"- 작성일: {today}",
+        "- 용도: 보고서 본문에 몰아넣지 않고 팀 내부 발표·심층면접 대비용으로 쓰는 별도 Q&A 산출물",
+        "- 기준: 보고서 v2, 원본 ipynb 출력, members/_integrated/docs 교수님 가이드 01-04",
+        "- 말투 원칙: 예측·인과가 아니라 연관, 과장 대신 근거, 어려운 용어는 쉬운 설명과 함께 제시",
+        "",
+        "## 0. 발표 스토리라인 한 장 요약",
+        "",
+    ]
+    for i, step in enumerate(STORY_STEPS, start=1):
+        lines.append(f"{i}. {step}")
+    lines += [
+        "",
+        "## 0-1. 참고한 원천",
+        "",
+    ]
+    for name, path, role in SOURCE_ITEMS:
+        lines.append(f"- [{name}]({path}): {role}")
+    lines += [
+        "",
+        "## 0-2. Q&A 지도",
+        "",
+        "| 구간 | 범위 | 초점 |",
+        "|---|---:|---|",
+    ]
+    section_lookup = {code: (title, qrange) for code, title, qrange in SECTIONS}
+    for code, title, qrange in SECTIONS:
+        lines.append(f"| {code}. {title} | {qrange} | 발표 질문의 큰 흐름 |")
+    lines.append("")
+
+    current_section = None
+    for item in QA:
+        code = str(item["section"])
+        if code != current_section:
+            current_section = code
+            title, qrange = section_lookup[code]
+            lines += [
+                f"## {code}. {title} ({qrange})",
+                "",
+            ]
+        lines += [
+            f"### Q{int(item['no']):02d}. {md_escape(str(item['question']))}",
+            "",
+            f"**한 줄 답변**: {md_escape(str(item['short']))}",
+            "",
+            f"**쉬운 설명**: {md_escape(str(item['easy']))}",
+            "",
+            f"**근거**: {md_escape(str(item['evidence']))}",
+            "",
+            f"**추가 방어 포인트**: {md_escape(str(item['defense']))}",
+            "",
+        ]
+    lines += [
+        "---",
+        "",
+        "## 마지막 리허설 문장",
+        "",
+        "> 이 프로젝트는 ESG 등급을 맞히는 예측 모델이 아니라, OpenDART 사업보고서 언어와 KCGS 외부 평가 등급의 연관성을 재현 가능한 파이프라인으로 확인한 공시 연구입니다. MCP와 Skill은 방향과 점검을 돕는 보조 도구로 쓰고, 최종 수치는 OpenDART 원문을 Python으로 직접 파싱해 만들었습니다. 결론은 ESG 공시 언어와 등급 사이의 연관은 존재하지만, `n_tokens`로 대표되는 공시 분량 효과가 더 강하므로 결과는 cheap-talk 가능성과 함께 조심스럽게 해석해야 한다는 것입니다.",
+        "",
+    ]
+    return "\n".join(lines)
+
+
+def build_html() -> str:
+    today = date.today().isoformat()
+    section_lookup = {code: (title, qrange) for code, title, qrange in SECTIONS}
+    nav = "\n".join(
+        f'<a href="#section-{escape(code)}"><span>{escape(code)}</span>{escape(title)}</a>'
+        for code, title, _ in SECTIONS
+    )
+    story = "\n".join(
+        f"<li><strong>{idx}</strong><span>{escape(step)}</span></li>"
+        for idx, step in enumerate(STORY_STEPS, start=1)
+    )
+    sources = "\n".join(
+        f'<li><a href="{escape(path)}">{escape(name)}</a><span>{escape(role)}</span></li>'
+        for name, path, role in SOURCE_ITEMS
+    )
+
+    section_blocks: list[str] = []
+    for code, title, qrange in SECTIONS:
+        cards = []
+        for item in [row for row in QA if row["section"] == code]:
+            cards.append(
+                f"""
+                <article class="qa-card" id="q{int(item['no']):02d}">
+                    <div class="qa-kicker">Q{int(item['no']):02d} · {escape(title)}</div>
+                    <h3>{escape(str(item['question']))}</h3>
+                    <section class="answer-block main-answer">
+                        <h4>한 줄 답변</h4>
+                        <p>{escape(str(item['short']))}</p>
+                    </section>
+                    <section class="answer-block">
+                        <h4>쉬운 설명</h4>
+                        <p>{escape(str(item['easy']))}</p>
+                    </section>
+                    <section class="answer-grid">
+                        <div>
+                            <h4>근거</h4>
+                            <p>{escape(str(item['evidence']))}</p>
+                        </div>
+                        <div>
+                            <h4>추가 방어 포인트</h4>
+                            <p>{escape(str(item['defense']))}</p>
+                        </div>
+                    </section>
+                </article>
+                """
+            )
+        section_blocks.append(
+            f"""
+            <section class="qa-section" id="section-{escape(code)}">
+                <div class="section-heading">
+                    <span class="section-code">{escape(code)}</span>
+                    <div>
+                        <p>{escape(qrange)}</p>
+                        <h2>{escape(title)}</h2>
+                    </div>
+                </div>
+                {''.join(cards)}
+            </section>
+            """
+        )
+
+    return f"""<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>발표 예상 질의응답 50단계 v1</title>
+  <style>
+    :root {{
+      --ink: #172026;
+      --muted: #52616b;
+      --line: #d9e1e6;
+      --paper: #f7f9fa;
+      --panel: #ffffff;
+      --teal: #0f766e;
+      --blue: #2563eb;
+      --amber: #b45309;
+      --green: #15803d;
+      --shadow: 0 12px 30px rgba(23, 32, 38, 0.08);
+    }}
+    * {{ box-sizing: border-box; }}
+    html {{ scroll-behavior: smooth; }}
+    body {{
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", "Segoe UI", Arial, sans-serif;
+      line-height: 1.72;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }}
+    a {{ color: inherit; }}
+    .shell {{
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 34px 0 64px;
+    }}
+    header {{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }}
+    .hero, .source-panel, .story-panel, .qa-card {{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }}
+    .hero {{
+      padding: 32px;
+      border-top: 5px solid var(--teal);
+    }}
+    .eyebrow {{
+      color: var(--teal);
+      font-weight: 800;
+      letter-spacing: 0;
+      margin: 0 0 8px;
+      font-size: 14px;
+    }}
+    h1 {{
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }}
+    .lead {{
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+    }}
+    .meta {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 22px;
+    }}
+    .pill {{
+      border: 1px solid #cbd5dc;
+      background: #f8fafc;
+      color: #334155;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }}
+    .source-panel {{
+      padding: 22px;
+    }}
+    .source-panel h2, .story-panel h2 {{
+      margin: 0 0 12px;
+      font-size: 18px;
+    }}
+    .source-panel ul, .story-panel ol {{
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }}
+    .source-panel li {{
+      padding: 10px 0;
+      border-top: 1px solid #eef2f4;
+    }}
+    .source-panel li:first-child {{ border-top: 0; }}
+    .source-panel a {{
+      display: block;
+      color: var(--blue);
+      font-weight: 800;
+      text-decoration: none;
+      margin-bottom: 2px;
+    }}
+    .source-panel span {{
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }}
+    .nav {{
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 0 16px;
+      background: linear-gradient(180deg, var(--paper) 70%, rgba(247, 249, 250, 0));
+      margin-bottom: 10px;
+    }}
+    .nav a {{
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 800;
+    }}
+    .nav span {{
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--teal);
+      font-size: 12px;
+    }}
+    .story-panel {{
+      padding: 24px;
+      margin-bottom: 28px;
+      border-left: 5px solid var(--amber);
+    }}
+    .story-panel li {{
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 10px 0;
+      border-top: 1px solid #eef2f4;
+    }}
+    .story-panel li:first-child {{ border-top: 0; }}
+    .story-panel strong {{
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--amber);
+      font-size: 13px;
+    }}
+    .qa-section {{
+      margin-top: 34px;
+      scroll-margin-top: 82px;
+    }}
+    .section-heading {{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }}
+    .section-code {{
+      display: inline-grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+    }}
+    .section-heading p {{
+      margin: 0;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 900;
+    }}
+    .section-heading h2 {{
+      margin: 0;
+      font-size: 25px;
+      letter-spacing: 0;
+    }}
+    .qa-card {{
+      padding: 24px;
+      margin: 14px 0;
+      scroll-margin-top: 88px;
+    }}
+    .qa-kicker {{
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }}
+    .qa-card h3 {{
+      margin: 0 0 16px;
+      font-size: 22px;
+      line-height: 1.42;
+      letter-spacing: 0;
+    }}
+    .answer-block, .answer-grid > div {{
+      border-top: 1px solid #edf1f3;
+      padding-top: 14px;
+      margin-top: 14px;
+    }}
+    .main-answer {{
+      border-top: 2px solid var(--teal);
+    }}
+    .answer-block h4, .answer-grid h4 {{
+      margin: 0 0 5px;
+      color: var(--teal);
+      font-size: 14px;
+      letter-spacing: 0;
+    }}
+    .answer-block p, .answer-grid p {{
+      margin: 0;
+      color: #26343b;
+    }}
+    .answer-grid {{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 20px;
+    }}
+    .closing {{
+      margin-top: 34px;
+      padding: 24px;
+      border-radius: 8px;
+      color: #10201d;
+      background: #e8f5f1;
+      border: 1px solid #b9ddd2;
+      font-weight: 700;
+    }}
+    code {{
+      font-family: Consolas, "Courier New", monospace;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 5px;
+      padding: 1px 5px;
+    }}
+    @media (max-width: 860px) {{
+      .shell {{ width: min(100% - 28px, 1180px); padding-top: 20px; }}
+      header {{ grid-template-columns: 1fr; }}
+      .hero {{ padding: 24px; }}
+      .answer-grid {{ grid-template-columns: 1fr; gap: 0; }}
+      .nav a {{ font-size: 13px; }}
+    }}
+    @media print {{
+      body {{ background: #fff; }}
+      .nav {{ display: none; }}
+      .shell {{ width: 100%; padding: 0; }}
+      .hero, .source-panel, .story-panel, .qa-card {{ box-shadow: none; break-inside: avoid; }}
+    }}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <section class="hero">
+        <p class="eyebrow">ESG DART Final Project · Internal Defense Guide</p>
+        <h1>발표 예상 질의응답 50단계 v1</h1>
+        <p class="lead">보고서와 원본 ipynb, 교수님 가이드 01-04를 기준으로 만든 발표·심층면접 대비용 Q&A입니다. 질문은 세분화하되 답변은 쉬운 설명, 근거, 방어 포인트가 함께 보이도록 구성했습니다.</p>
+        <div class="meta">
+          <span class="pill">작성일 {escape(today)}</span>
+          <span class="pill">50 Questions</span>
+          <span class="pill">보고서와 분리 보관</span>
+          <span class="pill">인과 아님 · 연관 해석</span>
+        </div>
+      </section>
+      <aside class="source-panel">
+        <h2>참고 원천</h2>
+        <ul>{sources}</ul>
+      </aside>
+    </header>
+    <nav class="nav" aria-label="Q&A sections">{nav}</nav>
+    <section class="story-panel">
+      <h2>발표 스토리라인 한 장 요약</h2>
+      <ol>{story}</ol>
+    </section>
+    {''.join(section_blocks)}
+    <section class="closing">
+      이 프로젝트는 ESG 등급을 맞히는 예측 모델이 아니라, OpenDART 사업보고서 언어와 KCGS 외부 평가 등급의 연관성을 재현 가능한 파이프라인으로 확인한 공시 연구입니다. MCP와 Skill은 방향과 점검을 돕는 보조 도구로 쓰고, 최종 수치는 OpenDART 원문을 Python으로 직접 파싱해 만들었습니다. 결론은 ESG 공시 언어와 등급 사이의 연관은 존재하지만, <code>n_tokens</code>로 대표되는 공시 분량 효과가 더 강하므로 결과는 cheap-talk 가능성과 함께 조심스럽게 해석해야 한다는 것입니다.
+    </section>
+  </main>
+</body>
+</html>
+"""
+
+
+def main() -> None:
+    if len(QA) != 50:
+        raise ValueError(f"Expected 50 Q&A entries, got {len(QA)}")
+    OUT_MD.write_text(build_markdown(), encoding="utf-8", newline="\n")
+    OUT_HTML.write_text(build_html(), encoding="utf-8", newline="\n")
+    print(f"Wrote {OUT_MD}")
+    print(f"Wrote {OUT_HTML}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알파분석 방향 제안 | 비정형 기말 프로젝트</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e2a;
+    --border: #252a38;
+    --accent: #c8f064;
+    --accent2: #64c8f0;
+    --accent3: #f0a064;
+    --accent4: #f06490;
+    --text: #e8eaf0;
+    --text-muted: #7a8099;
+    --text-dim: #3e4460;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nanum Gothic', 'Apple SD Gothic Neo', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 64px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .header-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-label::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.02em;
+    font-size: clamp(40px, 7vw, 72px);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  h1 span { color: var(--accent); }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.2s; }
+  .section:nth-child(4) { animation-delay: 0.3s; }
+  .section:nth-child(5) { animation-delay: 0.4s; }
+  .section:nth-child(6) { animation-delay: 0.5s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    min-width: 32px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Finding cards */
+  .findings {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .finding-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .finding-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .finding-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .finding-card.green::before { background: var(--accent); }
+  .finding-card.blue::before { background: var(--accent2); }
+  .finding-card.orange::before { background: var(--accent3); }
+
+  .finding-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .finding-card.green .finding-tag { color: var(--accent); }
+  .finding-card.blue .finding-tag { color: var(--accent2); }
+  .finding-card.orange .finding-tag { color: var(--accent3); }
+
+  .finding-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .finding-text strong { color: var(--accent); }
+  .finding-card.blue .finding-text strong { color: var(--accent2); }
+  .finding-card.orange .finding-text strong { color: var(--accent3); }
+
+  /* Impossible block */
+  .impossible-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent4);
+    border-radius: 10px;
+    padding: 20px 24px;
+  }
+  .impossible-block p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+  .impossible-block p::before {
+    content: '❌ ';
+  }
+  .impossible-block p + p { margin-top: 6px; }
+
+  /* Direction cards */
+  .direction-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .direction-card:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+  .direction-card::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+  .direction-card.d1::after { background: var(--accent); }
+  .direction-card.d2::after { background: var(--accent2); }
+  .direction-card.d3::after { background: var(--accent3); }
+  .direction-card.d4::after { background: var(--accent4); }
+
+  .direction-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+
+  .direction-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .d1 .direction-badge { background: rgba(200,240,100,0.12); color: var(--accent); }
+  .d2 .direction-badge { background: rgba(100,200,240,0.12); color: var(--accent2); }
+  .d3 .direction-badge { background: rgba(240,160,100,0.12); color: var(--accent3); }
+  .d4 .direction-badge { background: rgba(240,100,144,0.12); color: var(--accent4); }
+
+  .direction-title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  .direction-body {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .formula-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 12px;
+    line-height: 1.7;
+  }
+
+  .question-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .question-box::before {
+    content: '→';
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Factor table */
+  .factor-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .factor-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .factor-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    line-height: 1.5;
+    vertical-align: top;
+  }
+  .factor-table tr:last-child td { border-bottom: none; }
+  .factor-table tr:hover td { background: var(--surface2); }
+
+  .tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+  .tag-green { background: rgba(200,240,100,0.12); color: var(--accent); }
+  .tag-blue  { background: rgba(100,200,240,0.12); color: var(--accent2); }
+  .tag-orange{ background: rgba(240,160,100,0.12); color: var(--accent3); }
+  .tag-pink  { background: rgba(240,100,144,0.12); color: var(--accent4); }
+
+  /* Story flow */
+  .story-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .story-node {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .story-spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 32px;
+  }
+
+  .story-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 6px;
+    position: relative;
+    z-index: 1;
+  }
+  .story-node:nth-child(2) .story-dot { background: var(--accent2); }
+  .story-node:nth-child(3) .story-dot { background: var(--accent3); }
+  .story-node:nth-child(4) .story-dot { background: var(--accent4); }
+  .story-node:nth-child(5) .story-dot { background: var(--accent); }
+
+  .story-line {
+    width: 1px;
+    flex: 1;
+    background: var(--border);
+    min-height: 32px;
+  }
+
+  .story-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 8px;
+    flex: 1;
+  }
+
+  .story-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .story-node:nth-child(1) .story-label { color: var(--accent); }
+  .story-node:nth-child(2) .story-label { color: var(--accent2); }
+  .story-node:nth-child(3) .story-label { color: var(--accent3); }
+  .story-node:nth-child(4) .story-label { color: var(--accent4); }
+  .story-node:nth-child(5) .story-label { color: var(--accent); }
+
+  .story-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  /* Implication */
+  .implication-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .implication-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+  }
+
+  .implication-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .implication-card:nth-child(2) .implication-title { color: var(--accent2); }
+
+  .implication-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .implication-list li {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--text-muted);
+    padding-left: 16px;
+    position: relative;
+  }
+  .implication-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .implication-card:nth-child(2) .implication-list li::before { color: var(--accent2); }
+
+  /* Footer */
+  .footer {
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .findings { grid-template-columns: 1fr; }
+    .implication-grid { grid-template-columns: 1fr; }
+    .factor-table { font-size: 12px; }
+    .factor-table th, .factor-table td { padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-label">비정형 데이터 처리 | 기말 프로젝트</div>
+    <h1>알파분석 <span>방향 제안</span></h1>
+    <div class="header-sub">ESG × 사업보고서 텍스트 분석 → 팩터 설계</div>
+  </div>
+
+  <!-- Section 1: 선행연구 한계 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>선행연구 한계</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="findings">
+      <div class="finding-card green">
+        <div class="finding-tag">한계 A</div>
+        <div class="finding-text"><strong>정형 데이터만 사용</strong><br>재무 수치만으로 ESG 등급 예측. 시장이 기업을 어떻게 인식하는지에 대한 비정형 정보 부재.</div>
+      </div>
+      <div class="finding-card blue">
+        <div class="finding-tag">한계 B</div>
+        <div class="finding-text"><strong>텍스트 감성 미반영</strong><br>뉴스·공시·사업보고서의 언어 신호가 ESG 등급 및 주가 알파에 미치는 영향 미분석.</div>
+      </div>
+      <div class="finding-card orange">
+        <div class="finding-tag">한계 C</div>
+        <div class="finding-text"><strong>섹션 단위 분석 없음</strong><br>보고서 전체를 동등하게 처리. 신호가 집중된 특정 섹션의 정보 가치를 놓침.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: 우리 분석 결과 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>우리 분석 결과 (핵심 발견)</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="findings">
+      <div class="finding-card green">
+        <div class="finding-tag">발견 1 — CHEAP-TALK</div>
+        <div class="finding-text">공시 언어 ↔ ESG 등급 연관 존재. 그러나 <strong>최강 요인은 분량</strong>으로, 내용보다 길이가 등급을 설명함.</div>
+      </div>
+      <div class="finding-card blue">
+        <div class="finding-tag">발견 2 — G 신호</div>
+        <div class="finding-text">분량·규모 통제 후 <strong>G(지배구조)에 견고한 독립 신호</strong> 존재. VI 섹션에 국소화됨.</div>
+      </div>
+      <div class="finding-card orange">
+        <div class="finding-tag">발견 3 — E·S</div>
+        <div class="finding-text">E는 규모 통제 시 약화되는 <strong>부분 신호</strong>. S는 사업보고서만으로 <strong>측정 자체가 어려움</strong>.</div>
+      </div>
+    </div>
+
+    <div class="impossible-block">
+      <p>"ESG 어휘를 더 사용하면 KCGS 등급이 오른다"</p>
+      <p>"사업보고서 분량을 늘리면 ESG 평가가 좋아진다"</p>
+      <p>"G 어휘를 풍부히 쓰면 지배구조가 우수하다"</p>
+    </div>
+  </div>
+
+  <!-- Section 3: 알파분석 접목 방향 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>알파분석 접목 방향</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="direction-card d1">
+      <div class="direction-header">
+        <span class="direction-badge">방향 1</span>
+        <div class="direction-title">Cheap-talk 제거 후 순수 G 신호 팩터</div>
+      </div>
+      <div class="direction-body">분량 효과를 회귀 잔차로 제거한 뒤, 순수한 G 어휘 밀도를 팩터로 구성. "분량만 늘린 기업"과 "진짜 G 내용이 있는 기업"을 시장이 구별하는지 검증.</div>
+      <div class="formula-box">G_signal = G어휘 빈도 / 전체 분량<br>→ 분량 회귀 잔차 추출<br>→ 잔차 상위 포트폴리오 vs 하위 포트폴리오 수익률 비교</div>
+      <div class="question-box">Cheap-talk을 제거한 순수 G 신호가 알파를 예측하는가?</div>
+    </div>
+
+    <div class="direction-card d2">
+      <div class="direction-header">
+        <span class="direction-badge">방향 2</span>
+        <div class="direction-title">VI 섹션 집중 분석 팩터</div>
+      </div>
+      <div class="direction-body">G 신호가 VI 섹션에 국소화되어 있다는 발견을 활용. 전체 보고서 대신 VI 섹션만 추출하여 임베딩 및 팩터 구성. 선행연구와의 명확한 차별점 확보.</div>
+      <div class="formula-box">VI 섹션 텍스트 추출<br>→ Sentence Transformer 임베딩 (KR-ELECTRA)<br>→ VI 섹션 G 어휘 밀도 팩터 → 알파 예측력 검증</div>
+      <div class="question-box">전체 보고서보다 VI 섹션 한정 신호의 알파 예측력이 더 높은가?</div>
+    </div>
+
+    <div class="direction-card d3">
+      <div class="direction-header">
+        <span class="direction-badge">방향 3</span>
+        <div class="direction-title">ESG 워싱(Washing) 탐지 팩터</div>
+      </div>
+      <div class="direction-body">분량은 많지만 G 잔차 신호는 낮은 기업을 "cheap-talk 기업(ESG 워싱 의심)"으로 분류. 실질 신호 기업과의 장단기 수익률 차이를 분석. 경영학적으로 임팩트 있는 질문 제시.</div>
+      <div class="formula-box">분량 상위 & G잔차 하위 → "ESG 워싱 의심" 기업<br>분량 무관 & G잔차 상위 → "실질 신호" 기업<br>→ 두 포트폴리오 수익률 장단기 비교</div>
+      <div class="question-box">시장은 ESG 워싱 기업을 텍스트 신호로 구별하여 반응하는가?</div>
+    </div>
+
+    <div class="direction-card d4">
+      <div class="direction-header">
+        <span class="direction-badge">방향 4</span>
+        <div class="direction-title">E·G·S 신호 원천 비대칭 팩터</div>
+      </div>
+      <div class="direction-body">E·G는 사업보고서 내부 신호, S는 외부 데이터 필요라는 발견을 팩터 설계에 직접 반영. S 측정 불가 자체를 연구 발견으로 활용하여 공시 체계의 한계를 지적.</div>
+      <div class="formula-box">E·G 팩터 → 사업보고서 내부 텍스트 신호<br>S 팩터   → 외부 비정형 데이터 필요 (뉴스 등)<br>→ 신호 원천별 알파 예측력 비교</div>
+      <div class="question-box">신호 원천(내부 vs 외부)에 따라 알파 예측력이 다른가?</div>
+    </div>
+  </div>
+
+  <!-- Section 4: 팩터 요약표 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>알파 팩터 요약</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+      <table class="factor-table">
+        <thead>
+          <tr>
+            <th>팩터</th>
+            <th>구성 방법</th>
+            <th>검증 질문</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-green">G잔차 팩터</span></td>
+            <td>G어휘 밀도에서 분량 효과 제거한 잔차</td>
+            <td>Cheap-talk 제거 후에도 알파 예측하는가?</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-blue">VI섹션 팩터</span></td>
+            <td>VI섹션만 추출한 G 신호 밀도</td>
+            <td>전체 보고서보다 예측력 높은가?</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-orange">ESG워싱 팩터</span></td>
+            <td>분량 대비 G잔차 낮은 기업 식별</td>
+            <td>워싱 기업이 장기 수익률 낮은가?</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-pink">비대칭 팩터</span></td>
+            <td>E·G 내부신호 / S 외부신호 분리</td>
+            <td>신호 원천별 알파 예측력 다른가?</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section 5: 스토리텔링 흐름 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>스토리텔링 흐름</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="story-flow">
+      <div class="story-node">
+        <div class="story-spine">
+          <div class="story-dot"></div>
+          <div class="story-line"></div>
+        </div>
+        <div style="flex:1; margin-bottom: 8px;">
+          <div class="story-content">
+            <div class="story-label">선행연구</div>
+            <div class="story-text">재무 데이터 → XGBoost → ESG 등급 예측<br><span style="color: var(--text-muted); font-size: 12px;">한계: 사업보고서 텍스트(비정형) 미반영</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-node">
+        <div class="story-spine">
+          <div class="story-dot"></div>
+          <div class="story-line"></div>
+        </div>
+        <div style="flex:1; margin-bottom: 8px;">
+          <div class="story-content">
+            <div class="story-label">우리 연구 1단계</div>
+            <div class="story-text">사업보고서 텍스트 → ESG 등급 연관 분석<br><span style="color: var(--text-muted); font-size: 12px;">발견: 분량(cheap-talk) 지배, G만 독립 신호, VI 섹션 국소화</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-node">
+        <div class="story-spine">
+          <div class="story-dot"></div>
+          <div class="story-line"></div>
+        </div>
+        <div style="flex:1; margin-bottom: 8px;">
+          <div class="story-content">
+            <div class="story-label">우리 연구 2단계</div>
+            <div class="story-text">Cheap-talk 제거한 순수 G신호 → 알파 팩터 설계<br><span style="color: var(--text-muted); font-size: 12px;">VI 섹션 집중 · ESG 워싱 탐지 · 신호 원천 비대칭</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-node">
+        <div class="story-spine">
+          <div class="story-dot"></div>
+          <div class="story-line"></div>
+        </div>
+        <div style="flex:1; margin-bottom: 8px;">
+          <div class="story-content">
+            <div class="story-label">검증 질문</div>
+            <div class="story-text">시장은 ESG 워싱을 텍스트 신호로 구별하는가?<br><span style="color: var(--text-muted); font-size: 12px;">G잔차 팩터 / VI섹션 팩터 / 워싱 팩터 / 비대칭 팩터</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-node">
+        <div class="story-spine">
+          <div class="story-dot"></div>
+        </div>
+        <div style="flex:1; margin-bottom: 8px;">
+          <div class="story-content">
+            <div class="story-label">시사점 & 제언</div>
+            <div class="story-text">비정형 텍스트 신호가 ESG 평가·투자 판단에 보완적 가치 제공<br><span style="color: var(--text-muted); font-size: 12px;">ESG 공시 표준화 · S 외부 데이터 통합 · 워싱 탐지 체계 필요</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: 시사점 & 제언 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>경영학적 시사점 & 제언</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="implication-grid">
+      <div class="implication-card">
+        <div class="implication-title">시사점</div>
+        <ul class="implication-list">
+          <li>재무 수치가 같아도 ESG를 어떻게 서술하느냐에 따라 시장 반응(알파)이 달라질 수 있음</li>
+          <li>Cheap-talk(분량 부풀리기)은 시장이 장기적으로 구별하여 반응할 가능성</li>
+          <li>G(지배구조)는 사업보고서 VI 섹션에서 신뢰할 수 있는 텍스트 신호 추출 가능</li>
+          <li>S(사회) 항목은 사업보고서만으로 측정이 어려워 외부 데이터 필요성 입증</li>
+        </ul>
+      </div>
+      <div class="implication-card">
+        <div class="implication-title">제언</div>
+        <ul class="implication-list">
+          <li><strong style="color:var(--text)">기업</strong>: 사업보고서 ESG 섹션을 단순 나열이 아닌 구체적·실질적 내용 중심으로 작성</li>
+          <li><strong style="color:var(--text)">투자자</strong>: ESG 등급 외 사업보고서 G 섹션 텍스트 신호를 보조 투자 지표로 활용</li>
+          <li><strong style="color:var(--text)">규제기관</strong>: ESG 공시 텍스트 표준화 및 S 항목 외부 데이터 통합 공시 의무화 검토</li>
+          <li><strong style="color:var(--text)">평가기관</strong>: 분량 기반 평가 탈피, 실질 내용 기반 텍스트 분석 도입 필요</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>비정형 데이터 처리 | 기말 프로젝트 팀 회의 자료</span>
+    <span>ESG × ALPHA ANALYSIS</span>
+  </div>
+
+</div>
+</body>
+</html>
