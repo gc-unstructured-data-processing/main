@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알파분석 설계·시사점 타당성 검토 + 추가 의견 — 이동원 회의 입장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4f1ea;
+  --card:#fffdf8;
+  --ink:#1a1c1f;
+  --ink-soft:#42454b;
+  --ink-faint:#76787f;
+  --rule:#dcd8cd;
+  --rule-soft:#ebe7dc;
+  --navy:#1f3a5f;          /* primary */
+  --navy-soft:#dbe4ef;
+  --crimson:#9a2b1f;       /* 과잉 / 위험 */
+  --crimson-soft:#f3ddd6;
+  --teal:#15605a;          /* 과소 / 기회 */
+  --teal-soft:#d6e8e4;
+  --green:#3f6b2e;         /* 타당 / 정합 */
+  --green-soft:#e0ebd4;
+  --gold:#9a7426;
+  --gold-soft:#f0e6cf;
+  --shadow:0 22px 48px -30px rgba(26,28,31,.5);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;background:
+    radial-gradient(900px 480px at 88% -8%, rgba(31,58,95,.07), transparent 60%),
+    radial-gradient(820px 420px at -5% 3%, rgba(154,43,31,.06), transparent 55%),
+    var(--paper);
+  color:var(--ink);font-family:"Noto Sans KR",sans-serif;line-height:1.72;
+  font-size:16px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px 120px;}
+
+/* HERO */
+.hero{padding:58px 0 28px;border-bottom:3px double var(--ink);}
+.tag{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.38em;
+  text-transform:uppercase;color:var(--ink-faint);margin:0 0 16px;}
+.hero h1{font-family:"Gowun Batang",serif;font-weight:700;
+  font-size:clamp(28px,5.2vw,48px);line-height:1.18;letter-spacing:-.015em;margin:0;}
+.hero h1 .em{color:var(--navy);}
+.hero .lead{margin:20px 0 0;max-width:780px;font-size:17.5px;color:var(--ink-soft);}
+.hero .lead b{color:var(--ink);font-weight:700;}
+.who{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;}
+.chip{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.02em;
+  background:var(--card);border:1px solid var(--rule);border-radius:999px;
+  padding:6px 13px;color:var(--ink-soft);}
+.chip b{color:var(--navy);font-weight:700;}
+
+/* premise band */
+.premise{margin:30px 0 8px;padding:20px 24px;background:linear-gradient(120deg,var(--navy),#13283f);
+  color:#eef3fa;border-radius:14px;box-shadow:var(--shadow);}
+.premise .k{font-family:"JetBrains Mono";font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9db6d6;}
+.premise h2{font-family:"Gowun Batang";font-weight:700;font-size:21px;margin:6px 0 8px;color:#fff;}
+.premise p{margin:0;font-size:14.5px;color:#d4ddea;}
+.premise .src{font-family:"JetBrains Mono";font-size:12px;color:#9db6d6;}
+
+/* section */
+.sec{margin-top:62px;}
+.ribbon{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+.rank{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  font-family:"Gowun Batang";font-weight:700;font-size:20px;color:#fff;background:var(--navy);}
+.ribbon .meta .ord{font-family:"JetBrains Mono";font-size:11px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--ink-faint);}
+.ribbon h2{font-family:"Gowun Batang",serif;font-weight:700;font-size:clamp(21px,3.3vw,29px);
+  margin:2px 0 0;line-height:1.25;letter-spacing:-.01em;}
+.sec>.intro{margin:14px 0 0;font-size:15.5px;color:var(--ink-soft);max-width:840px;}
+
+h3.blk{font-size:13px;font-family:"JetBrains Mono",monospace;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-faint);margin:34px 0 14px;
+  display:flex;align-items:center;gap:12px;}
+h3.blk::after{content:"";flex:1;height:1px;background:var(--rule);}
+
+/* verdict cards */
+.vlist{display:flex;flex-direction:column;gap:14px;}
+.vcard{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:18px 20px;
+  box-shadow:0 12px 28px -26px rgba(26,28,31,.6);position:relative;overflow:hidden;}
+.vcard::before{content:"";position:absolute;top:0;left:0;width:5px;height:100%;background:var(--green);}
+.vcard.warn::before{background:var(--gold);}
+.vcard .top{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.vcard .n{font-family:"Gowun Batang";font-weight:700;font-size:17px;color:var(--navy);flex:1;min-width:240px;}
+.verdict{font-family:"JetBrains Mono";font-size:11px;font-weight:700;letter-spacing:.04em;
+  padding:4px 11px;border-radius:999px;white-space:nowrap;}
+.verdict.ok{background:var(--green-soft);color:var(--green);}
+.verdict.cond{background:var(--gold-soft);color:var(--gold);}
+.verdict.star{background:var(--navy-soft);color:var(--navy);}
+.vcard .body{font-size:14.5px;color:var(--ink-soft);}
+.vcard .body b{color:var(--ink);}
+.vcard code{font-family:"JetBrains Mono";font-size:12px;background:var(--rule-soft);border-radius:4px;padding:1px 6px;color:var(--crimson);}
+.vcard .mine{margin-top:11px;display:flex;gap:9px;align-items:flex-start;font-size:14px;color:var(--ink);
+  background:var(--navy-soft);border-radius:10px;padding:10px 13px;line-height:1.55;}
+.vcard .mine .a{font-weight:700;color:var(--navy);flex:none;}
+.src{font-family:"JetBrains Mono";font-size:11.5px;color:var(--crimson);}
+
+/* finding chips row */
+.finds{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:6px 0 6px;}
+.find{background:var(--card);border:1px solid var(--rule);border-radius:13px;padding:16px 17px;position:relative;}
+.find::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;border-radius:13px 13px 0 0;}
+.find.f1::before{background:var(--crimson);}.find.f2::before{background:var(--navy);}.find.f3::before{background:var(--teal);}
+.find .h{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:7px;}
+.find .v{font-family:"Gowun Batang";font-weight:700;font-size:25px;line-height:1.05;}
+.find.f1 .v{color:var(--crimson);}.find.f2 .v{color:var(--navy);}.find.f3 .v{color:var(--teal);}
+.find .d{font-size:12.5px;color:var(--ink-soft);margin-top:6px;line-height:1.5;}
+
+/* opinion cards (part3) */
+.opin{display:flex;flex-direction:column;gap:14px;}
+.ocard{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:20px 22px;
+  box-shadow:0 12px 28px -26px rgba(26,28,31,.6);position:relative;overflow:hidden;}
+.ocard::before{content:"";position:absolute;top:0;left:0;width:5px;height:100%;background:var(--navy);}
+.ocard .lab{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.ocard .lab .big{font-family:"Gowun Batang";font-weight:700;font-size:24px;color:var(--navy);line-height:1;}
+.ocard .lab .t{font-family:"Gowun Batang";font-weight:700;font-size:18px;color:var(--ink);}
+.ocard p{margin:0;font-size:14.5px;color:var(--ink-soft);}
+.ocard p b{color:var(--ink);}
+.ocard .why{margin-top:10px;padding:10px 13px;background:var(--gold-soft);border-radius:10px;
+  font-size:13.5px;color:var(--ink-soft);}
+.ocard .why b{color:var(--gold);}
+
+/* agenda table */
+.tbl{width:100%;border-collapse:collapse;margin:8px 0;background:var(--card);border:1px solid var(--rule);
+  border-radius:12px;overflow:hidden;font-size:14px;box-shadow:0 12px 28px -28px rgba(26,28,31,.6);}
+.tbl th{background:var(--ink);color:var(--paper);text-align:left;padding:12px 15px;
+  font-family:"Noto Sans KR";font-weight:600;font-size:12.5px;letter-spacing:.02em;}
+.tbl td{padding:12px 15px;border-bottom:1px solid var(--rule-soft);color:var(--ink-soft);vertical-align:top;line-height:1.55;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:nth-child(even) td{background:rgba(236,231,220,.4);}
+.tbl td:first-child{font-weight:600;color:var(--ink);white-space:nowrap;}
+.tbl .pos{color:var(--navy);font-weight:600;}
+
+/* limit / note */
+.note{margin-top:20px;display:flex;gap:13px;background:#fbf6ec;border:1px dashed var(--gold);
+  border-radius:12px;padding:15px 18px;font-size:14px;color:var(--ink-soft);}
+.note .ic{flex:none;font-size:17px;}
+.note b{color:var(--ink);}
+
+.foot{margin-top:50px;padding-top:20px;border-top:3px double var(--ink);
+  font-family:"JetBrains Mono";font-size:11.5px;letter-spacing:.05em;color:var(--ink-faint);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.foot .d{color:var(--navy);}
+::selection{background:var(--navy);color:var(--paper);}
+
+@media(max-width:760px){
+  .finds{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <p class="tag">ESG DART · 3조 · 알파분석 회의 입장 자료</p>
+    <h1>알파분석 설계와 시사점은 <span class="em">타당한가</span>,<br>그리고 나는 <span class="em">무엇을 더 내세울 것인가</span></h1>
+    <p class="lead">지난 회의에 불참한 <b>이동원</b>이, 회의에서 메인으로 확정된 <b>김혜성의 Talk–Walk Gap 알파</b>(노트북 §6에 이미 구현됨)와
+      <b>「알파분석_제안_김혜성」·「알파분석_설계_explainer」</b>를 정독해 작성한 검토 의견서다.
+      오늘 안건은 ① 설계 타당성 확인 → ② 시사점·제언 타당성 확인 → ③ 추가 의견 개진 → <b>제언 최종 결정</b>이다.</p>
+    <div class="who">
+      <span class="chip">작성 <b>이동원</b> (통합·문서·발표자료)</span>
+      <span class="chip">메인 알파 <b>Talk–Walk Gap (김혜성)</b></span>
+      <span class="chip">표본 <b>381 firm-year</b> · 추가수집 0</span>
+      <span class="chip">톤 <b>중도~적극</b></span>
+    </div>
+  </header>
+
+  <!-- PREMISE -->
+  <div class="premise">
+    <div class="k">회의 합의 전제</div>
+    <h2>메인 알파 = 김혜성 「말–실행 격차(Talk–Walk Gap)」로 확정</h2>
+    <p>비교자료 평가매트릭스에서 Talk–Walk Gap과 가독성 지도가 동률 15/15였고, <b>이미 노트북 §6에 전 과정이 구현·실행</b>되어 있다(격차점수 → 2×2 유형 → 지속성 → 규모통제 robustness → 축간 선택적 공시).
+      따라서 이 문서는 "어떤 알파를 할까"가 아니라 <b>"확정된 김혜성 알파의 설계·시사점이 타당한지 검증하고, 무엇을 더 강하게 내세울지"</b>에 집중한다. <span class="src">근거: §6 구현 · 비교자료 매트릭스</span></p>
+  </div>
+
+  <!-- PART 1 — 설계 타당성 -->
+  <section class="sec">
+    <div class="ribbon">
+      <div class="rank">1</div>
+      <div class="meta"><div class="ord">안건 ① · 알파분석 설계가 타당한가</div>
+        <h2>설계 4결정 + 견고성 점검 — 항목별 검증</h2></div>
+    </div>
+    <p class="intro">격차 점수를 만드는 4가지 설계 결정(Decision Box ⑭)과, 가장 중요한 견고성 점검(6-4B)을 하나씩 "<b>타당 판정 + 근거(수치) + 내 보강의견</b>"으로 검토한다.</p>
+
+    <h3 class="blk">설계 결정별 판정</h3>
+    <div class="vlist">
+
+      <div class="vcard">
+        <div class="top"><div class="n">① 분량 잔차화 — <code>talk_resid = resid(expanded_score ~ log_n_tokens)</code></div>
+          <span class="verdict ok">타당 ✓</span></div>
+        <div class="body"><b>근거.</b> §4 타당성 검증에서 <b>보고서 분량(n_tokens)이 어떤 ESG 어휘보다 등급과 강하게 연관(ρ≈0.66)</b>된, 이 프로젝트 최대 교란이다.
+          그 분량으로 설명되는 몫을 'talk'에서 직접 빼고 <b>길이와 무관한 순수 어휘강조도</b>만 남긴 것은 정확히 옳은 통제다.
+          검증 출력 <code>talk_resid↔log_n_tokens r≈0.000</code> — 분량을 깨끗이 제거했다.</div>
+        <div class="mine"><span class="a">보강 →</span><span><code>r≈0.000</code>·<code>gap 평균≈0</code>은 <b>"발견"이 아니라 "제대로 만들었다는 검증 표시"</b>다(잔차는 수학적으로 그 변수와 상관 0). 발표 때 이걸 결과처럼 읽으면 안 된다고 못 박자. 실제로 읽을 값은 <b>SD 1.079</b>(격차의 폭)와 개별 z다.</span></div>
+      </div>
+
+      <div class="vcard">
+        <div class="top"><div class="n">② z-표준화 후 격차 정의 — <code>gap = z(talk) − z(grade)</code></div>
+          <span class="verdict ok">타당 ✓</span></div>
+        <div class="body"><b>근거.</b> 한쪽은 연속값(어휘), 한쪽은 0~6 서열(등급)이라 그대로 빼면 비교가 안 된다. 각각 z로 맞춘 뒤 빼는 것은 표준 절차이며,
+          <b>'공시점수 − 성과점수'</b>로 격차를 만든 greenwashing 선행연구(#6 Peeking, Delmas-Burbano 계열)와 <b>동형</b>이다. 양수=과잉(말이 앞섬), 음수=과소(등급이 앞섬)로 부호 해석도 명료.</div>
+        <div class="mine"><span class="a">보강 →</span><span>양극단이 직관과 일치해 설계 타당성이 눈으로 확인된다: 과잉 1위 <b>백광산업</b>(3년 연속 D인데 어휘 z +1.2~1.6), 과소 1위 <b>KB·신한금융지주</b>(A+인데 어휘 z 음수). "격차가 의도대로 잡힌다"의 산 증거.</span></div>
+      </div>
+
+      <div class="vcard">
+        <div class="top"><div class="n">③ 2×2 중앙값 분할 + 3개 연도 지속성</div>
+          <span class="verdict ok">타당 ✓</span></div>
+        <div class="body"><b>근거.</b> 등급이 특정 구간(s_grade A+ 112건 등)에 쏠려 평균이 대표값이 못 되므로 <b>중앙값 분할이 더 적절</b>(표본이 고르게 절반씩 나뉨).
+          유형 분포(과잉 72·과소 96·정합 119·일관저조 94)도 한쪽 쏠림 없이 분포. <b>지속성: 127개사 중 76개사(59.8%)가 3년 내내 같은 칸</b> → 격차가 일시적 전술이 아니라 기업에 굳어진 특성임을 보인 강력한 결과.</div>
+        <div class="mine"><span class="a">보강 →</span><span>경계선 근처 분류가 흔들릴 수 있으니 <b>칸(유형)뿐 아니라 연속 gap_ESG도 함께</b> 보고하자. 그리고 <b>3개 연도는 지속성 판단에 짧다</b>는 한계를 반드시 같이 명시(검정력 약함).</span></div>
+      </div>
+
+      <div class="vcard">
+        <div class="top"><div class="n">④ 규모 추가 통제 견고성 (6-4B) — <code>talk ~ log_n_tokens + log_assets</code></div>
+          <span class="verdict star">★ 설계의 최대 강점</span></div>
+        <div class="body"><b>왜 결정적인가.</b> 6-4에서 <b>유형을 가장 강하게 가른 변수가 규모(log_assets, H=172)</b>였다 → "Talk–Walk 격차란 게 사실 회사 크기를 돌려 말한 것 아니냐"는 반론이 당연히 나온다.
+          이를 막으려 길이 <b>+ 규모까지 동시에 잔차화</b>해 다시 분류한 결과: <b>원래 격차와 Spearman ρ=0.993, 유형 일치율 90.9%</b>(경계 9%만 재분류).
+          → 격차는 단순 규모 대리가 아니라 <b>규모로 환원되지 않는 독립적 정합성 신호</b>.</div>
+        <div class="mine"><span class="a">보강 →</span><span>이 robustness가 <b>설계 방어의 핵심</b>이다. 발표에서 "격차=규모 대리 아니냐?"는 예상 반론에 <b>ρ=0.993 / 일치율 90.9%</b>로 선제 차단하도록 슬라이드 전면에 두자.</span></div>
+      </div>
+
+    </div>
+
+    <div class="note"><span class="ic">⚖︎</span><span><b>종합 판정 — 설계 타당.</b> 4결정 모두 방법론적으로 옳고, 특히 <b>분량·규모 이중 통제 후에도 격차가 보존</b>된다는 점이 다른 어떤 팀안보다 강한 방어선이다.
+      유일한 구조적 한계는 <b>3개 연도 패널의 짧은 시계열</b>과 <b>중앙값 경계 민감성</b>이며, 둘 다 연속 gap 병행·한계 명시로 관리 가능하다.</span></div>
+  </section>
+
+  <!-- PART 2 — 시사점·제언 타당성 -->
+  <section class="sec">
+    <div class="ribbon">
+      <div class="rank">2</div>
+      <div class="meta"><div class="ord">안건 ② · 시사점·제언이 타당한가</div>
+        <h2>핵심 발견 3가지와 제언의 타당성 확인</h2></div>
+    </div>
+    <p class="intro">알파가 산출한 세 발견을 재확인하고, 거기서 나온 시사점·제언이 데이터로 뒷받침되는지(그리고 어디까지만 말해야 하는지)를 점검한다.</p>
+
+    <h3 class="blk">핵심 발견 (재확인)</h3>
+    <div class="finds">
+      <div class="find f1"><div class="h">말–실행 불일치</div><div class="v">44%</div><div class="d">과잉 72 + 과소 96 = 168 / 381. 절반 가까이가 말과 실행이 어긋난다.</div></div>
+      <div class="find f2"><div class="h">구조적(3년 고정)</div><div class="v">59.8%</div><div class="d">127사 중 76사가 3년 내내 같은 칸. 일시적 전술 아닌 굳어진 특성.</div></div>
+      <div class="find f3"><div class="h">축간 선택적 공시</div><div class="v">47.2%</div><div class="d">180 / 381이 한 축 과잉·다른 축 과소. ESG를 골라서 부풀린다.</div></div>
+    </div>
+
+    <h3 class="blk">시사점 타당성 점검</h3>
+    <div class="vlist">
+      <div class="vcard">
+        <div class="top"><div class="n">시사점 A — "유형을 가르는 건 수익성이 아니라 규모다"</div><span class="verdict ok">타당 ✓ (통념 반증)</span></div>
+        <div class="body"><b>근거.</b> 수익성 <code>roa</code> H=4.59 <b>p=0.205 → 차이 없음</b> vs 규모 <code>log_assets</code> H=172.0 p&lt;0.001. 과잉공시 roa 중앙값 0.014 ≈ 나머지 0.021(Mann-Whitney p=0.126).
+          → <b>"과잉공시 = 부실기업의 변명"이라는 통념을 데이터로 반증</b>: 과잉공시는 '소형주의 상징적 공시', 과소공시는 '대형주의 IR 격차'.</div>
+      </div>
+      <div class="vcard">
+        <div class="top"><div class="n">시사점 B — "S축은 약점을 말로 가리고, G축은 강점을 정당하게 알린다"</div><span class="verdict star">★ 타당 + 차별점</span></div>
+        <div class="body"><b>근거(6-7 [C]).</b> S를 부풀린 firm-year의 실제 S등급 평균 <b>2.08 ≪ 전체 3.03</b>(약점 은폐), G를 부풀린 곳의 실제 G등급 <b>2.43 &gt; 2.31</b>(정당한 시그널링).
+          → <b>"선택적 공시 = greenwashing"을 단정하지 않고 정교화</b>한다. 단일 ESG 점수로는 결코 보이지 않는 구분 — 이 알파만의 기여.</div>
+      </div>
+      <div class="vcard warn">
+        <div class="top"><div class="n">제언 — 유형별 경영 처방 (과잉=검증근거 보강 / 과소=ESG섹션 응집)</div><span class="verdict cond">타당, 단 조건부</span></div>
+        <div class="body"><b>판정.</b> 제언 자체는 발견과 정합적이고 평가표의 '알파·해석·제언'을 동시에 충족한다. 다만 <b>'처방'이 아니라 '진단 신호 기반 권고'</b>로 묶어야 한다.
+          과잉공시 11개사(구조적)·과소공시 21개사(금융지주·CJ·현대건설 등)를 1차 점검 대상으로 구체화하되, 인과·성과 단정은 피한다.</div>
+      </div>
+    </div>
+
+    <div class="note"><span class="ic">⛓︎</span><span><b>제언을 묶는 안전장치(반드시 유지).</b> ⑴ KCGS 등급은 noisy하고 <b>사업보고서를 평가 인풋으로 사용</b> → 동어반복·역인과 위험, 격차는 <b>'진단 신호'지 인과적 greenwashing 증명이 아니다</b>.
+      ⑵ 381 firm-year는 <b>의도적으로 고른 pilot 패널</b> → "한국 상장사 일반"으로 일반화 금지. ⑶ <b>bag-of-words(명사)</b>라 "배출 증가/감축"을 못 구분.
+      이 세 한계가 제언을 <b>'검토 권고' 수위</b>로 자연스럽게 한정한다 → 그래서 제언은 타당하다.</span></span></div>
+  </section>
+
+  <!-- PART 3 — 추가 의견 -->
+  <section class="sec">
+    <div class="ribbon">
+      <div class="rank">3</div>
+      <div class="meta"><div class="ord">안건 ③ · 이동원이 추가로 내세울 의견</div>
+        <h2>김혜성 알파를 더 강하게 만드는 4가지</h2></div>
+    </div>
+    <p class="intro">메인 알파가 김혜성안으로 확정된 만큼, 추가 의견은 모두 <b>그 안을 보강·차별화하는 방향</b>으로 모았다.</p>
+
+    <div class="opin">
+      <div class="ocard">
+        <div class="lab"><span class="big">A</span><span class="t">6-7 「축간 선택적 공시」를 우리만의 차별점으로 전면 배치</span></div>
+        <p>선행연구의 greenwashing 측정은 거의 전부 ESG를 <b>하나의 점수</b>(공시−성과)로 합친다. Bingler(#4)의 cherry-pick도 <b>기후(E) 내부</b>의 중대/비중대 선택일 뿐이다.
+          우리는 <code>gap_E·gap_S·gap_G</code>를 분해해 <b>E·S·G 세 축을 각 축의 KCGS 등급에 견줘</b> 비교한다 — <b>"단일 ESG 점수가 구조적으로 못 보는" 유일 기여</b>.</p>
+        <div class="why"><b>왜 전면에 →</b> 평가표 '알파' 가점의 핵심이자, 선행 13편 어디에도 없는 빈틈을 정확히 겨냥. "S는 약점 은폐(2.08≪3.03), G는 정당 시그널(2.43&gt;2.31)"이라는 한 줄이 발표의 하이라이트가 된다.</div>
+      </div>
+
+      <div class="ocard">
+        <div class="lab"><span class="big">B</span><span class="t">cheap-talk(분량 ρ=0.66)을 '발견'의 전면에</span></div>
+        <p>알파의 출발점이자 정당성의 근거다. <b>"등급과 가장 강하게 연관된 건 ESG의 내용이 아니라 보고서 길이"</b>라는 사실(§4) 자체가 강력한 메시지이며,
+          그렇기에 talk에서 분량을 빼는 격차 설계가 정당화된다. 분량을 숨기지 않고 전면에 두는 것이 오히려 정직하고 설득력 있다.</p>
+        <div class="why"><b>왜 →</b> 비교자료 안건 2와 직접 연결. "최강 신호 = 분량"을 핵심 발견으로 내세우는 데 찬성.</div>
+      </div>
+
+      <div class="ocard">
+        <div class="lab"><span class="big">C</span><span class="t">김혜성 Gap + 김지우 가독성 지도 = 하나의 완결 서사로 통합</span></div>
+        <p>두 안은 같은 빈틈을 다른 프레임으로 본 것이다. <b>분량 통제(A·§4–5) → 차원 분해(B·§5) → 섹션 국소화(C, 보조) → 기업별 격차 진단(§6)</b>으로 이으면,
+          김혜성의 gap은 김지우 가독성 지도의 <b>자연스러운 종착점</b>이 된다. 충돌이 아니라 하나의 이야기 — 메인은 합의대로 김혜성 Gap.</p>
+        <div class="why"><b>왜 →</b> 발표 스토리라인이 매끄러워지고, 팀 4인의 작업이 한 흐름으로 묶인다.</div>
+      </div>
+
+      <div class="ocard">
+        <div class="lab"><span class="big">D</span><span class="t">신지영의 '주가 수익률 알파'는 현재 데이터로 실행 불가 → 진단 프레임으로 흡수</span></div>
+        <p>신지영 제안의 G잔차·VI섹션·워싱·비대칭 팩터는 모두 <b>"포트폴리오 수익률 비교"</b>로 검증을 끝맺는다. 그러나 <b>이 프로젝트엔 주가 수익률 데이터가 없다</b> — 유일한 'walk'는 KCGS 등급이다.
+          따라서 수익률 검증은 실행할 수 없고, 대신 <b>walk를 KCGS 등급으로 둔 §6 Talk–Walk 진단</b>으로 흡수한다(워싱 탐지·잔차화 아이디어는 §6에 이미 반영됨). 주가 알파는 <b>§8 후속과제</b>로 정직하게 남긴다.</p>
+        <div class="why"><b>왜 →</b> 회의에서 "수익률 알파를 본분석으로 올릴지"가 나올 때, 데이터 제약을 분명히 해 무리한 약속을 막는다. 좋은 아이디어를 폐기가 아니라 후속과제로 보존.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 안건별 입장 -->
+  <section class="sec">
+    <div class="ribbon">
+      <div class="rank" style="background:var(--ink)">✓</div>
+      <div class="meta"><div class="ord">정리 · 회의 안건별 이동원 입장</div>
+        <h2>오늘 결정해야 할 5개 안건 — 내 표</h2></div>
+    </div>
+    <table class="tbl">
+      <tr><th style="width:34%">안건</th><th>이동원 입장</th></tr>
+      <tr><td>1. 알파 주제 최종 확정</td><td class="pos">메인 = 김혜성 Talk–Walk Gap 동의. 김지우 가독성 지도와 <b>통합 서사</b>로 묶고, 김혜성 gap을 종착점에 둠 (위 의견 C).</td></tr>
+      <tr><td>2. cheap-talk(분량) 전면 배치 수위</td><td class="pos">전면 찬성. "최강 신호 = 분량(ρ=0.66)"을 핵심 발견이자 알파의 출발점으로 (의견 B).</td></tr>
+      <tr><td>3. S "측정 불가" 표현 방식</td><td class="pos">"본질적 한계"가 아니라 <b>"사업보고서 통로의 한계"</b>(방어적)로. 나아가 6-7의 <b>'S 약점 은폐' 발견</b>과 결합해 약점을 오히려 <b>발견으로 전환</b>.</td></tr>
+      <tr><td>4. 규제 제언 강도</td><td class="pos">표본이 pilot이므로 규제 권고는 <b>"검토 권고"로 완화</b>. 단 기업·투자자 유형별 제언은 <b>구체적으로</b>(중도~적극). 대상 기업 수(과잉 11·과소 21)까지 명시.</td></tr>
+      <tr><td>5. 역할 분담</td><td class="pos">이동원 = <b>통합·문서·발표자료·해석/제언 파트</b> 담당으로 확정 요청.</td></tr>
+    </table>
+  </section>
+
+  <footer class="foot">
+    <span>ESG DART <span class="d">●</span> 이동원 회의 입장 — 설계 타당성 / 시사점 타당성 / 추가 의견 4 / 안건별 입장</span>
+    <span>메인 알파 = 김혜성 Talk–Walk Gap (§6 구현 완료)</span>
+  </footer>
+
+</div>
+</body>
+</html>

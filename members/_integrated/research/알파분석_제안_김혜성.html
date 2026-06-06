@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>선행연구 및 알파분석 제안 — ESG DART 프로젝트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@300;400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f6f3ec;
+  --paper-2:#efeadf;
+  --ink:#1c1a17;
+  --ink-soft:#43403a;
+  --ink-faint:#6f6a60;
+  --rule:#d8d2c4;
+  --rule-soft:#e6e1d5;
+  --crimson:#8a2b22;
+  --crimson-deep:#5e1c16;
+  --gold:#9a7426;
+  --teal:#1f5d56;
+  --accent-bg:#ece6d8;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 12% -10%, rgba(138,43,34,.05), transparent 40%),
+    radial-gradient(circle at 100% 0%, rgba(31,93,86,.05), transparent 35%),
+    var(--paper);
+  color:var(--ink);
+  font-family:"Noto Serif KR", serif;
+  font-weight:400;
+  line-height:1.85;
+  font-size:17px;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+/* subtle paper grain */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:0 28px 120px;}
+
+/* ── Masthead ── */
+.masthead{
+  border-bottom:3px double var(--ink);
+  margin-top:64px;padding-bottom:26px;margin-bottom:14px;
+}
+.kicker{
+  font-family:"Spectral",serif;font-style:italic;
+  color:var(--crimson);font-size:15px;letter-spacing:.04em;margin:0 0 14px;
+}
+.masthead .eyebrow{
+  font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.42em;
+  text-transform:uppercase;color:var(--ink-faint);margin:0 0 18px;
+}
+h1{
+  font-family:"Gowun Batang",serif;font-weight:700;
+  font-size:clamp(30px,5.4vw,50px);line-height:1.18;letter-spacing:-.01em;
+  margin:0;color:var(--ink);
+}
+.runline{
+  display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;
+  font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-faint);
+  letter-spacing:.02em;
+}
+.runline span b{color:var(--crimson);font-weight:500;}
+
+/* ── Headings ── */
+h2{
+  font-family:"Gowun Batang",serif;font-weight:700;
+  font-size:clamp(22px,3.6vw,30px);line-height:1.3;letter-spacing:-.01em;
+  margin:72px 0 8px;padding-top:26px;border-top:1px solid var(--rule);
+  position:relative;
+}
+h2::before{
+  content:"";position:absolute;top:-1px;left:0;width:64px;height:3px;background:var(--crimson);
+}
+h3{
+  font-family:"Noto Serif KR",serif;font-weight:700;
+  font-size:20px;line-height:1.4;margin:44px 0 6px;color:var(--ink);
+}
+h3.rec{
+  background:linear-gradient(var(--accent-bg),var(--accent-bg)) bottom/100% 42% no-repeat;
+  display:inline-block;padding:4px 12px 4px 0;border-radius:2px;
+}
+h3.rec-1{color:var(--crimson-deep);}
+h3.rec-2{color:var(--teal);}
+h4{font-family:"Noto Serif KR";font-weight:600;font-size:16px;margin:26px 0 4px;color:var(--ink-soft);}
+
+p{margin:14px 0;color:var(--ink-soft);}
+strong{color:var(--ink);font-weight:600;}
+em{font-family:"Spectral",serif;font-style:italic;}
+
+a{
+  color:var(--crimson);text-decoration:none;
+  border-bottom:1px solid rgba(138,43,34,.32);
+  transition:background .18s,border-color .18s;
+  word-break:break-all;
+}
+a:hover{background:rgba(138,43,34,.09);border-color:var(--crimson);}
+
+/* ── Blockquote ── */
+blockquote{
+  margin:22px 0;padding:14px 22px;
+  background:linear-gradient(90deg,rgba(154,116,38,.08),rgba(154,116,38,0));
+  border-left:3px solid var(--gold);
+  color:var(--ink-soft);font-size:15.5px;line-height:1.7;border-radius:0 6px 6px 0;
+}
+blockquote p{margin:6px 0;}
+blockquote strong{color:var(--crimson-deep);}
+
+/* ── Lists ── */
+ul,ol{margin:14px 0;padding-left:24px;color:var(--ink-soft);}
+li{margin:9px 0;padding-left:4px;}
+li::marker{color:var(--crimson);font-weight:600;}
+ul li::marker{color:var(--gold);}
+
+/* ── Inline code ── */
+code{
+  font-family:"JetBrains Mono",monospace;font-size:.86em;
+  background:var(--paper-2);border:1px solid var(--rule);
+  padding:1px 6px;border-radius:4px;color:var(--crimson-deep);
+}
+
+/* ── Tables ── */
+.tbl-scroll{overflow-x:auto;margin:26px 0;border-radius:8px;
+  box-shadow:0 1px 0 var(--rule),0 18px 36px -28px rgba(28,26,23,.5);}
+table{
+  border-collapse:collapse;width:100%;min-width:560px;
+  background:rgba(255,253,248,.55);font-size:14.5px;line-height:1.6;
+  overflow:hidden;
+}
+thead th{
+  background:var(--ink);color:var(--paper);
+  font-family:"Noto Serif KR";font-weight:600;font-size:13px;letter-spacing:.02em;
+  text-align:left;padding:13px 15px;vertical-align:bottom;
+}
+tbody td{padding:12px 15px;border-bottom:1px solid var(--rule-soft);color:var(--ink-soft);vertical-align:top;}
+tbody tr:nth-child(even){background:rgba(236,230,216,.4);}
+tbody tr:hover{background:rgba(138,43,34,.06);}
+tbody td:first-child{font-family:"JetBrains Mono",monospace;font-weight:500;color:var(--crimson);white-space:nowrap;}
+table code{font-size:.82em;}
+
+/* ── HR ── */
+hr{border:none;height:1px;background:var(--rule);margin:54px 0;position:relative;}
+hr::after{content:"❧";position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:var(--paper);padding:0 16px;color:var(--gold);font-size:17px;}
+
+/* ── Footer ── */
+.colophon{
+  margin-top:80px;padding-top:24px;border-top:3px double var(--ink);
+  font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.06em;
+  color:var(--ink-faint);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.colophon .dot{color:var(--crimson);}
+
+::selection{background:var(--crimson);color:var(--paper);}
+
+@media(max-width:600px){
+  body{font-size:16px;line-height:1.75;}
+  .wrap{padding:0 18px 80px;}
+  .masthead{margin-top:40px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">비정형 데이터 처리 · Final Term Project · 3조</p>
+    <p class="kicker">Literature Review &amp; Alpha-Analysis Proposal</p>
+    <h1>선행연구 조사 및<br>알파분석 주제 도출</h1>
+    <div class="runline">
+      <span>주제 <b>사업보고서 ESG 표현 ↔ KCGS 등급</b></span>
+      <span>표본 <b>127사 × 3년 = 381 firm-year</b></span>
+      <span>타이밍 <b>esg_year = fiscal_year + 1</b></span>
+    </div>
+  </header>
+  <h1>선행연구 조사 및 알파분석 주제 도출</h1>
+<blockquote>
+<p>대상 프로젝트: <strong>한국 상장기업 사업보고서의 ESG 관련 표현이 KCGS ESG 등급과 어떤 연관성을 보이는지 검증</strong> (3조)
+기준 분석 범위: 노트북 §1~§5 (데이터 수집 → 전처리 → seed/expanded TF-IDF·FastText·cosine feature → Spearman·Mann-Whitney validity → OLS·ordered·binary logit + 재무통제).
+기준 분석의 핵심 결론: <strong>분량(<code>n_tokens</code>, ρ≈0.66)이 어떤 ESG 어휘 feature보다 등급과 강하게 연관 → cheap-talk가 지배적</strong>이며, 분량·재무 통제 후에도 <strong>견고하게 남는 신호는 거버넌스 어휘(<code>expanded_score_G</code>)뿐</strong>.</p>
+</blockquote>
+<hr />
+<h2>1. 선행연구 조사 (주제별 · 출처 링크 포함)</h2>
+<p>프로젝트의 4개 방법론 축(① 텍스트→ESG 측정, ② cheap-talk/greenwashing, ③ seed→임베딩 사전 확장, ④ ESG 등급의 신뢰성·한국 맥락)별로 정리한다.</p>
+<h3>① 텍스트로 ESG를 측정하고 등급과 연결하는 연구 (= 프로젝트의 본 질문)</h3>
+<p>핵심 주장: 공시 텍스트에서 추출한 ESG 어휘/주제 강도는 외부 ESG 등급의 상당 부분을 설명한다.</p>
+<ul>
+<li><strong>Schimanski, Reding, Reding, Bingler, Kraus, Leippold (2024)</strong> — "Bridging the gap in ESG measurement: Using NLP to quantify ESG communication", <em>Finance Research Letters</em>. E/S/G 도메인별 언어모델을 사전학습해 공시 품질과 ESG 등급 사이의 견고한 양(+)의 관계를 보고. → 본 프로젝트 "어휘 강도 ↔ 등급" 가설의 직접 선행. https://www.sciencedirect.com/science/article/pii/S1544612324000096</li>
+<li><strong>"Sustainable fingerprint" (2023)</strong> — listed EU firms의 ESG 보고를 textual analysis로 탐지, <em>Journal of Cleaner Production</em>. 학술 word list가 여러 ESG 등급의 상당 부분을 설명함을 보이며 동시에 <strong>등급 간 분산(rating dispersion)</strong> 문제를 제기. → seed/expanded 사전 접근의 정당화 + 등급 해석 한계. https://www.sciencedirect.com/science/article/abs/pii/S0959652623031189</li>
+<li><strong>"ESG disclosure vs. ESG ratings: Consistent information value?" (2025)</strong>, <em>International Review of Financial Analysis</em>. 연차보고서 textual analysis로 공시와 등급의 정합성을 검증 — 두 갈래(공시 연구 / 등급 연구)를 결합. → 본 프로젝트가 위치한 정확한 교집합. https://ideas.repec.org/a/eee/finana/v107y2025ics1057521925007100.html</li>
+</ul>
+<h3>② Cheap-talk / greenwashing — 공시 언어와 실제 성과의 괴리</h3>
+<p>핵심 주장: 공시 언어량·긍정 톤은 실제 ESG 성과와 분리(decoupling)될 수 있고, 그 괴리("talk–walk gap")가 greenwashing 신호다.</p>
+<ul>
+<li><strong>Bingler, Kraus, Leippold, Webersinke (2022)</strong> — "Cheap talk and cherry-picking: What ClimateBERT has to say on corporate climate risk disclosures", <em>Finance Research Letters</em> 47:102776. TCFD 지지 기업의 기후 공시가 <strong>대체로 cheap talk이며, 비(非)중대 항목을 cherry-pick</strong>한다고 결론. → 본 프로젝트의 cheap-talk 프레이밍과 §2-1B(중대성) 논의의 직접 근거. https://www.sciencedirect.com/science/article/pii/S1544612322000897</li>
+<li><strong>Gorovaia et al. (2025)</strong> — "Identifying greenwashing in CSR reports using NLP", <em>European Financial Management</em>. 환경 어휘 점수 × 가독성/긍정성을 상호작용시켜 decoupling·selective disclosure로서의 greenwashing을 직접 검정. https://onlinelibrary.wiley.com/doi/full/10.1111/eufm.12509</li>
+<li><strong>"Peeking into Corporate Greenwashing through the Readability of ESG Disclosures" (2024)</strong>, <em>Sustainability</em>. <strong>공시 점수 − 성과 점수</strong>의 peer 상대 격차로 기업별 greenwashing 점수를 구성(중국 표본). → 본 제안 알파의 핵심 연산(격차 점수)의 직접 선례. https://www.mdpi.com/2071-1050/16/6/2571</li>
+<li><strong>"Greenwashing in Sustainability Reporting: A Systematic Literature Review …" (2025)</strong>, <em>Sustainability</em>. greenwashing 측정법을 종합하며, 키워드 빈도법은 <strong>공시 '양'만 측정해 품질을 과대평가</strong>할 위험을 명시하고 모든 접근이 <strong>"talk–walk gap"</strong> 개념을 공유한다고 정리. → 본 프로젝트의 <code>n_tokens</code> 지배 현상에 대한 이론적 뒷받침. https://www.mdpi.com/2071-1050/18/1/17</li>
+</ul>
+<h3>③ Seed 단어 → 단어 임베딩으로 사전을 확장하는 방법론 (= 프로젝트의 핵심 기법)</h3>
+<p>핵심 주장: 소수의 가치 단어(seed)에서 출발해 word embedding으로 유사어를 확장하면 대규모 corpus에서 추상적 구성개념을 측정할 수 있다.</p>
+<ul>
+<li><strong>Li, Mai, Shen, Yan (2021)</strong> — "Measuring Corporate Culture Using Machine Learning", <em>Review of Financial Studies</em> 34(7):3265-3315. <strong>seed 가치단어 → word embedding 유사어 확장 → 사전 기반 점수화</strong>라는, 본 프로젝트 FastText 확장(§3-2~3-3)의 방법론 원형. https://academic.oup.com/rfs/article-abstract/34/7/3265/5869446</li>
+<li><strong>Sautner, van Lent, Vilkov, Zhang (2023)</strong> — "Firm-Level Climate Change Exposure", <em>Journal of Finance</em> 78(3):1449-1498. ML keyword-discovery로 기업별 기후 노출(기회·물리·규제)을 텍스트에서 추출. seed 사전의 환경(E) 축 근거(시드 CSV에도 인용). https://onlinelibrary.wiley.com/doi/full/10.1111/jofi.13219</li>
+<li><strong>Li, Mai, Shen, Yang, Zhang (2026)</strong> — "Dissecting Corporate Culture Using Generative AI", <em>Review of Financial Studies</em> 39:253-296. 위 (2021)의 생성형 AI 확장. 시드 CSV의 S·G 축 근거로 인용됨. https://sites.google.com/view/kaili/finance-publications</li>
+<li><strong>(개념적 기원) Guiso, Sapienza, Zingales (2015)</strong> — "The Value of Corporate Culture", <em>Journal of Financial Economics</em>. Li et al.(2021)이 사용하는 5개 가치단어의 출처로, 가치단어 기반 측정의 이론적 뿌리. (시드 CSV에 인용; Li et al. 논문 내 인용으로 확인.)</li>
+</ul>
+<h3>④ ESG 등급 자체의 신뢰성 · 중대성 · 한국 맥락</h3>
+<p>핵심 주장: ESG 등급은 평가사마다 크게 다르며, '중대(material)' 이슈에서의 성과만 실질적 가치를 가진다 — 따라서 등급을 결과변수로 쓸 때 해석에 주의해야 한다.</p>
+<ul>
+<li><strong>Berg, Kölbel, Rigobon (2022)</strong> — "Aggregate Confusion: The Divergence of ESG Ratings", <em>Review of Finance</em> 26(6):1315-1344. 6개 평가사 등급의 평균 상관이 0.38~0.71에 불과하며, 분산의 56%가 <strong>measurement(측정)</strong> 차이. → KCGS 단일 등급을 정답처럼 다루지 말아야 한다는 한계 근거. https://academic.oup.com/rof/article/26/6/1315/6590670</li>
+<li><strong>Khan, Serafeim, Yoon (2016)</strong> — "Corporate Sustainability: First Evidence on Materiality", <em>The Accounting Review</em> 91(6):1697-1724. <strong>업종별 중대(material) 이슈에서 좋은 기업만 초과성과</strong>를 내고, 비중대 이슈 성과는 무관. → 본 제안 알파(중대성 가중)의 직접 근거. https://publications.aaahq.org/accounting-review/article-abstract/91/6/1697</li>
+<li><strong>Yoo, Ji Seon (2025)</strong> — "Determinants of ESG Rating Disagreement and its Relationship with Firm Value", <em>Korea International Accounting Review</em> 119:1-19. <strong>KCGS vs MSCI</strong> 등급 불일치의 결정요인을 한국 표본(1,273 firm-year)으로 분석. → 한국·KCGS 맥락의 등급 신뢰성 선행. https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003183859</li>
+<li><strong>Yoon, Han, Lee, Hwang (2023)</strong> — "Text Mining Analysis of ESG Management Reports in South Korea: Comparison With SDGs", <em>SAGE Open</em>. 한국 ESG 보고서를 LDA 토픽모델링으로 분석. → 한국어 ESG 텍스트 마이닝 선행(단, 본 프로젝트와 달리 등급 연결·cheap-talk 통제는 부재). https://journals.sagepub.com/doi/10.1177/21582440231202896</li>
+<li><strong>KCGS 평가 방법론</strong> (한국ESG기준원). 평가 인풋에 <strong>사업보고서·지속가능보고서·웹사이트·규제기관 자료·언론</strong>이 포함됨을 명시 → 사업보고서 언어와 등급이 연관될 수 있는 <strong>제도적 경로</strong>의 근거(동시에 역인과·동어반복 위험의 근거). https://www.cgs.or.kr/eng/business/esg_tab01.jsp</li>
+<li><strong>(국내 방법론 리뷰) "한국ESG기준원(KCGS) ESG 평가자료 활용 연구동향…"</strong>, KCI. KCGS 등급을 변수로 쓸 때 표본기간·분류체계 변화로 인한 해석 유의사항 정리 → 등급→숫자 변환·서열 처리의 정당화. https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003296656</li>
+</ul>
+<h3>⑤ 팀 seed 사전에 인용되었으나 독립 확인이 필요한 출처</h3>
+<p>시드 CSV에 등장하나 본 조사에서 서지정보를 독립적으로 확정하지 못함 — 보고서 인용 전 원문 확인 권장. 추정 링크를 임의로 붙이지 않음.
+- <strong>Bao et al. (2024)</strong> — θ threshold·후보 단어 검토 기준의 근거로 과제 문서·시드 CSV에 인용(폐기물·반부패·주주 등 G/E seed).
+- <strong>Alam et al. (2025)</strong> — 시드 CSV의 E 축(Bloomberg ESG climate) 근거로 인용.
+- Bloomberg ESG framework / Refinitiv Workforce score / MSCI ESG KLD Stats — 상용 ESG 프레임워크(학술 논문 아님, seed 차원 분류의 산업 표준 근거).</p>
+<hr />
+<h2>2. 최종 선행연구 리스트 (출처 일치 확인 완료)</h2>
+<p>아래 12편은 검색으로 서지정보·링크를 <strong>독립 확인</strong>했고, 본 프로젝트와의 관계 및 <strong>선행연구가 다루지 않은 빈틈(gap)</strong>을 함께 정리했다. (⑤항 3건은 미확인이므로 본 리스트에서 제외.)</p>
+<div class="tbl-scroll"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>저자(연도)</th>
+<th>출처 / 링크</th>
+<th>프로젝트와의 관련성</th>
+<th>다루지 않은 gap(→ 알파 단서)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Schimanski et al. (2024)</td>
+<td>Finance Research Letters · <a href="https://www.sciencedirect.com/science/article/pii/S1544612324000096">link</a></td>
+<td>공시 품질 ↔ ESG 등급 양의 관계 — 본 질문의 직접 선행</td>
+<td>"더 잘 쓰면 등급↑" 평균효과에서 멈춤. <strong>어느 기업이</strong> 말과 등급이 어긋나는지(기업별 진단)는 없음</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Sustainable fingerprint (2023)</td>
+<td>J. Cleaner Production · <a href="https://www.sciencedirect.com/science/article/abs/pii/S0959652623031189">link</a></td>
+<td>word list로 등급 설명 + 등급 분산 제기</td>
+<td>등급을 단일 정답으로 사용. <strong>중대성·업종 가중</strong> 미고려</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ESG disclosure vs. ESG ratings (2025)</td>
+<td>Int. Review of Financial Analysis · <a href="https://ideas.repec.org/a/eee/finana/v107y2025ics1057521925007100.html">link</a></td>
+<td>공시–등급 정합성 검증(교집합)</td>
+<td>정합성의 평균 검증. <strong>불일치 기업의 유형화·처방</strong> 부재</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Bingler et al. (2022)</td>
+<td>Finance Research Letters · <a href="https://www.sciencedirect.com/science/article/pii/S1544612322000897">link</a></td>
+<td>cheap talk·cherry-picking — 본 프로젝트 핵심 프레이밍</td>
+<td>기후(E)에 한정. <strong>E/S/G 차원별·업종 중대성별 cheap-talk 비교</strong> 없음, 한국 사업보고서 아님</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Gorovaia et al. (2025)</td>
+<td>European Financial Management · <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/eufm.12509">link</a></td>
+<td>어휘×가독성으로 greenwashing 검정</td>
+<td>환경 위반(hard outcome)을 'walk'로 사용. <strong>KCGS 등급을 'walk'로 한 격차</strong> 미적용</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Peeking into Greenwashing (2024)</td>
+<td>Sustainability · <a href="https://www.mdpi.com/2071-1050/16/6/2571">link</a></td>
+<td><strong>공시점수 − 성과점수</strong> 격차로 기업별 greenwashing 점수 — 본 제안 알파의 직접 선례</td>
+<td>중국·가독성 기반. <strong>한국 사업보고서 어휘강도 vs KCGS 등급</strong>, 분량 잔차화는 미수행</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Greenwashing SLR (2025)</td>
+<td>Sustainability · <a href="https://www.mdpi.com/2071-1050/18/1/17">link</a></td>
+<td>키워드 빈도법이 '양'만 측정 → 본 프로젝트 <code>n_tokens</code> 지배의 이론 근거</td>
+<td>리뷰(실증 아님). 구체적 firm-year 진단 도구 미제시</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Li, Mai, Shen, Yan (2021)</td>
+<td>Review of Financial Studies · <a href="https://academic.oup.com/rfs/article-abstract/34/7/3265/5869446">link</a></td>
+<td>seed→임베딩 확장 방법론 원형(§3-2~3-3)</td>
+<td>문화 측정·기업성과 연결. <strong>ESG 등급·중대성</strong> 적용 아님</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Sautner et al. (2023)</td>
+<td>Journal of Finance · <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/jofi.13219">link</a></td>
+<td>텍스트 기반 기업별 기후노출(E seed 근거)</td>
+<td>노출 측정·실물성과 예측. <strong>외부 등급과의 괴리 진단</strong> 없음</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Berg, Kölbel, Rigobon (2022)</td>
+<td>Review of Finance · <a href="https://academic.oup.com/rof/article/26/6/1315/6590670">link</a></td>
+<td>등급 분산 → KCGS 단일등급 해석 한계 근거</td>
+<td>평가사 간 분산 자체가 주제. <strong>기업 공시언어와의 연결</strong> 없음</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Khan, Serafeim, Yoon (2016)</td>
+<td>The Accounting Review · <a href="https://publications.aaahq.org/accounting-review/article-abstract/91/6/1697">link</a></td>
+<td><strong>업종 중대성</strong> 이론 — 본 제안 알파의 직접 근거</td>
+<td>정량 등급(SASB) 기반. <strong>텍스트 어휘강도의 중대성 가중</strong> 미수행</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Yoo (2025)</td>
+<td>Korea Int. Accounting Review · <a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003183859">link</a></td>
+<td>KCGS vs MSCI 불일치(한국 맥락)</td>
+<td>평가사 간 불일치. <strong>기업의 공시 언어 전략과의 연결</strong> 없음</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Yoon et al. (2023)</td>
+<td>SAGE Open · <a href="https://journals.sagepub.com/doi/10.1177/21582440231202896">link</a></td>
+<td>한국어 ESG 텍스트마이닝 선행</td>
+<td>토픽모델링·SDG 매핑. <strong>등급 연결·cheap-talk 통제·기업 진단</strong> 부재</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>리스트 종합 — 선행연구가 공통적으로 비워둔 빈틈 3가지</strong>
+1. 대부분 "공시 언어가 좋으면 등급이 높다"는 <strong>평균효과(association)</strong> 에서 멈춘다. <strong>개별 기업이 자신의 등급 대비 얼마나 과·소(過·少) 공시하는지</strong>를 측정해 <strong>유형화하고 처방</strong>하는 firm-level 진단 도구는 없다.
+2. greenwashing의 "talk–walk gap"은 대개 'walk'로 <strong>배출량·환경위반·정량 ESG 점수</strong>를 쓴다. <strong>한국 사업보고서의 (사전 확장) 어휘강도 vs KCGS E/S/G 등급</strong>으로, 게다가 <strong>프로젝트의 최대 교란인 분량(<code>n_tokens</code>)을 잔차화한 뒤</strong> 격차를 정의한 연구는 없다.
+3. 중대성(Khan-Serafeim-Yoon)과 cherry-picking(Bingler)은 강력하지만, <strong>업종별 중대 차원에 텍스트 신호를 가중</strong>해 KCGS 등급 설명력이 어떻게 달라지는지는 한국 표본에서 검증되지 않았다.</p>
+<hr />
+<h2>3. 알파분석 주제 도출 (경영학적 시사점·제언의 근거)</h2>
+<p>§1~§5 기준 분석은 <strong>"분량 통제 후 견고한 신호는 G뿐"</strong> 이라는 진단에서 끝난다. 이는 <em>현상 확인</em>이지 <em>처방</em>이 아니다. 아래 알파는 위 gap을 메우면서, 각 기업이 <strong>무엇을 어떻게 해야 하는지</strong>(경영 제언)로 연결되도록 설계했다.</p>
+<blockquote>
+<p>세 안 모두 기존 PANEL_DF(<code>expanded_score_E/S/G</code>, <code>seed_*</code>, <code>ref_cosine_*</code>, <code>dense_cos_*</code>, <code>log_n_tokens</code>, 재무변수, <code>e/s/g_grade</code>, <code>industry</code>, <code>fiscal_year</code>)와 <strong>추가 수집 없이</strong> 실행 가능하다.</p>
+</blockquote>
+<h3 class="rec rec-1">★ 권장 1순위 — "말–실행 격차(Talk–Walk Gap)" 기업 유형 진단</h3>
+<p><strong>동기 (literature gap 1·2).</strong> 선행연구는 평균효과에서 멈추거나(#1·#3), 'walk'로 배출량·위반을 쓴다(#5·#6). 본 프로젝트는 (a) 사전 확장 어휘강도(talk)와 (b) 독립기관 KCGS 등급(walk-proxy)을 <strong>동시에</strong> 보유하고, (c) 최대 교란인 분량을 이미 측정해 두었다. 이 세 조건이 갖춰진 표본은 드물다.</p>
+<p><strong>방법.</strong>
+1. 차원별(E/S/G)로 어휘강도 신호를 <strong>분량 잔차화</strong>: <code>expanded_score_d</code>를 <code>log_n_tokens</code>(필요시 <code>log_assets</code>)에 회귀한 <strong>잔차</strong> <code>talk_d_resid</code>를 만든다 → "분량을 걷어낸 순수 ESG 어휘 강조도". (프로젝트 핵심 교란을 정면으로 통제.)
+2. <code>talk_d_resid</code>와 등급 <code>d_grade_num</code>을 각각 z-표준화.
+3. <strong>격차 점수</strong> <code>gap_d = z(talk_d_resid) − z(d_grade_num)</code> 정의 (Delmas-Burbano / Kim-Lyon 계열, #6과 동형).
+   - <code>gap_d &gt; 0</code> → <strong>과잉 공시형(over-talk)</strong>: 등급 대비 말이 앞섬 (greenwashing/cheap-talk 후보).
+   - <code>gap_d &lt; 0</code> → <strong>과소 공시형(under-talk)</strong>: 등급은 좋은데 언어는 절제 (실속·소통부족형).
+4. 2×2 사분면(어휘강도 高/低 × 등급 高/低)으로 기업-연도를 분류하고, <strong>3개 연도에 걸친 분면 지속성</strong>(같은 기업이 매년 같은 분면인지)으로 <em>구조적 유형 vs 일시적</em>을 구분.
+5. 유형 간 차이 검정: 사분면별 재무특성(<code>roa</code>,<code>leverage</code>,<code>log_assets</code>)·업종 분포를 비교(Kruskal-Wallis/χ²). over-talk 군집이 특정 업종·저수익 기업에 몰리는지 확인.</p>
+<p><strong>경영학적 시사점·제언 (이 알파의 핵심 산출).</strong>
+- <strong>과잉 공시형</strong>에게: 언어가 등급을 앞서면 평가사·규제기관의 <strong>할인(discount) 및 greenwashing 조사 리스크</strong>. → <em>제언: 서술을 검증 가능한 정량 목표·실적(배출량 수치, 이수율, 사외이사 비율)으로 뒷받침하라.</em>
+- <strong>과소 공시형</strong>에게: 등급이 좋은데 사업보고서 언어가 약하다 = <strong>인식 격차(IR gap)</strong>. KCGS가 사업보고서를 평가 인풋으로 사용(#KCGS 방법론)하므로 <strong>저평가·시장 미반영 손실</strong> 가능. → <em>제언: 실질 성과를 사업보고서 II/IV/VI에 구체적으로 서술해 평가·시장 인식을 회수하라.</em>
+- 전사 차원: "어휘 강조 = 성과"라는 통념을 데이터로 반증(#7) → <strong>공시 KPI를 '양'에서 '검증가능성·정합성'으로 전환</strong>하라는 제언.</p>
+<p><strong>한계.</strong> KCGS 등급을 'walk'의 대리로 쓰지만 등급 자체가 noisy(#10·#12)하고 부분적으로 사업보고서를 인풋으로 한다(동어반복·역인과 위험) → 격차를 <strong>인과적 greenwashing 측정이 아닌 진단적 신호</strong>로만 해석. 3개 연도는 지속성 판단에 짧음.</p>
+<h3 class="rec rec-2">☆ 권장 2순위 — 업종 중대성(Materiality) 가중 어휘 신호</h3>
+<p><strong>동기 (literature gap 3).</strong> Khan-Serafeim-Yoon(#11)은 <strong>중대 이슈</strong> 성과만 가치를 가짐을, Bingler(#4)는 기업이 <strong>비중대 항목을 cherry-pick</strong>함을 보였다. 기준 분석에서 <strong>E 신호가 재무통제 후 소멸</strong>한 것은, E 어휘가 <em>모든 업종에 균질하게</em> 중대하지 않다는 중대성 관점과 정합적일 수 있다.</p>
+<p><strong>방법.</strong>
+1. <code>industry</code>(전기전자·화학·철강·금융·유통 등)를 SASB식 거친 매핑으로 <strong>업종별 E/S/G 중대성 가중치</strong> <code>w_{ind,d}</code> 부여(예: 제조·소재 → E↑, 금융·지주 → G↑, 유통·서비스 → S↑). 매핑 근거를 표로 명시·정당화.
+2. <strong>중대성 가중 점수</strong> <code>mat_score = Σ_d w_{ind,d}·z(expanded_score_d)</code> vs <strong>균등가중 점수</strong> 비교.
+3. <code>ρ(mat_score, esg_grade)</code> 와 <code>ρ(equal_score, esg_grade)</code>, 그리고 회귀 설명력(R²) 비교. 추가로 <strong>비중대 차원 어휘</strong>가 등급에 노이즈(또는 음의 신호=cherry-picking)인지 검정.</p>
+<p><strong>경영학적 시사점·제언.</strong> 중대성 가중이 설명력을 높이면 → <em>ESG 공시 자원은 업종 중대 이슈에 집중</em>하고 비중대 보일러플레이트는 등급을 못 움직인다(오히려 cherry-picking 신호)는 제언. 업종별 "어디에 써야 하는지" 처방을 제공.</p>
+<p><strong>한계.</strong> 중대성 매핑은 판단적이고 KCGS 내부 가중치는 비공개. <code>industry</code>가 거칠어 SASB 정밀 매핑 불가 → 민감도 분석(가중치 2~3안) 필수.</p>
+<h3 class="rec rec-2">☆ 보조 robustness — 기업내(within-firm) 변화 분석</h3>
+<p><strong>동기.</strong> 기준 분석은 횡단면(pooled). Bingler(#4)는 "TCFD 지지 선언이 실제 공시 증가로 이어지지 않음"을 보였다 — 즉 <em>시간에 따른</em> 말-실행 분리.</p>
+<p><strong>방법.</strong> 3개 연도를 활용한 <strong>1차 차분/기업 FE</strong>: <code>Δg_grade ~ Δexpanded_G + Δlog_n_tokens</code>. 횡단면 G 신호가 <strong>기업 간(구조적)</strong> 인지 <strong>기업 내(연도별 대응)</strong> 인지 분해.</p>
+<p><strong>시사점.</strong> 등급이 sticky하고 within 분산이 작아 신호가 between이면 → ESG 언어는 <strong>연도별 공시 전술이 아닌 안정적 기업 유형</strong>을 반영. <em>제언: 단기 워딩 변경보다 구조적 거버넌스 개선이 등급에 유효.</em> (단, 3개 연도·낮은 within 분산으로 검정력 약함을 명시.)</p>
+<hr />
+<h3>권장 결론</h3>
+<p>1순위 <strong>Talk–Walk Gap 진단</strong>을 메인 알파로 권장한다. 이유: (a) 프로젝트가 이미 강조한 cheap-talk 프레이밍을 <strong>기업 단위 진단·처방</strong>으로 끌어올려 §5 결론의 자연스러운 다음 단계이고, (b) 추가 수집 없이 즉시 실행 가능하며, (c) 과잉/과소 공시 두 군집 각각에 <strong>명확한 경영 제언</strong>이 나와 평가표의 "알파" 및 "해석과 한계" 항목을 동시에 만족하고, (d) 선행연구 빈틈(firm-level 진단 부재)을 정확히 겨냥한다. 2순위(중대성 가중)는 이론적 신규성이 가장 크므로 시간이 허락하면 병행, 보조(within-firm)는 1·2순위의 견고성 점검으로 1셀 추가하면 좋다.</p>
+  <footer class="colophon">
+    <span>ESG&nbsp;DART&nbsp;<span class="dot">●</span>&nbsp;선행연구 13편 · 알파 3안</span>
+    <span>출처 링크 독립 확인 완료</span>
+  </footer>
+</div>
+</body>
+</html>
