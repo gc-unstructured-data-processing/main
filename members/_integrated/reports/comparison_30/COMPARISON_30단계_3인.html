@@ -1,0 +1,311 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<title>ESG DART 전체진행 3인 비교(+1 대기) — 30단계 정밀 점검</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><style>
+:root{
+--bg:#f7f8fa;--card:#fff;--ink:#101828;--soft:#475467;--line:#e4e7ec;
+--ok:#2e7d32;--ok-bg:#e8f5e9;--warn:#b45309;--warn-bg:#fef3c7;
+--bad:#b42318;--bad-bg:#fee4e2;--dev:#1d4ed8;--dev-bg:#dbeafe;
+--alpha:#7c3aed;--alpha-bg:#ede9fe;--na:#98a2b3;--na-bg:#f2f4f7;
+--jw:#be185d;--jw-bg:#fce7f3;--hs:#0e7490;--hs-bg:#cffafe;--dw:#1d4ed8;--dw-bg:#dbeafe;--sy:#64748b;--sy-bg:#f1f5f9;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.55}
+.wrap{max-width:1240px;margin:0 auto;padding:26px 20px}
+.banner{background:linear-gradient(135deg,#fff,#eef3ff);border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin-bottom:18px}
+.banner h1{margin:0 0 6px;font-size:21px}
+.banner .sub{color:var(--soft);font-size:13px}
+.banner .who{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.who .chip{padding:4px 11px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid}
+.c-jw{color:var(--jw);border-color:var(--jw);background:var(--jw-bg)}
+.c-hs{color:var(--hs);border-color:var(--hs);background:var(--hs-bg)}
+.c-dw{color:var(--dw);border-color:var(--dw);background:var(--dw-bg)}
+.c-sy{color:var(--sy);border-color:var(--sy);background:var(--sy-bg)}
+section.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px;overflow-x:auto}
+h2{font-size:17px;margin:0 0 4px;padding-bottom:8px;border-bottom:2px solid var(--dev)}
+h2 .tag{font-size:12px;color:var(--soft);font-weight:500}
+.blkhead{font-size:13px;font-weight:800;color:#fff;background:var(--dev);border-radius:8px;padding:7px 12px;margin:16px 0 0}
+.blkhead.danger{background:var(--bad)}
+.lead{color:var(--soft);font-size:13px;margin:8px 0 12px}
+table{width:100%;min-width:760px;border-collapse:collapse;font-size:13px;margin:6px 0 2px;table-layout:fixed}
+th{background:#f8fafc;text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);font-size:11.5px;color:var(--soft);font-weight:700}
+td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;word-break:keep-all;overflow-wrap:anywhere}
+tr:last-child td{border-bottom:0}
+.center{text-align:center}
+.crit b{font-size:13.5px}
+.crit .src{display:block;font-size:11.5px;color:var(--soft);margin-top:3px}
+.crit .src .g{color:#1d4ed8;font-weight:700}
+.badge{display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;margin-left:4px;vertical-align:middle}
+.b-must{background:var(--bad-bg);color:var(--bad)}
+.b-ban{background:#fde2e1;color:#7a271a}
+.b-bonus{background:var(--alpha-bg);color:var(--alpha)}
+.b-opt{background:var(--na-bg);color:var(--soft)}
+.b-hide{background:var(--dev-bg);color:var(--dev)}
+.vcell{font-size:12px}
+.vcell .v{font-weight:800;white-space:nowrap;display:block;margin-bottom:2px}
+.v-ok{color:var(--ok)}.v-part{color:var(--warn)}.v-bad{color:var(--bad)}.v-na{color:var(--na)}
+.vcell .tx{color:var(--soft)}
+.row-ok{} .row-split td{background:#fffdf5}
+.note{background:var(--warn-bg);border-left:3px solid var(--warn);padding:11px 14px;border-radius:8px;font-size:13px;margin:12px 0}
+.note.dev{background:var(--dev-bg);border-color:var(--dev)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--soft);margin-top:8px;align-items:center}
+.refs{font-size:12px;color:var(--soft);line-height:1.7}
+.refs a{color:#1d4ed8;text-decoration:none}.refs a:hover{text-decoration:underline}
+.refs .grp{font-weight:800;color:var(--ink);margin-top:9px;display:block}
+footer{color:var(--soft);font-size:12px;text-align:center;padding:18px}
+/* column widths */
+.t30{min-width:1040px}.t30 col.c-crit{width:28%}.t30 col.c-mem{width:18%}
+@media(max-width:820px){
+  table,.t30{min-width:0}
+  table,thead,tbody,th,td,tr{display:block}
+  thead{display:none}
+  .t30 td{border:0;padding:4px 11px}
+  .t30 tr{border-bottom:1px solid var(--line);padding:8px 0;display:block}
+  .t30 td.crit{padding-top:10px}
+  td.vcell::before{content:attr(data-who) " — ";font-weight:800;color:var(--ink)}
+}
+</style></head><body><div class="wrap">
+
+<div class="banner">
+<h1>ESG DART 전체진행 3인 비교(+1 대기) — 30단계 정밀 점검</h1>
+<div class="sub">실무·학술 벤치마킹 + 교수님 가이드 필수/위반 + 숨은 의도 9가지 · 2026-05-23 · 5/23 추합 회의용</div>
+<div class="who">
+<span class="chip c-jw">김지우 · N=210 KOSPI · g_signal_ratio</span>
+<span class="chip c-hs">김혜성 · N=381 · fastText θ-sweep</span>
+<span class="chip c-dw">이동원 · N=381 · 통합·재현성</span>
+<span class="chip c-sy">신지영 · 자료 대기 · 업로드 후 갱신</span>
+</div>
+<div class="legend">
+<span><b class="v-ok">✅</b> 충족</span><span><b class="v-part">🟡</b> 부분</span><span><b class="v-bad">⛔</b> 미흡/누락</span><span><b class="v-na">➖</b> 해당없음</span>
+<span>·</span>
+<span><span class="badge b-must">필수</span><span class="badge b-ban">위반금지</span><span class="badge b-bonus">가점</span><span class="badge b-hide">숨은의도</span><span class="badge b-opt">선택</span></span>
+</div>
+<div class="note dev"><b>자료 상태</b> — 현재 파일은 3인 자료 기준 비교이며, 신지영 자료는 미반영 상태로 별도 열에 고정 표시했습니다. 업로드 후 같은 30단계 기준으로 해당 열만 갱신하면 표 구조가 무너지지 않습니다.</div>
+</div>
+
+<!-- 1. 스코어보드 -->
+<section class="card">
+<h2>1. 종합 스코어보드</h2>
+<table>
+<colgroup><col style="width:18%"><col style="width:8%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:34%"></colgroup>
+<tr><th>블록</th><th>단계</th><th class="center">김지우</th><th class="center">김혜성</th><th class="center">이동원</th><th class="center">신지영</th><th>한 줄 메모</th></tr>
+<tr><td>A. 표본·식별자</td><td>1–6</td><td class="center v-part">🟡✅</td><td class="center v-ok">✅</td><td class="center v-ok">✅</td><td class="center v-na">➖</td><td>혜성·동원 N=381 전수, 지우 N=210 KOSPI 한정, 신지영 자료 대기</td></tr>
+<tr><td>B. 텍스트 추출</td><td>7–9</td><td class="center v-ok">✅</td><td class="center v-ok">✅</td><td class="center v-ok">✅</td><td class="center v-na">➖</td><td>3인 모두 II/IV/VI 직접 파싱, 4번째 자료는 같은 기준으로 추가 예정</td></tr>
+<tr><td>C. 전처리·형태소</td><td>10–13</td><td class="center v-part">🟡</td><td class="center v-ok">✅</td><td class="center v-ok">✅</td><td class="center v-na">➖</td><td>제외근거=동원, 정량표=혜성</td></tr>
+<tr class="row-split"><td>D. Feature·사전확장</td><td>14–20</td><td class="center v-bad">🟡⛔</td><td class="center v-ok">✅</td><td class="center v-part">🟡</td><td class="center v-na">➖</td><td><b>점수 최대 갈림</b> — fastText 완주는 혜성뿐</td></tr>
+<tr><td>E. 측정 validity</td><td>21–23</td><td class="center v-ok">✅</td><td class="center v-ok">✅</td><td class="center v-ok">✅</td><td class="center v-na">➖</td><td>동원 Bootstrap CI까지</td></tr>
+<tr><td>F. 회귀</td><td>24–26</td><td class="center v-ok">✅✅</td><td class="center v-ok">✅</td><td class="center v-ok">✅</td><td class="center v-na">➖</td><td>고정효과(FE)는 지우만</td></tr>
+<tr><td>G. 알파·해석·제출</td><td>27–30</td><td class="center v-part">✅⛔</td><td class="center v-ok">✅</td><td class="center v-ok">✅</td><td class="center v-na">➖</td><td>지우 업로드본 출력 공백(재현 증빙), 신지영 업로드 후 갱신</td></tr>
+</table>
+<div class="note"><b>한 줄 요약 —</b> <b style="color:var(--hs)">김혜성</b>=가이드 문자 그대로 가장 충실(fastText·차원매칭 완성형) · <b style="color:var(--dw)">이동원</b>=통합·재현성 축(단 expanded는 manual 7단어) · <b style="color:var(--jw)">김지우</b>=방법론 깊이 압도(robustness·cheap-talk·FE)나 N=210·출력 공백·fastText 미구현.</div>
+</section>
+
+<!-- 2. 숨은 의도 -->
+<section class="card">
+<h2>2. 교수님의 "숨은 의도" 9가지 <span class="tag">— 상·중·하를 가르는 행간</span></h2>
+<p class="lead">가이드를 표면적으로 읽으면 "수집→TF-IDF→회귀"지만, 평가표(04)·개요(01)의 행간에 진짜 시험 포인트가 숨어 있습니다.</p>
+<table>
+<colgroup><col style="width:6%"><col style="width:40%"><col style="width:24%"><col style="width:30%"></colgroup>
+<tr><th>#</th><th>숨은 의도</th><th>가이드 단서</th><th>가장 잘 짚은 사람</th></tr>
+<tr><td>H1</td><td><b>"정답 재현이 아니라 선택의 정당화"</b>가 과제 본질</td><td>01 §39–42</td><td>김지우(Decision Box)·이동원</td></tr>
+<tr><td>H2</td><td><b>cheap-talk이 핵심 시험</b> — 분량 통제를 <i>왜</i> 넣는지</td><td>04 §46 / 03 §234</td><td>김지우·이동원</td></tr>
+<tr><td>H3</td><td>분석기 <b>선정·제외 근거</b>는 교수 심층질문 대비</td><td>03 평가표 / 5·19 회의</td><td>이동원·김혜성</td></tr>
+<tr class="row-split"><td>H4</td><td>expanded는 "정답사전" 아님 — <b>θ sweep·직접검토 과정 자체</b>가 평가대상</td><td>01 §102 / 03 §120</td><td><b style="color:var(--hs)">김혜성 (유일 완주)</b></td></tr>
+<tr><td>H5</td><td>측정 validity 없이 <b>회귀 직행 = 흔한 실패</b></td><td>04 평가표</td><td>3인 모두 충족</td></tr>
+<tr><td>H6</td><td>약한 연관(ρ 0.1–0.2)을 <b>강한 예측력으로 과장 금지</b></td><td>03 §188 / 04 §89</td><td>김지우(ρ 해석 기준표)</td></tr>
+<tr><td>H7</td><td><b>381은 pilot</b> — 대표표본·일반화 금지</td><td>04 §101</td><td>3인 명시(지우는 N=210 축소)</td></tr>
+<tr><td>H8</td><td>거버넌스 어휘·등급은 <b>의무공시(IDF≈1.0)라 cheap-talk 함정</b></td><td>03 §234</td><td><b style="color:var(--hs)">김혜성</b>·김지우(Alpha 4)</td></tr>
+<tr><td>H9</td><td><b>차원별(E/S/G) 점수↔차원별 등급 매칭</b>이 자연스러움</td><td>03 §146</td><td><b style="color:var(--hs)">김혜성 (e/s/g 분리)</b></td></tr>
+</table>
+<div class="note dev"><b>회의 핵심 —</b> H4(fastText 완주)=<b style="color:var(--hs)">김혜성</b>, H2·H6(cheap-talk·과장금지)=<b style="color:var(--jw)">김지우</b>, H3·재현성=<b style="color:var(--dw)">이동원</b>. <b>최종본은 이 세 강점을 합쳐야 합니다.</b></div>
+</section>
+
+<!-- 3. 30단계 -->
+<section class="card">
+<h2>3. 30단계 정밀 비교 <span class="tag">— 각 행: 항목·가이드근거·실무벤치마킹 + 3인 판정</span></h2>
+<div id="t30"></div>
+</section>
+
+<!-- 4. 회의 결정 -->
+<section class="card">
+<h2>4. 회의(5/23) 결정용 — "최종본에 무엇을 가져갈까"</h2>
+<table>
+<colgroup><col style="width:22%"><col style="width:34%"><col style="width:44%"></colgroup>
+<tr><th>영역</th><th>채택 권장 베이스</th><th>이유</th></tr>
+<tr><td>수집·표본</td><td>김혜성/이동원 (N=381)</td><td>가이드 381 충족 + 실행 보존</td></tr>
+<tr><td>수집 함수</td><td>혜성 v2 + 동원 recover parser</td><td>결산월 무관+정정우선 + 비정상 XML 복구(이미 동원 통합)</td></tr>
+<tr><td>형태소 근거</td><td>이동원(제외근거)+김혜성(8지표)</td><td>교수 심층질문 H3 대비</td></tr>
+<tr class="row-split"><td><b>fastText·expanded</b></td><td><b style="color:var(--hs)">김혜성</b> (θ sweep+직접검토+v2)</td><td>H4·H5 유일 완주 — 가장 큰 가점 영역</td></tr>
+<tr><td>차원별 등급매칭</td><td><b style="color:var(--hs)">김혜성</b> (e/s/g 분리)</td><td>H9 정합</td></tr>
+<tr><td>회귀·고정효과</td><td><b style="color:var(--jw)">김지우</b> (industry+year FE)</td><td>H2·실무 최고 수준</td></tr>
+<tr><td>robustness·cheap-talk</td><td><b style="color:var(--jw)">김지우</b> (sign reversal·verbosity-adj)</td><td>H2·H6·H8 정면</td></tr>
+<tr><td>알파(섹션)</td><td>혜성(섹션 mechanism)+동원(section_weighted)</td><td>보고서 위치별 점수 가이드 1순위</td></tr>
+<tr><td>재현성·통합 골격</td><td><b style="color:var(--dw)">이동원</b> (단일 노트북·캐시·.env)</td><td>Run All 완주 검증됨</td></tr>
+</table>
+<div class="note"><b>즉시 액션 (회의 전)</b><br>
+1. <b>김지우 노트북 전체 실행 → 출력 보존</b> (현재 재현 증빙 공백 / 30단계)<br>
+2. <b>등급 스케일 1개로 통일</b> (가이드 0–6 권장 / 4단계)<br>
+3. <b>fastText·θ sweep을 통합본에 김혜성 방식으로 이식</b> (동원·지우 D블록 공백 / 15–18단계)<br>
+4. <b>표본 정의 합의</b>: 381 전수(가이드) vs 210 KOSPI(검정력·동질성) / 1단계</div>
+</section>
+
+<!-- 5. 참고문헌 -->
+<section class="card">
+<h2>5. 참고문헌 — 웹 벤치마킹 출처</h2>
+<div class="refs">
+<span class="grp">ESG 공시 텍스트분석 · cheap-talk · greenwashing</span>
+· <a href="https://www.mdpi.com/2071-1050/16/6/2571">Greenwashing &amp; Readability of ESG Disclosures, Sustainability 16(6):2571</a><br>
+· <a href="https://www.mdpi.com/2071-1050/16/21/9270">Textual Attributes of Sustainability Reports &amp; ESG Ratings, Sustainability 16(21):9270</a><br>
+· <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/eufm.12509">Identifying greenwashing in CSR reports using NLP, Eur. Financial Mgmt (2025)</a>
+<span class="grp">word embedding 사전 확장 (seed → cosine θ)</span>
+· <a href="https://www.researchgate.net/publication/274314819_Financial_Keyword_Expansion_via_Continuous_Word_Vector_Representations">Financial Keyword Expansion via Word Vectors</a><br>
+· <a href="https://www.researchgate.net/publication/339896379_Explaining_Financial_Uncertainty_through_Specialized_Word_Embeddings">Specialized Word Embeddings (산업특화 우위)</a><br>
+· <a href="https://link.springer.com/article/10.3758/s13428-023-02063-y">LEXpander: automated lexicon expansion (2023)</a>
+<span class="grp">한국어 형태소 분석기 (Kiwi vs Okt/Mecab)</span>
+· <a href="https://github.com/bab2min/kiwipiepy/tree/main/benchmark/disambiguate">kiwipiepy benchmark</a><br>
+· <a href="https://accesson.kr/kjdh/v.1/1/109/43508">Kiwi: Statistical LM + Skip-Bigram (정확도 86.7%)</a>
+<span class="grp">KCGS ESG 등급 방법론 · 등급체계</span>
+· <a href="https://www.hyosung.com/resources/en/file/management/credit-rating/KCGS-ESG-Rating(Hyosung).pdf">한국ESG기준원 KCGS ESG Rating</a><br>
+· <a href="https://esgconsulting.co.kr/wiki/esg/kcgs/">KCGS 평가 가이드 (S~D 7등급, 부문별 E/S/G)</a>
+<span class="grp">ordered logit · 고정효과 패널</span>
+· <a href="https://journals.sagepub.com/doi/full/10.1177/1536867X20930984">feologit: fixed-effects ordered logit, Stata Journal (2020)</a><br>
+· <a href="https://link.springer.com/article/10.1007/s00181-021-02121-4">ESG scores → credit ratings, multivariate ordinal logit, Empirical Economics (2022)</a>
+<span class="grp">방법론 anchor (가이드 인용 문헌)</span>
+· <a href="https://academic.oup.com/rfs/article-abstract/34/7/3265/5869446">Li, Mai, Shen, Yan (2021) Measuring Corporate Culture, RFS 34(7)</a><br>
+· <a href="https://academic.oup.com/rof/article/26/6/1315/6590670">Berg, Kölbel, Rigobon (2022) Aggregate Confusion: ESG Ratings Divergence, RoF 26(6)</a>
+</div>
+</section>
+
+<footer>ESG DART 전체진행 3인 비교 · 30단계 정밀 점검 · 2026-05-23 · 4번째 팀원(신지영) 업로드 시 동일 30단계로 갱신</footer>
+</div>
+
+<script>
+// [번호,제목,[badgeClass,label],가이드근거,벤치마킹,[지우 v,텍스트],[혜성],[동원]]
+const BLOCKS=[
+["블록 A · 표본·식별자 (1–6)",false,[
+[1,"표본 규모 — 최대 381 firm-year 시도",["b-must","필수"],"01 §127 / 02 §117·123","표본 편의가 ρ 부호까지 뒤집음 → 가용 모집단 전수 시도가 표준",
+ ["part","N=210 (KOSPI·FY21–23). 검정력 OK나 가이드 381과 달라 'KOSPI만' 정당화 필요"],
+ ["ok","N=381 전수 수집·실행(SUCCESS 381)"],["ok","N=381 전수(시도 381·SUCCESS 100%)"]],
+[2,"식별자 키 — stock_code×fiscal_year",["b-ban","위반금지"],"02 §35","company_name 133 ≠ stock_code 127 → 안정 ID 키 표준",
+ ["ok","5-key 원칙 명문화"],["ok","stock_code join, corpCode.xml 1회 매핑"],["ok","복합키만 사용(#2)"]],
+[3,"stock_code zfill(6) 정규화",["b-hide","숨은의도"],"02 식별자 정합성 전제","dtype=str/zfill(6)=한국 종목코드 정석",
+ ["ok","zfill(6) 명시"],["ok","005930→5930 복구, 길이분포 {6:381}"],["ok","zfill(6)(#7)"]],
+[4,"타이밍 — esg_year = fiscal_year+1",["b-must","필수"],"01 §70 / 02 §37 / 04 §111","공시→평가 lag 정렬은 disclosure 연구 기본(인과 아님)",
+ ["ok","fiscal_year+1"],["ok","검색기간 +1년 + 비12월 결산 한계 명시"],["ok","fiscal_year+1(#8). 등급 0–6=가이드 일치"]],
+[5,"실패행 처리 — 가짜 0 금지 + 사유 기록",["b-ban","위반금지"],"01 §98 / 02 §172 / 04 §58","결측 0 대체는 분포·계수 왜곡 → missingness 명시 표준",
+ ["ok","salvage_log INCLUDE/EXCLUDE, NaN 보존"],["ok","실패 13건 사유기록→전수복구"],["ok","status·reason 기록, corpus 제외(#1)"]],
+[6,"raw 원문 보존 + lineage 로그(재현성)",["b-must","필수"],"02 §145·176 / 04 재현성","원자료 보존+감사로그=reproducible research 핵심",
+ ["ok","lineage_audit + salvage_log 2종"],["ok","collection_meta+JSON+캐시ZIP, 체크포인트"],["ok","raw ZIP + corpus_381 캐시(idempotent)(#5)"]],
+]],
+["블록 B · 텍스트 추출 (7–9)",false,[
+[7,"II/IV/VI 섹션 선택 + 출처 기록",["b-must","필수"],"01 §99 / 02 §137 / 04 §37","관련 섹션 한정이 잡음↓(GRI word-list 관행)",
+ ["ok","II/IV/VI + 섹션별 컬럼 보존"],["ok","TITLE 경계+<P>만(<TABLE> 제외)"],["ok","II·IV·VI 본문(TITLE+TABLE 제거)"]],
+[8,"XML 직접 파싱 — MCP/LLM passage 신뢰 금지",["b-ban","위반금지"],"02 §94","LLM 발췌는 hallucination → 원문 파싱이 audit 가능",
+ ["ok","XBRL→text 직접 추출"],["ok","'원문 XML 직접 파싱' 명시"],["ok","XMLParser(recover=True) 직접 파싱"]],
+[9,"firm-year 1행 집계",["b-must","필수"],"01 §100 / 03 §32","Li et al.(2021) firm-year document = 표준 단위",
+ ["ok","firm_year_documents_v2(섹션 컬럼도)"],["ok","II/IV/VI를 1 document로 통합"],["ok","firm-year document→feature 1행"]],
+]],
+["블록 C · 전처리·형태소 (10–13)",false,[
+[10,"형태소 분석기 robust 비교 (Kiwi vs Okt 정량)",["b-hide","회의결정"],"5·19 회의 ② / 04 평가표","Kiwi 모호성해소 정확도 86.7%, 경량 C++ → 정량비교 후 선택이 모범",
+ ["part","Kiwi(exp_F) Decision Box로 정당화, Okt 정량표는 별도분석"],
+ ["ok","8지표: 1.31s vs 2.97s, seed 30/30 vs 20/30, Jaccard 0.649"],
+ ["ok","seed 보존 87% vs 67%, 11.5s → PRIMARY=Kiwi"]],
+[11,"분석기 제외 근거 (Komoran·Kkma)",["b-hide","숨은의도"],"5·19 회의 메모","Kkma 과세분화·저속, Komoran 미등록어·사용자사전 약함 — 문헌 정합",
+ ["na","Kiwi/Okt/Mecab/KoBERT만 후보, 제외근거 없음"],
+ ["part","Kiwi vs Okt 집중, Komoran/Kkma 제외근거 약함"],
+ ["ok","Kkma·Komoran·Okt 제외/선정 근거 정성+정량"]],
+[12,"seed 복합명사 보존 (user dict score)",["b-must","필수"],"03 §90 / 5·19 회의 ③","seed 토큰 무결성이 측정 전제(Li 2021)",
+ ["ok","30 seed+14복합어 NNP score=50, 보존≈100%"],["ok","add_user_word 15/30→30/30"],["ok","seed 30 등록(score=50), 정량 확인"]],
+[13,"불용어 (회사명/boilerplate 제거 기준)",["b-must","필수"],"03 §56–58","boilerplate·회사명 제거=ESG 텍스트 표준 전처리",
+ ["ok","STOPWORDS_EXT+G_SIGNAL_PROTECT 보호집합, bp_rate 정량화"],["ok","초안+회사명/숫자/법률, 358개"],["ok","회사명(1·2자)·boilerplate, seed 제외"]],
+]],
+["블록 D · Feature·사전확장 (14–20) — 점수 최대 갈림 구간",true,[
+[14,"seed TF-IDF 점수 (E/S/G)",["b-must","필수"],"03 §124–130 / 01 §101","seed-word TF-IDF 합산=Li(2021) 직접 적용",
+ ["ok","seed_tfidf_E/S/G + ratio·concentration"],["ok","E/S/G seed_score(M1a)+IDF 진단"],["ok","seed_tfidf E 0.318***·G 0.210***·S 0.131*"]],
+[15,"expanded = seed→embedding→팀 기준 걸러내기",["b-must","필수"],"01 §101 / 03 §90–93 / 04 §40","cosine 임계 확장은 확립된 방법, 큐레이션 필수",
+ ["part","frame+4기준 명시하나 manual_v1 7단어가 N=29 subset만(honest gap 자인)"],
+ ["ok","seed 30→expanded 56(v1 39→v2 27), 차원별 keep/drop표 완비"],
+ ["part","expanded_manual 7단어. 설명은 있으나 embedding 확장은 manual 대체"]],
+[16,"fastText 직접 학습 (사전학습 X = 가점)",["b-bonus","가점"],"03 §90 / 가점 조건","산업특화 임베딩이 불확실성 설명력 유의하게 큼",
+ ["bad","'fastText 모델 없어 미생성' — 미구현 자인"],
+ ["ok","사업보고서 corpus로 직접 학습(문장단위 재토큰화)"],
+ ["bad","manual 확장 — 본인 GUIDE가 발전과제 ③로 등록"]],
+[17,"θ sweep — 여러 임계값 비교(상위 100단어)",["b-must","필수"],"01 §102 / 03 §120 (Bao 2024)","임계 calibration+상위 N 검토=lexicon expansion 표준",
+ ["bad","θ 비교표가 빈 frame(미기입)"],
+ ["ok","θ=.55/.60/.65/.70 sweep, 잡음표, .60 선택근거(20/39/83), v2 차등θ"],
+ ["bad","θ sweep 미실행(발전과제 명시)"]],
+[18,"후보 단어 직접 검토·잡음 제거(회사명 등)",["b-must","필수"],"02 §76 / 03 §122 / 04 §41·76","자동확장은 고유명사 잡음 포함 → human-in-the-loop 필수",
+ ["part","채택/기각 4기준(개념적), 실제 검토 산출물 없음"],
+ ["ok","θ.60 39개 검토+성씨30·subword(이사무엘/감사선)·법률접미사 자동v3+수동drop"],
+ ["part","seed 검토는 했으나 expanded는 manual 7단어로 제한"]],
+[19,"기준 문장 cosine similarity (baseline)",["b-opt","baseline"],"01 §55–59 / 03 §209–215","단어겹침 cosine은 lexical 보조지표임을 명시해야",
+ ["na","ratio·concentration 패러다임 중심(직접 미구현)"],
+ ["ok","E/S/G cosine(M2). S차원 cosine만 유의(β=0.359**)"],
+ ["ok","cosine_E/S/G feature 생성"]],
+[20,"다중공선성 회피 (seed/expanded 동시투입 금지)",["b-must","필수"],"03 §132","상관 0.8+ 동시투입은 VIF 폭증 → 독립 모델 비교",
+ ["ok","VIF 사전진단(>10)+변수 분리"],["ok","상관 0.80~0.97→독립 회귀식"],["ok","seed/expanded 동시투입 안 함"]],
+]],
+["블록 E · 측정 validity (21–23)",false,[
+[21,"Spearman 순위상관 (회귀 전 검증)",["b-must","필수"],"03 §166 / 04 평가표","서열 종속변수엔 Pearson보다 Spearman",
+ ["ok","exp_F Spearman + ρ 해석기준표"],["ok","차원매칭(E .402·S .229·G −.13)"],["ok","Spearman + Bootstrap 95% CI(CI_excl_0)"]],
+[22,"등급 그룹 평균차 (t-test/Mann-Whitney)",["b-must","필수"],"03 §190–192 / 04 평가표","분포비교는 상관과 독립 증거, effect size 동반",
+ ["ok","Mann-Whitney U + rank-biserial"],["ok","Shapiro→t-test/MW 분기"],["ok","Mann-Whitney U(A이상 vs 미만)"]],
+[23,"약한 연관 신중 해석 (ρ 0.1–0.2)",["b-hide","숨은의도"],"03 §188 / 04 §89","통계 유의 ≠ 실질 의미 — 효과크기 보고",
+ ["ok","'유의성≠실질의미' 명문화, robust 기준 엄격"],["ok","'약한 연관' 라벨링"],["ok","약/중/강 구분, total_tokens 신중"]],
+]],
+["블록 F · 회귀 (24–26)",false,[
+[24,"모형 선택 (OLS/Ordered/Binary) + 근거",["b-must","필수"],"03 §221–274 / 04 평가표","서열 등급엔 ordered logit 적합, OLS는 baseline",
+ ["ok","M1~M5(OLS3+Ordered+Binary), '셋 같은 방향일 때만 신호'"],
+ ["ok","27회귀 일관성→메인 Ordered, 선택근거 4가지"],
+ ["ok","3종 비교(OLS β23.06 R².406, Ordered β29.19 p.002)"]],
+[25,"cheap-talk 통제변수 (word_count/log_tokens)",["b-must","숨은핵심"],"03 §234·266 / 04 §46","greenwashing 연구는 분량 통제로 cheap-talk 측정 — 필수",
+ ["ok","log_tokens 항상 통제, M1→M2 변화로 진단"],
+ ["ok","n_tokens 통제, S TF-IDF 통제후 소멸=cheap-talk 증거"],
+ ["ok","total_tokens(ρ=0.654 최강!) 통제 — verbosity 환원 위험을 1순위 발전과제로"]],
+[26,"고정효과/통제변수 (industry·year FE)",["b-opt","선택·실무가점"],"03 §164 '(선택)'","firm/year FE ordered logit이 ESG-등급 패널 표준(feologit)",
+ ["ok","유일하게 industry_FE+year_FE 투입(M3~M5)"],
+ ["part","차원·섹션·measure 분해는 깊으나 명시 FE 패널 미투입"],
+ ["part","pooled OLS — FE 미투입(발전과제 ④)"]],
+]],
+["블록 G · 알파·해석·제출 (27–30)",false,[
+[27,"cheap-talk 가설 정면 검토(verbosity vs 실질)",["b-must","숨은핵심"],"04 §46 / 01 §106","저성과 기업이 언어로 보완 — ESG 텍스트 연구 중심 주제",
+ ["ok","4 alpha 전부 cheap-talk 축. 가장 정면"],
+ ["ok","G IDF≈1.0 진단 + S TF-IDF 소멸 정량증거"],
+ ["ok","specificity/commitment/non-material 3종 + total_tokens 우려"]],
+[28,"알파분석 — 왜 필요/무엇을 더/한계",["b-must","필수"],"01 §105 / 04 §93–97","섹션별·업종별 분해, 통제 변형 등 robustness가 좋은 알파",
+ ["ok","Alpha 1~4 + 발표 메시지 매트릭스"],
+ ["ok","섹션별 1,143 측정단위 mechanism 해부"],
+ ["ok","부호역전·section_weighted·업종·cheap-talk 3종 4축"]],
+[29,"인과 아닌 연관·표본 한계 명시",["b-ban","위반금지급"],"01 §142–148 / 04 §4","ESG 등급 제공자 상관 0.38~0.71(Berg 2022) → anchor 한계 인정이 정직",
+ ["ok","'association만', KCGS 비공개·KOSPI 편향, 등급 divergence 인식 우수"],
+ ["ok","비12월 결산·차원 직접비교 금지 등 구체적"],
+ ["ok","pilot·cheap-talk·timing·분석기·FE 한계 6종"]],
+[30,"제출 형식·재현성 (Run All·.env·.md)",["b-must","필수"],"04 §1·§2-1·§5 / 01 §113","실행가능 노트북+비밀키 분리=reproducible submission",
+ ["bad","구조·Decision Box 우수하나 업로드본 셀 출력 0개(미실행)→재현 증빙 공백"],
+ ["ok","67개 셀 출력 보존(실행완료), 캐시 0호출"],
+ ["ok","Run All 완주·출력 보존, idempotent 캐시, .env API_KEY만"]],
+]],
+];
+const VC={ok:["v-ok","✅ 충족"],part:["v-part","🟡 부분"],bad:["v-bad","⛔ 미흡"],na:["v-na","➖ 해당없음"]};
+function esc(value){
+  return String(value).replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+function vcell(who,arr){const[c,l]=VC[arr[0]];return `<td class="vcell" data-who="${esc(who)}"><span class="v ${c}">${esc(l)}</span><span class="tx">${esc(arr[1])}</span></td>`;}
+const MISSING_MEMBER=["na","자료 미반영: 업로드 후 동일 30단계 기준으로 갱신"];
+let html="";
+for(const[title,danger,steps] of BLOCKS){
+  html+=`<div class="blkhead${danger?' danger':''}">${esc(title)}</div>`;
+  html+=`<table class="t30"><colgroup><col class="c-crit"><col class="c-mem"><col class="c-mem"><col class="c-mem"><col class="c-mem"></colgroup>`;
+  html+=`<tr><th>항목 · 가이드 · 벤치마킹</th><th>김지우</th><th>김혜성</th><th>이동원</th><th>신지영</th></tr>`;
+  for(const[n,t,[bc,bl],src,bench,jw,hs,dw] of steps){
+    html+=`<tr><td class="crit"><b>${esc(n)}. ${esc(t)}</b><span class="badge ${bc}">${esc(bl)}</span>`+
+      `<span class="src"><span class="g">📕 ${esc(src)}</span> · 🌐 ${esc(bench)}</span></td>`+
+      vcell("김지우",jw)+vcell("김혜성",hs)+vcell("이동원",dw)+vcell("신지영",MISSING_MEMBER)+`</tr>`;
+  }
+  html+=`</table>`;
+}
+document.getElementById("t30").innerHTML=html;
+</script>
+</body></html>
