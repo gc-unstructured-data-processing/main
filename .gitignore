@@ -195,3 +195,9 @@ __MACOSX/
 
 # 대용량 재생성 가능 파이프라인 산출물 (GitHub 100MB 제한 초과 — 노트북으로 재생성)
 members/_integrated/notebooks/archive/outputs/
+
+# 대용량 모델/캐시
+*.npy
+*.model
+*.bin
+.env

@@ -109,6 +109,43 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
 .warnbox{margin:16px 0;display:flex;gap:12px;background:#fbf6ec;border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:13px 16px;font-size:14px;color:var(--ink-soft);}
 .warnbox b{color:var(--ink);}.warnbox .ic{flex:none;}
 
+/* narrative story paragraph */
+p.story{font-size:15.5px;color:var(--ink-soft);background:var(--card);border:1px solid var(--rule-soft);border-radius:12px;padding:15px 18px;margin:14px 0;line-height:1.78;}
+p.story b{color:var(--ink);}
+p.story .lead-in{font-family:"Gowun Batang";color:var(--teal);font-weight:700;}
+
+/* inline anticipated-question strip per section */
+.askbox{margin:22px 0 4px;border:1px solid var(--crimson-soft);border-radius:13px;overflow:hidden;background:linear-gradient(180deg,#fff,#fdf6f4);box-shadow:0 12px 26px -28px rgba(154,43,31,.5);}
+.askbox .ah{display:flex;align-items:center;gap:9px;background:var(--crimson);color:#fff;padding:9px 16px;font-family:"JetBrains Mono";font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;}
+.askbox .ah .qm{font-family:"Gowun Batang";font-size:16px;line-height:1;}
+.askbox ul{list-style:none;margin:0;padding:10px 16px 13px;}
+.askbox li{padding:8px 0;border-bottom:1px dashed var(--rule);font-size:14.5px;color:var(--ink-soft);line-height:1.6;}
+.askbox li:last-child{border-bottom:none;}
+.askbox li .q{font-family:"Gowun Batang";color:var(--crimson);font-weight:700;}
+.askbox li .pin{display:block;margin-top:3px;font-size:13px;color:var(--teal);}
+.askbox li .pin b{color:var(--ink);}
+.askbox li .ref{font-family:"JetBrains Mono";font-size:10.5px;color:var(--ink-faint);}
+
+/* differentiation vs prior work */
+.diff{margin:26px 0 0;background:linear-gradient(120deg,#102a26,var(--teal));color:#e9f3f0;border-radius:16px;padding:20px 24px;box-shadow:var(--shadow);}
+.diff .k{font-family:"JetBrains Mono";font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#9fd6cc;}
+.diff h4{margin:7px 0 10px;font-family:"Gowun Batang";font-size:19px;color:#fff;font-weight:700;}
+.diff .row{display:grid;grid-template-columns:128px 1fr;gap:10px 16px;font-size:14px;align-items:baseline;}
+.diff .row .lab{font-family:"JetBrains Mono";font-size:11px;color:#9fd6cc;letter-spacing:.04em;padding-top:2px;}
+.diff .row .val{color:#f2faf8;line-height:1.6;}
+.diff .row .val b{color:#9fe0d6;}
+.diff .row+.row{margin-top:9px;}
+
+/* storyline arc */
+.arc{margin:26px 0 0;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:18px 20px;}
+.arc .t{font-family:"JetBrains Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px;}
+.arc ol{margin:0;padding-left:0;list-style:none;counter-reset:arc;}
+.arc li{position:relative;padding:9px 0 9px 40px;border-bottom:1px solid var(--rule-soft);counter-increment:arc;font-size:14.5px;color:var(--ink-soft);line-height:1.6;}
+.arc li:last-child{border-bottom:none;}
+.arc li::before{content:counter(arc);position:absolute;left:0;top:9px;width:26px;height:26px;border-radius:8px;background:var(--navy);color:#fff;font-family:"JetBrains Mono";font-weight:700;font-size:12px;display:grid;place-items:center;}
+.arc li b{color:var(--ink);}
+.arc li .hl{color:var(--crimson);font-weight:700;}
+
 /* Q&A */
 .qsec{margin-top:70px;}
 .qcat{font-family:"JetBrains Mono";font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--crimson);margin:30px 0 12px;font-weight:700;}
@@ -139,7 +176,8 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
     <p class="tag">ESG DART · 3조 · 발표 준비용 전체 상세설명 + 심층 Q&A</p>
     <h1>노트북 §1~§7 <span class="em">빠짐없이</span>,<br>그리고 어떤 질문이 와도 <span class="em">답할 수 있게</span></h1>
     <p class="lead">방대한 분석 노트북(102셀)을 <b>발표자·이동원이 단번에 숙지</b>하고 심층 질의응답에 대비하기 위한 문서다.
-      데이터 수집부터 알파 진단까지 7단계를 핵심 수치·시각화와 함께 설명하고, 각 단계에서 나올 법한 <b>예상 질문과 모범답변</b>을 정리했다.</p>
+      교수님께서 <b>"기술적 디테일은 ipynb로 확인하고, 발표의 핵심은 스토리텔링"</b>이라 하셨기에 — 코드는 걷어내되 <b>각 단계가 무슨 이야기를 하는지(왜 그렇게 했고, 무엇을 발견했는지)</b>를 흐름으로 설명하고,
+      <b>시사점·제언의 근거 사슬</b>과 <b>선행연구와의 차별점</b>을 함께 짚는다. 그리고 각 파트마다 <b>교수님이 던질 법한 심층 질의</b>를 그 자리에 미리 배치해 안내한다.</p>
     <div class="who">
       <span class="chip">표본 <b>127사 × 3년 = 381 firm-year</b></span>
       <span class="chip">타이밍 <b>esg_year = fiscal_year+1</b></span>
@@ -170,6 +208,28 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
     <div class="pstep"><span class="n">7</span><div class="t">결론</div><div class="x">발견·시사·한계</div></div>
   </div>
 
+  <!-- storyline arc -->
+  <div class="arc">
+    <div class="t">발표 스토리라인 — 이 순서대로 한 편의 이야기가 된다</div>
+    <ol>
+      <li><b>질문을 던진다.</b> "ESG를 강하게 말하는 기업이 실제 등급도 높은가?" 그리고 그 연관이 <b>내용</b> 때문인지 <span class="hl">'그냥 길게 써서'(cheap-talk)</span> 때문인지 가른다.</li>
+      <li><b>첫 반전.</b> 등급과 가장 강하게 연관된 건 ESG 어휘가 아니라 <span class="hl">보고서 분량(ρ=0.66)</span>이었다 — "길게 쓰면 잘한 것처럼 보이는 착시".</li>
+      <li><b>착시를 걷어낸다.</b> 분량·규모·수익성을 통제하자 살아남은 진짜 신호는 <span class="hl">거버넌스(G)뿐</span>. 환경(E)은 '큰 기업 효과'였다.</li>
+      <li><b>개별 기업으로 내려간다.</b> 등급 대비 말이 앞서는지(과잉)·뒤지는지(과소)를 <span class="hl">말–실행 격차(Talk–Walk Gap)</span>로 점수화 — 44%가 불일치, 60%는 3년 고정된 구조적 특성.</li>
+      <li><b>마지막 발견.</b> 기업은 ESG를 고르게가 아니라 <span class="hl">'축을 골라'</span> 부풀린다 — 약한 사회(S)는 말로 가리고(은폐), 강한 거버넌스(G)는 정당하게 부각(시그널링).</li>
+      <li><b>그래서 무엇인가.</b> ESG 공시는 정보 전달이 아니라 <b>전략적 언어</b>다 → 기업·투자자·평가자를 위한 제언으로 닫는다.</li>
+    </ol>
+  </div>
+
+  <!-- differentiation vs prior work -->
+  <div class="diff">
+    <div class="k">선행연구와 무엇이 다른가 (대비 포인트)</div>
+    <h4>"선택적 공시 = greenwashing"이라는 통념을, 축을 분해해 반증한다</h4>
+    <div class="row"><span class="lab">기존 연구</span><span class="val">greenwashing 측정의 거의 전부가 ESG를 <b>하나로 합친 점수</b>(공시점수−성과점수)를 쓴다 → "어떤 축은 부풀리고 어떤 축은 침묵하는가"라는 <b>축 간(cross-pillar) 선택</b>을 구조적으로 못 본다.</span></div>
+    <div class="row"><span class="lab">Bingler 2022</span><span class="val">기후 공시의 cherry-picking을 다뤘으나 어디까지나 <b>기후(E) 내부</b>의 중대/비중대 선택 — E·S·G 세 축을 각 축의 KCGS 등급에 견준 것은 아니다.</span></div>
+    <div class="row"><span class="lab">본 분석</span><span class="val"><code>gap_E·gap_S·gap_G</code>를 <b>따로</b> 보유 → 세 축을 각 축의 실제 등급에 견줘 비교한 결과, <b>S는 약점 은폐(2.08≪3.03)·G는 강점 시그널(2.43&gt;2.31)</b>로 갈렸다. 단일 점수로는 결코 안 보이는 firm-level 진단. (검색 가능한 범위에서 한국 DART 사업보고서에 이 설계를 적용한 선례를 찾지 못함.)</span></div>
+  </div>
+
   <!-- §0 -->
   <section class="sec" id="s0">
     <div class="shead"><div class="num">0</div><div><h2>한눈에 — 연구 질문과 설계</h2><div class="sub">research question · design</div></div></div>
@@ -177,6 +237,18 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
       — 등급을 <b>맞히는(예측) 문제가 아니라</b>, 공시 언어와 외부 평가 사이의 <b>패턴을 데이터로 확인</b>하는 것이 목표다(인과 아님).</p>
     <p class="body"><b>타이밍.</b> <code>esg_year = fiscal_year + 1</code> — KCGS 평가연도 t는 직전 회계연도 t−1의 사업보고서와 연결. (단, 제공 CSV의 <code>esg_year</code>가 <code>fiscal_year</code>와 동일값이라, 보고서는 가이드 규칙대로 고르되 등급은 CSV가 각 fiscal_year 행에 부여한 값을 신뢰해 결합 — 한 해 어긋날 가능성은 §7 한계에 명시.)</p>
     <div class="take"><span class="ic">▶</span><span><b>해석 규율(전 구간 적용).</b> 우리는 평가가 <b>무엇을 보상하는지(구조)</b>를 본다. 기업이 거기 반응했는지(행동)는 보지 않는다. 모든 문장은 "~할 수 있다(may)" 수준이며 인과·행동변화는 주장하지 않는다.</span></div>
+
+    <p class="story"><span class="lead-in">무슨 이야기인가.</span> 이 연구는 "등급을 잘 맞히는 모델"을 만드는 게 아니다. 만약 정확도가 목표였다면 <b>분량 하나만 넣어도</b> 설명력이 크게 오른다 — 하지만 그건 cheap-talk를 정당화할 뿐 경영학적 의미가 없다. 그래서 우리는 처음부터 <b>"무엇이 등급과 연관되고, 그 연관이 분량 착시인지 진짜 신호인지"를 분리</b>하는 데 초점을 맞췄고, 그 결과 <b>통제(분량·재무)가 분석의 중심축</b>이 됐다. 이 한 줄의 설계 선택이 §4~§6 전체의 성격을 결정한다.</p>
+
+    <div class="askbox">
+      <div class="ah"><span class="qm">Q</span> 이 파트에서 예상되는 심층 질의 — 설계의 정당성</div>
+      <ul>
+        <li><span class="q">Q.</span> 등급을 예측(머신러닝)하지 않고 왜 상관·회귀만 했나요?
+          <span class="pin"><b>한 줄 답:</b> 연구 질문이 '예측'이 아니라 '공시 언어와 외부 평가의 패턴 확인'이라서. 예측이 목표면 분량만 넣어도 R²가 오르지만 그건 cheap-talk 정당화일 뿐. <span class="ref">→ 하단 Q&amp;A A·1</span></span></li>
+        <li><span class="q">Q.</span> 인과가 아니라면 이 분석의 쓸모는 무엇인가요?
+          <span class="pin"><b>한 줄 답:</b> 격차·축 편향은 인과 증명이 아니라 <b>'더 들여다볼 후보'를 골라주는 진단 신호</b>. 평가가 무엇을 보상하는지(구조)를 본다.</span></li>
+      </ul>
+    </div>
   </section>
 
   <!-- §1 -->
@@ -195,6 +267,20 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
       <div class="knc"><div class="knh">등급 척도</div><div class="knv">D~A+</div><div class="knd">6단계 · 표본 최고 A+</div></div>
     </div>
     <div class="take"><span class="ic">▶</span><span><b>핵심.</b> 전수 100% 수집에 성공했고, 실패 시 가짜 0으로 메우지 않고 기록만 했다(정직성). 글자수 편차 42배는 이후 <b>분량(cheap-talk) 통제의 필요성</b>을 예고한다.</span></div>
+
+    <p class="story"><span class="lead-in">무슨 이야기인가.</span> 분석의 신뢰는 데이터 혈통(lineage)에서 시작한다. 사업보고서 전체가 아니라 <b>ESG 신호가 모이는 3개 섹션만</b> 골라 잡음을 줄였고(II 사업의 내용·IV 경영진단·VI 이사회 등 기관), 정정공시는 <b>원본&gt;기재정정&gt;첨부정정</b> 순으로 우선순위를 정해 같은 firm-year가 중복되지 않게 했다. 무엇보다 <b>수집 실패를 '가짜 0'으로 메우지 않고 그대로 기록</b>한 점이 중요하다 — 없는 값을 0으로 채웠다면 "ESG를 한 마디도 안 한 기업"이 인위적으로 생겨 이후 모든 상관이 오염됐을 것이다. 그리고 이 단계에서 이미 <b>기업 간 분량이 42배</b> 벌어진다는 사실이 드러나, "분량을 통제하지 않으면 안 된다"는 뒤 이야기의 복선이 깔린다.</p>
+
+    <div class="askbox">
+      <div class="ah"><span class="qm">Q</span> 이 파트에서 예상되는 심층 질의 — 데이터 신뢰성</div>
+      <ul>
+        <li><span class="q">Q.</span> 381 firm-year로 한국 상장사 전반을 말할 수 있나요?
+          <span class="pin"><b>한 줄 답:</b> 없습니다. KCGS 등급 보유사 중 <b>의도적으로 고른 pilot 패널</b>(무작위 아님)이라 모집단 추론 불가 → 모든 결론은 "이 표본에서는"으로 한정. <span class="ref">→ 하단 Q&amp;A C·1</span></span></li>
+        <li><span class="q">Q.</span> 왜 사업보고서 전체가 아니라 3개 섹션만 추출했나요?
+          <span class="pin"><b>한 줄 답:</b> ESG 신호가 집중된 II·IV·VI만 경계로 잘라 잡음(재무표·보일러플레이트)을 줄이기 위함. 대분류 로마숫자 TITLE만 경계로 사용.</span></li>
+        <li><span class="q">Q.</span> 수집 못 한 firm-year는 어떻게 처리했나요?
+          <span class="pin"><b>한 줄 답:</b> 가짜 0으로 메우지 않고 <b>기록만</b> 했습니다(정직성). 다만 누락이 비무작위면 corpus가 편향될 수 있어 §7 한계에 명시.</span></li>
+      </ul>
+    </div>
   </section>
 
   <!-- §2 -->
@@ -218,6 +304,18 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
         Kiwi 사용자 사전(28/30)이 ESG 합성어를 단일 토큰으로 보존하는 반면 <b>HF subword(16/30)는 특히 S·G 합성어를 ## 조각으로 분할</b>한다. 사전 기반 ESG seed score 측정엔 합성어 보존이 핵심 → <b>Kiwi 채택이 세 번째 비교축에서도 정당화</b>.</figcaption>
     </figure>
     <div class="take"><span class="ic">▶</span><span><b>핵심.</b> seed 보존율 60%↔93% 차이는 G·S 차원 feature 품질에 직결. 이 한 끗 차이가 분석 전체의 토대다.</span></div>
+
+    <p class="story"><span class="lead-in">무슨 이야기인가.</span> 한국어 분석에서 토크나이저는 '사소한 도구 선택'이 아니라 <b>측정의 토대</b>다. <code>감사위원회·재생에너지·탄소중립</code> 같은 ESG 합성어가 <code>감사/위원회</code>로 쪼개지면 그 단어의 ESG 신호 자체가 사라진다. 그래서 분석기를 <b>"ESG seed 30개를 단일 토큰으로 얼마나 보존하는가"</b>라는 한 가지 기준으로 줄세웠고, Kiwi+사용자 사전(28/30)이 Okt·HF subword를 앞섰다. 한 가지 더 흥미로운 디테일 — 회사명을 불용어로 지우다 보면 <code>한화에너지</code>의 <code>에너지</code>처럼 <b>ESG 핵심어가 함께 지워질 뻔</b>했는데, seed 강제 보호 장치가 이를 막았다. 없었으면 E(환경) 신호가 통째로 0이 될 뻔한 아찔한 지점이다.</p>
+
+    <div class="askbox">
+      <div class="ah"><span class="qm">Q</span> 이 파트에서 예상되는 심층 질의 — 전처리 선택</div>
+      <ul>
+        <li><span class="q">Q.</span> 명사만 쓰는 bag-of-words면 문맥·부정(否定)을 못 잡지 않나요?
+          <span class="pin"><b>한 줄 답:</b> 맞습니다, 명시적 한계. "배출 증가"와 "배출 감축"이 똑같이 E 점수를 올림 → 점수를 '성과'가 아니라 <b>'어휘 강조도'</b>로만 해석. <span class="ref">→ 하단 Q&amp;A C·3</span></span></li>
+        <li><span class="q">Q.</span> 분석기를 seed 보존율 하나로만 골라도 되나요?
+          <span class="pin"><b>한 줄 답:</b> 사전 기반 ESG 측정에선 합성어 보존이 곧 신호 품질이라 가장 직접적 기준. Okt(사전 미지원)·Komoran(느림)·Kkma(매우 느림)는 별도 사유로도 기각.</span></li>
+      </ul>
+    </div>
   </section>
 
   <!-- §3 -->
@@ -243,6 +341,20 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
       <tr><td>G 지배</td><td class="mono">0.009</td><td class="mono">0.197</td><td class="gd hi">+2185%</td><td>★ expanded 정당성 최강 — seed 제외분을 대폭 보완</td></tr>
     </table>
     <div class="warnbox"><span class="ic">⚠︎</span><span><b>다중공선성.</b> 같은 차원 seed↔expanded 상관: E r=0.937·S r=0.817(동시 투입 금지) / <b>G r=0.177(투입 가능)</b>. 그래서 회귀는 feature set별로 분리(M1a seed / M1b expanded / M1c cosine). cosine은 값이 0.02 수준으로 거의 직교 → <b>약한 보조 baseline</b>으로만 해석.</span></div>
+
+    <p class="story"><span class="lead-in">무슨 이야기인가.</span> 여기서 가장 직관에 반하는 결정이 나온다 — <code>max_df=0.80</code>으로 <b>이사회·주주·감사위원회 같은 G 핵심어를 일부러 버린다.</b> 얼핏 "G를 과소측정하는 것 아니냐"는 반발이 나오지만, 이 단어들은 거의 모든 보고서에 의무적으로 등장해 <b>변별력이 0</b>이다. 실제로 다 넣으면 seed_G↔등급 상관이 0.27에서 <b>음수(−0.16)로 반전</b>한다(시각화 2). 즉 max_df 컷은 버그가 아니라 <b>"의무공시 상투어는 G 신호가 아니다"라는 발견 그 자체</b>다. 빠진 자리는 FastText로 확장한 <b>expanded_G</b>가 메우는데, G는 seed↔expanded 상관이 낮아(r=0.18) 둘이 겹치지 않는 정보를 담는다 — 그래서 G만이 뒤 회귀에서 끝까지 살아남을 자격을 갖춘다.</p>
+
+    <div class="askbox">
+      <div class="ah"><span class="qm">Q</span> 이 파트에서 예상되는 심층 질의 — feature 설계</div>
+      <ul>
+        <li><span class="q">Q.</span> max_df=0.80으로 이사회·주주를 빼면 G를 과소측정하는 것 아닌가요?
+          <span class="pin"><b>한 줄 답:</b> 반대로 <b>빼야 G 신호가 살아납니다.</b> 보편어를 다 넣으면 ρ가 0.27→−0.16으로 반전 → 변별력 없는 boilerplate라는 증거. 실제 G는 expanded_G가 담당. <span class="ref">→ 하단 Q&amp;A A·3</span></span></li>
+        <li><span class="q">Q.</span> 왜 0.85·0.97은 안 봤나요? 최적값을 찾은 건가요?
+          <span class="pin"><b>한 줄 답:</b> '최적점 탐색'이 아니라 '민감도 곡선의 모양' 확인이 목적. 0.99부터 붕괴·반전한다는 게 핵심이고 어느 값이든 최종 결론은 불변. <span class="ref">→ 하단 Q&amp;A A·4</span></span></li>
+        <li><span class="q">Q.</span> FastText 확장이 자의적으로 단어를 넣은 것 아닌가요?
+          <span class="pin"><b>한 줄 답:</b> θ=0.65 자동 필터 후 <b>차원별 cosine 내림차순 전수 수동 검토</b>로 인명·기관명·형태소 오분리를 기각. 최종 E121·S26·G316.</span></li>
+      </ul>
+    </div>
   </section>
 
   <!-- §4 -->
@@ -263,6 +375,18 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
       <figcaption><span class="fl">시각화 3 · 의미 임베딩(dense) vs 단어겹침(TF-IDF) — 반증 결과</span>
         한국어 SBERT(ko-sroberta) 기반 <b>의미적 dense cosine이 오히려 등급과 더 약하게</b> 연관됐다(E: dense 0.229 &lt; TF-IDF 0.367; S·G는 음수/무의미). 즉 "더 정교한 의미 임베딩이 항상 낫다"는 통념을 이 표본에서 반증 — 단어 기반 측정의 가치를 정직하게 확인.</figcaption>
     </figure>
+
+    <p class="story"><span class="lead-in">무슨 이야기인가.</span> 회귀로 직행하지 않고 먼저 순위상관·집단차이로 "각 feature가 등급과 진짜 연관되는지"를 확인하는 단계다. <b>그리고 여기서 프로젝트 전체를 뒤집는 발견이 나온다</b> — 어떤 ESG 어휘 feature보다 <b>보고서 분량(n_tokens)이 등급과 가장 강하게 연관(ρ=0.663)</b>됐다. A등급 이상 기업은 B+ 이하보다 평균 2.1배 길게 쓴다. "내용이 좋아서 등급이 높다"가 아니라 <b>"길게 써서 높아 보인다"는 cheap-talk 착시</b>의 직접 증거이고, 이 한 발견이 이후 모든 회귀에 <code>log_n_tokens</code> 통제를 의무로 만든다. 덤으로, 더 정교해 보이는 의미 임베딩(dense)이 오히려 더 약했다는 결과(시각화 3)는 "최신 기법이 늘 낫다"는 통념을 정직하게 반증한다.</p>
+
+    <div class="askbox">
+      <div class="ah"><span class="qm">Q</span> 이 파트에서 예상되는 심층 질의 — 분량 발견의 해석</div>
+      <ul>
+        <li><span class="q">Q.</span> 분량을 통제(잔차로 제거)하는 게 정당한가요? 분량 자체가 ESG 노력 아닌가요?
+          <span class="pin"><b>한 줄 답:</b> 그래서 <b>버리지 않고 따로 살려 보고</b>합니다. 분량은 '교란이자 그 자체로 흥미로운 발견'의 두 역할. §5에서 계수를 함께 공개. <span class="ref">→ 하단 Q&amp;A A·2</span></span></li>
+        <li><span class="q">Q.</span> 40개 검정이 다 유의하다는데 그만큼 강한 결과인가요?
+          <span class="pin"><b>한 줄 답:</b> 유의 ≠ 효과크기. FDR 보정 후에도 유의하지만 ρ는 0.2~0.45로 <b>약~중간</b>. 표본이 커서 유의해진 면을 정직하게 인정.</span></li>
+      </ul>
+    </div>
   </section>
 
   <!-- §5 -->
@@ -285,6 +409,20 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
     </figure>
     <div class="take"><span class="ic">▶</span><span><b>핵심.</b> ⑴ 분량이 3종 모형 모두에서 압도적 유의(cheap-talk 확증) ⑵ <b>expanded_G가 유일하게 분량·규모·수익성 통제 후에도 견고</b>(1 SD↑ ≈ 0.26등급↑) ⑶ S는 모든 모형에서 무관/음수.
       (모형 한계: ordered logit 비례오즈는 S에서 위반, seed_G는 분리로 추정 불안정 → 방향만 읽고 3중 교차검증으로 보강.)</span></div>
+
+    <p class="story"><span class="lead-in">무슨 이야기인가.</span> §4의 단순 상관은 "분량 착시"에 오염돼 있을 수 있다. 그래서 이제 <b>분량을 통제한 뒤(M1), 다시 기업 규모·수익성·레버리지까지 통제한 뒤(M2)에도</b> 어떤 ESG 어휘가 등급과 함께 가는지를 본다. 결과는 깔끔하다 — <b>거버넌스(G)만 끝까지 살아남는다</b>(β 3.17→1.96). 반면 <b>환경(E)은 재무통제를 넣자 유의성이 사라진다</b>(0.43→0.17). 이건 M1에서 보이던 환경 신호의 상당 부분이 사실은 <b>"큰 기업이 환경 서술도 많고 등급도 높다"는 규모 착시</b>였다는 뜻이다. 등급은 D~A+ 서열변수라 한 모형도 완벽하지 않기에 OLS·Ordered·Binary <b>3종을 교차검증</b>했고, G는 세 모형 모두에서 유의했다.</p>
+
+    <div class="askbox">
+      <div class="ah"><span class="qm">Q</span> 이 파트에서 예상되는 심층 질의 — 회귀·모형 선택</div>
+      <ul>
+        <li><span class="q">Q.</span> 회귀를 왜 3개나 돌렸나요? 하나로 충분하지 않나요?
+          <span class="pin"><b>한 줄 답:</b> 등급이 서열변수라 단일 모형의 가정이 모두 불완전(OLS 등간 위반·ordered 비례오즈 위반·binary 정보손실). <b>깨끗한 단일 모형이 없어</b> 방향 일치로 교차검증. <span class="ref">→ 하단 Q&amp;A A·5</span></span></li>
+        <li><span class="q">Q.</span> 왜 E·S는 약하고 G만 살아남나요?
+          <span class="pin"><b>한 줄 답:</b> G는 사외이사 수·감사위원회처럼 <b>코드화·검증 가능한 구조적 사실</b>이라 VI 섹션에 정형화. S는 서술·자기보고, E는 정량데이터가 주로 지속가능보고서에 있어 사업보고서에선 규모와 얽힘. (단, '보상 구조' 해석이지 G가 본질적으로 더 중요하다는 뜻 아님) <span class="ref">→ 하단 Q&amp;A B·1</span></span></li>
+        <li><span class="q">Q.</span> 같은 기업이 3번 반복되는데 pooled로 돌려도 되나요?
+          <span class="pin"><b>한 줄 답:</b> 한계로 인정(기업 FE·군집 SE 미적용, p-value 낙관적일 수 있음). §6 지속성·robustness로 기업 단위 안정성을 별도 확인, 후속과제로 명시. <span class="ref">→ 하단 Q&amp;A C·4</span></span></li>
+      </ul>
+    </div>
   </section>
 
   <!-- §6 -->
@@ -332,6 +470,22 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
       <tr><td class="gd">G (지배구조)</td><td class="mono gd">2.43</td><td class="mono">2.31</td><td class="gd">실제 강점을 부각 → 정당한 시그널링 (greenwashing 아님)</td></tr>
     </table>
     <div class="take"><span class="ic">★</span><span><b>이 알파만의 기여.</b> <b>"선택적 공시 = greenwashing"이 아니다.</b> S·E는 약점을 말로 가리고, G는 강점을 알린다 — 단일 ESG 점수로는 결코 보이지 않는 구분. 축 선택도 구조적(매년 같은 축 부풀림 59.1%).</span></div>
+
+    <p class="story"><span class="lead-in">무슨 이야기인가 (메인 알파).</span> 지금까지는 "전체 표본이 어떻게 움직이는가"였다면, 여기서는 <b>개별 기업으로 내려가 한 회사를 진단</b>한다. 핵심 발상은 단순하다 — 어떤 회사가 <b>자기 등급에 비해 말을 과하게 하는지(과잉), 실력보다 조용한지(과소)</b>를 <code>gap = z(말) − z(등급)</code>로 점수화한다. 단 '말'에서는 먼저 분량 효과를 잔차로 빼(§4 발견 반영) 순수 강조도만 남긴다. 그 결과 <b>44%가 말–실행 불일치, 60%가 3년 내내 같은 유형</b>인 굳어진 특성으로 나타났다. 그리고 두 가지 통념을 반증한다 — ⑴ 유형을 가르는 건 수익성이 아니라 <b>규모</b>(과잉=소형주의 상징적 공시, 부실기업의 변명이 아님), ⑵ 길이+규모를 동시에 빼도 유형 일치율 90.9%로 <b>격차는 규모의 대리가 아닌 독립 신호</b>다. 마지막으로 ESG를 한 점수로 합치지 않고 <b>축을 분해</b>했기에, "S(약점)는 가리고 G(강점)는 알린다"는, 단일 점수로는 안 보이는 선택적 공시를 잡아냈다 — 이것이 선행연구와의 차별점이다.</p>
+
+    <div class="askbox">
+      <div class="ah"><span class="qm">Q</span> 이 파트에서 예상되는 심층 질의 — 알파의 정당성·차별성</div>
+      <ul>
+        <li><span class="q">Q.</span> "과잉공시 = greenwashing 기업"이라고 말해도 되나요?
+          <span class="pin"><b>한 줄 답:</b> 안 됩니다. 과잉공시는 'greenwashing 확정'이 아니라 <b>'더 들여다볼 후보(진단 신호)'</b>. KCGS 등급도 noisy하고 동어반복 위험 있어 발표에서도 "후보·신호" 표현 유지. <span class="ref">→ 하단 Q&amp;A B·2</span></span></li>
+        <li><span class="q">Q.</span> 격차가 그냥 회사 크기를 돌려 말한 것(규모 대리) 아닌가요?
+          <span class="pin"><b>한 줄 답:</b> 길이+규모를 동시에 잔차화해 다시 계산해도 <b>Spearman ρ=0.993, 유형 일치율 90.9%</b> → 규모로 환원되지 않는 독립 측정값. <span class="ref">→ 하단 Q&amp;A B·3</span></span></li>
+        <li><span class="q">Q.</span> 과잉공시가 부실기업(돈 못 버는 회사)에 몰린 것 아닌가요?
+          <span class="pin"><b>한 줄 답:</b> 아닙니다. 수익성(roa)은 4유형 간 차이 없음(p=0.205). 가르는 축은 <b>규모</b>(H=172). 즉 '부실기업 변명'이 아니라 <b>'소형주의 상징적 공시'</b>. <span class="ref">→ 하단 Q&amp;A B·4</span></span></li>
+        <li><span class="q">Q.</span> 다른 greenwashing 연구(예: Bingler 2022)와 뭐가 다른가요?
+          <span class="pin"><b>한 줄 답:</b> 기존은 ESG를 한 점수로 합침. Bingler도 <b>기후(E) 내부</b> cherry-pick. 우리는 E·S·G를 <b>각 축의 KCGS 등급에 견줘</b> 분해 비교한 첫 사례. <span class="ref">→ 하단 Q&amp;A B·5 / 상단 차별점 박스</span></span></li>
+      </ul>
+    </div>
   </section>
 
   <!-- §7 -->
@@ -346,6 +500,20 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
       <tr><td>4</td><td>ESG는 '축을 골라' 부풀린다</td><td>선택적 47%·S 약점 은폐(2.08≪3.03)·G 정당 시그널 (§6)</td></tr>
     </table>
 
+    <h3 class="blk">발견 → 제언, 근거 사슬 (왜 이런 제언이 나왔나)</h3>
+    <p class="body">교수님 코멘트("핵심은 스토리텔링")에 맞춰, 각 제언이 <b>어떤 발견에서 직접 따라 나오는지</b>를 끊김 없이 연결한다.</p>
+    <table class="tbl">
+      <tr><th>대상</th><th>제언</th><th>그 근거가 된 발견</th></tr>
+      <tr><td>기업 (공통)</td><td>ESG 점수를 올리는 길은 <b>단어를 더 쓰는 게 아니다</b></td><td>분량 ρ=0.66이지만 규모 통제 후 E 소멸 — 길이는 cheap-talk (§4·§5)</td></tr>
+      <tr><td>기업 (과잉형)</td><td>말을 검증 근거(데이터·실적)로 뒷받침하라</td><td>과잉=소형·저등급, 수익성 차이 없음 → '상징적 공시' (§6)</td></tr>
+      <tr><td>기업 (과소형)</td><td>가진 실력을 제대로 드러내라 (IR 소통격차 해소)</td><td>과소=대형·고등급 지주, 실력 대비 말 부족 (§6)</td></tr>
+      <tr><td>기업 (S축)</td><td>약한 축(S)은 말로 가리지 말고 실질로 개선</td><td class="hi">S 부풀린 기업의 실제 S등급 최저(2.08≪3.03) = 약점 은폐 (§6)</td></tr>
+      <tr><td>평가자·투자자</td><td>어휘량을 액면 그대로 믿지 말 것 — 분량·규모 보정 후 <b>축별(E/S/G)</b>로 정합성 점검</td><td>말 많다≠잘한다, 말 적다≠못한다 (대형 지주 과소공시) (§4·§6)</td></tr>
+      <tr><td>후속 과제</td><td>실제 ESG 성과(배출량·산재·제재)·MSCI 등 복수 평가사로 'walk' 보강, FE·군집 SE 적용, 지속가능경영보고서로 확대</td><td>현재 'walk'는 KCGS 단일·noisy, pooled 추정 한계 (§7 한계)</td></tr>
+    </table>
+
+    <p class="story"><span class="lead-in">한 문장으로.</span> <b>ESG 공시는 정보 전달이 아니라 전략적 언어다.</b> 말과 실행의 격차를 측정하면 — 누가 약점을 가리고(S 은폐), 누가 강점을 드러내는지(G 시그널) 보인다. 그래서 투자자는 언어 이면의 실행을 검증해야 한다. 이것이 7단계 분석이 도달한 종착점이다.</p>
+
     <h3 class="blk">반드시 같이 말할 한계 (방어선)</h3>
     <div class="warnbox"><span class="ic">⚠︎</span><span>
       <b>① 외적타당도</b> — 381은 무작위 아닌 의도적 pilot 패널 → 모집단 추론 불가.
@@ -353,12 +521,24 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
       <b>③ 인과 아님</b> — KCGS가 사업보고서를 평가 인풋으로 사용 → 동어반복·역인과 위험. 격차는 <b>진단 신호</b>일 뿐.
       <b>④ 연구자 재량</b> — seed 30·θ=0.65·max_df=0.80 등 선택마다 결과 조건부(sweep으로 정당화는 함).
       <b>⑤ 패널</b> — pooled 추정(기업 FE·군집 SE 미적용)이라 p-value 낙관적일 수 있음. 3개 연도는 지속성 검정력 약함.</span></div>
+
+    <div class="askbox">
+      <div class="ah"><span class="qm">Q</span> 이 파트에서 예상되는 심층 질의 — 결론·시사점의 수위</div>
+      <ul>
+        <li><span class="q">Q.</span> 그래서 경영진/투자자/규제기관에게 결국 뭐라고 말할 건가요?
+          <span class="pin"><b>한 줄 답:</b> 위 '발견→제언' 표 그대로 — 기업은 말을 숫자로 뒷받침/실력을 드러내기, 투자자는 축별 정합성 점검, 규제는 표본이 pilot이라 '검토 권고' 수위. <span class="ref">→ 하단 Q&amp;A D·4</span></span></li>
+        <li><span class="q">Q.</span> 타이밍(esg_year=fiscal_year+1)이 제공 CSV와 안 맞는다던데 괜찮나요?
+          <span class="pin"><b>한 줄 답:</b> 보고서는 가이드 규칙대로 고르고 등급은 CSV 값을 신뢰해 결합. 한 해 어긋날 가능성은 §7에 명시. 인과가 아닌 동시 연관이라 서술적 정렬로 충분. <span class="ref">→ 하단 Q&amp;A C·2</span></span></li>
+        <li><span class="q">Q.</span> 이 알파(Talk–Walk Gap)의 신규성은 무엇인가요?
+          <span class="pin"><b>한 줄 답:</b> 개념 최초성이 아니라 <b>3가지 결합</b> — 분량 교란 직접 제거 + 수익성 아닌 규모와 연결(통념 반증) + E·S·G 축 간 선택적 공시를 축별 등급에 견줘 측정. <span class="ref">→ 하단 Q&amp;A D·1</span></span></li>
+      </ul>
+    </div>
   </section>
 
   <!-- Q&A -->
   <section class="qsec" id="qa">
     <div class="shead"><div class="num" style="background:var(--crimson)">Q</div><div><h2>심층 질의응답 대비</h2><div class="sub">anticipated questions &amp; model answers</div></div></div>
-    <p class="lead2">발표·심사에서 나올 법한 질문을 카테고리별로 정리했다. 각 답변은 <b>먼저 한 줄 결론 → 근거 수치 → 한계</b> 순서로 외우면 흔들리지 않는다.</p>
+    <p class="lead2">발표·심사에서 나올 법한 질문을 카테고리별로 정리한 <b>모범답변 은행</b>이다. 위 각 파트의 <span style="color:var(--crimson);font-weight:700;">예상 심층질의 박스</span>가 한 줄 답과 함께 여기(A~D 번호)를 가리킨다 — <b>파트별로는 흐름을 잡고, 여기서는 답을 외운다.</b> 각 답변은 <b>먼저 한 줄 결론 → 근거 수치 → 한계</b> 순서로 외우면 흔들리지 않는다.</p>
 
     <div class="qcat">A. 설계·방법론</div>
     <details class="qa"><summary><span class="q">Q.</span> 등급을 예측(머신러닝)하지 않고 왜 상관·회귀만 하나요?</summary>
@@ -398,7 +578,7 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
 
     <div class="qcat">D. 알파·기여·팀 의사결정</div>
     <details class="qa"><summary><span class="q">Q.</span> 이 알파(Talk–Walk Gap)의 학술적 신규성은 뭔가요?</summary>
-      <div class="ans"><span class="a">A.</span> greenwashing 개념의 최초성이 아니라 <b>세 가지 결합</b>입니다: ⑴ §4에서 발견한 분량 교란을 talk 항에서 <b>직접 제거</b>한 격차 구성, ⑵ 그 결과가 수익성이 아닌 <b>규모·구조적 특성</b>과 연결된다는 통념 반증, ⑶ ESG를 단일 점수로 합치는 기존 측정이 못 보는 <b>E·S·G 축 간 선택적 공시</b>를 KCGS 축별 등급에 견줘 측정. 선행 13편 어디에도 firm-level 진단 도구가 없던 빈틈을 정확히 겨냥합니다.</div></details>
+      <div class="ans"><span class="a">A.</span> greenwashing 개념의 최초성이 아니라 <b>세 가지 결합</b>입니다: ⑴ §4에서 발견한 분량 교란을 talk 항에서 <b>직접 제거</b>한 격차 구성, ⑵ 그 결과가 수익성이 아닌 <b>규모·구조적 특성</b>과 연결된다는 통념 반증, ⑶ ESG를 단일 점수로 합치는 기존 측정이 못 보는 <b>E·S·G 축 간 선택적 공시</b>를 KCGS 축별 등급에 견줘 측정. <b>검색 가능한 범위에서</b> 한국 DART 사업보고서에 이 설계를 적용한 선례를 찾지 못했고, 기존 greenwashing 측정 대다수가 ESG를 단일 점수로 합쳐 보던 빈틈을 정확히 겨냥합니다.</div></details>
     <details class="qa"><summary><span class="q">Q.</span> 신지영님 제안처럼 주가 수익률로 알파를 검증하면 안 되나요?</summary>
       <div class="ans"><span class="a">A.</span> 아이디어는 좋지만 <b>현재 데이터로 실행 불가</b>합니다. 이 프로젝트엔 주가 수익률 변수가 없고, 유일한 'walk'(외부 평가)는 KCGS 등급입니다. 그래서 "포트폴리오 수익률 비교"는 할 수 없고, 대신 <b>walk를 KCGS 등급으로 둔 Talk–Walk 진단</b>(§6)으로 그 발상을 흡수했습니다. 잔차화·워싱 탐지 아이디어는 이미 §6에 반영돼 있으며, 주가 검증은 <b>후속과제(§8)</b>로 남깁니다.</div></details>
     <details class="qa"><summary><span class="q">Q.</span> 김지우님 '가독성 지도'와 이 알파는 충돌하나요?</summary>
@@ -410,7 +590,7 @@ figcaption .fl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em
   </section>
 
   <footer class="foot">
-    <span>ESG DART <span class="d">●</span> 이동원 발표 준비 — §1~§7 상세설명 + 시각화 6 + 심층 Q&A 18문</span>
+    <span>ESG DART <span class="d">●</span> 이동원 발표 준비 — 스토리라인 + §1~§7 상세설명 + 파트별 예상질의 + 시각화 6 + 모범답변 18문</span>
     <span>연관·진단 (인과 아님) · 표본 381 firm-year (pilot)</span>
   </footer>
 
